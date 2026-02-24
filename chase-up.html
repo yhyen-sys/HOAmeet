@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOAmeet | 通知追蹤面板</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2rem;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            z-index: 10;
+        }
+
+        .dashboard-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.2rem;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            font-size: 1rem;
+        }
+
+        .chase-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .chase-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .list-section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid var(--glass-border);
+        }
+
+        .list-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .status-ok {
+            color: var(--secondary);
+        }
+
+        .status-warn {
+            color: var(--danger);
+        }
+
+        .member-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .member-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .member-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(4px);
+        }
+
+        .member-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .member-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .member-role {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .btn-remind {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-remind:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .action-bar {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-dim);
+            border: 1px solid var(--glass-border);
+            padding: 12px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        /* Blob Background */
+        .bg-blob {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            filter: blur(180px);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .blob-1 {
+            top: -100px;
+            left: -100px;
+            background: #6366f1;
+        }
+
+        .blob-2 {
+            bottom: -100px;
+            right: -100px;
+            background: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+
+    <div class="container">
+        <div class="dashboard-card">
+            <header>
+                <h1>通知追蹤面板 (Chase-up List)</h1>
+                <p class="subtitle">追蹤「績效評估優化」籌備會議的變更確認進度</p>
+            </header>
+
+            <div class="chase-grid">
+                <!-- 已確認區塊 -->
+                <div class="list-section">
+                    <div class="list-title status-ok">
+                        <span>🟢</span> 已確認收悉 (3人)
+                    </div>
+                    <ul class="member-list" id="ack-list">
+                        <li class="member-item">
+                            <div class="member-info">
+                                <span class="member-name">王浩宇 局長</span>
+                                <span class="member-role">行政室 (必席長官)</span>
+                            </div>
+                            <span style="font-size: 0.8rem; color: var(--secondary);">✓ 已確認</span>
+                        </li>
+                        <li class="member-item">
+                            <div class="member-info">
+                                <span class="member-name">李明德 教授</span>
+                                <span class="member-role">外部顧問</span>
+                            </div>
+                            <span style="font-size: 0.8rem; color: var(--secondary);">✓ 已確認</span>
+                        </li>
+                        <li class="member-item">
+                            <div class="member-info">
+                                <span class="member-name">陳大文 組長</span>
+                                <span class="member-role">專案小組</span>
+                            </div>
+                            <span style="font-size: 0.8rem; color: var(--secondary);">✓ 已確認</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 未確認區塊 -->
+                <div class="list-section" style="border-color: rgba(239, 68, 68, 0.2);">
+                    <div class="list-title status-warn">
+                        <span>🔴</span> 尚未確認 (2人)
+                    </div>
+                    <ul class="member-list" id="pending-list">
+                        <li class="member-item">
+                            <div class="member-info">
+                                <span class="member-name">林雪柔 專員</span>
+                                <span class="member-role">財務部</span>
+                            </div>
+                            <button class="btn-remind" onclick="remindUser('林雪柔')">一鍵催繳</button>
+                        </li>
+                        <li class="member-item">
+                            <div class="member-info">
+                                <span class="member-name">張智傑 助理</span>
+                                <span class="member-role">公共關係室</span>
+                            </div>
+                            <button class="btn-remind" onclick="remindUser('張智傑')">一鍵催繳</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn-ghost" onclick="location.href='calendar.html'">返回行事曆</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function remindUser(name) {
+            alert(`已向 ${name} 發送二次提醒通知 Email！\n系統並將於其登入時彈出強制視窗。`);
+        }
+    </script>
+</body>
+
+</html>

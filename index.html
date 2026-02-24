@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOAmeet | 智慧會議媒合平台</title>
+    <!-- Google Fonts: Inter & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700&display=swap"
+        rel="stylesheet">
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+        }
+
+        /* Background animated blur */
+        .bg-blur {
+            position: fixed;
+            width: 40vw;
+            height: 40vw;
+            background: var(--primary);
+            filter: blur(150px);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.15;
+            animation: move 20s infinite alternate;
+        }
+
+        @keyframes move {
+            from {
+                transform: translate(-10%, -10%);
+            }
+
+            to {
+                transform: translate(50%, 50%);
+            }
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 2rem;
+            z-index: 10;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: var(--text-dim);
+            text-align: center;
+            font-size: 0.95rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Form elements */
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: var(--primary);
+        }
+
+        select option {
+            background: #1e293b;
+            color: white;
+        }
+
+        button.primary-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1rem;
+        }
+
+        button.primary-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+        }
+
+        #google-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        /* Animation */
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-blur"></div>
+
+    <div id="app-container">
+        <!-- Login Card -->
+        <div id="login-card" class="glass-card fade-in">
+            <h1>HOAmeet</h1>
+            <p class="subtitle">讓每一次會議，都能找到最完美的交集</p>
+
+            <div id="google-button-container"></div>
+        </div>
+
+        <!-- Supplementary Info Card -->
+        <div id="info-card" class="glass-card fade-in hidden">
+            <h1 style="font-size: 1.8rem;">完善基本資料</h1>
+            <p class="subtitle">為了計算權重，請告訴我們您的身份</p>
+            <p style="margin-bottom: 1.5rem; font-size: 0.9rem; color: var(--text-dim); text-align: center;">
+                Email: <span id="user-email-display" style="color: var(--text-main); font-weight: 600;"></span>
+            </p>
+
+            <div class="input-group">
+                <label>服務單位</label>
+                <select id="department-select">
+                    <option value="">請選擇單位類型...</option>
+                    <option value="1">政府機關 (Government)</option>
+                    <option value="2">學術單位 (Academic)</option>
+                    <option value="3">外部/專家 (External)</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>職稱 / 身分</label>
+                <input type="text" id="job-title-input" placeholder="例如：局長、主任、教授">
+            </div>
+
+            <button class="primary-btn" onclick="submitExtraInfo()">確認並進入平台</button>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "http://localhost:1880/api"; // 修正為你的 Node-RED 位置
+
+        window.onload = function () {
+            google.accounts.id.initialize({
+                client_id: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+                callback: handleGoogleLogin
+            });
+
+            google.accounts.id.renderButton(
+                document.getElementById("google-button-container"),
+                { theme: "filled_blue", size: "large", width: "380px" }
+            );
+        };
+
+        function handleGoogleLogin(response) {
+            const googleToken = response.credential;
+            console.log("Token acquired, validating with HOAmeet backend...");
+
+            fetch(`${API_BASE}/auth/google`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: googleToken })
+            })
+                .then(res => {
+                    if (res.status === 200) return res.json().then(handleLoginSuccess);
+                    if (res.status === 206) return res.json().then(showInfoCard);
+                    throw new Error("Authentication failed");
+                })
+                .catch(err => {
+                    console.error("Login Error:", err);
+                    alert("驗證失敗，請檢查網路或確認後端服務是否運行中。");
+                });
+        }
+
+        function handleLoginSuccess(data) {
+            localStorage.setItem("hoa_token", data.token);
+            localStorage.setItem("hoa_user", JSON.stringify(data.user));
+
+            alert(`歡迎回來，${data.user.name}！`);
+            // 跳轉至儀表板主頁
+            window.location.href = "dashboard.html";
+        }
+
+        function showInfoCard(data) {
+            document.getElementById("login-card").classList.add("hidden");
+            document.getElementById("info-card").classList.remove("hidden");
+            document.getElementById("user-email-display").innerText = data.email;
+
+            sessionStorage.setItem("p_email", data.email);
+            sessionStorage.setItem("p_name", data.name);
+        }
+
+        function submitExtraInfo() {
+            const dept = document.getElementById("department-select").value;
+            const title = document.getElementById("job-title-input").value;
+
+            if (!dept || !title) {
+                alert("請完整填寫單位與職稱以利後端計算權重權限。");
+                return;
+            }
+
+            // 呼叫註冊 API 儲存至 Users 資料表
+            fetch(`${API_BASE}/auth/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: sessionStorage.getItem("p_email"),
+                    name: sessionStorage.getItem("p_name"),
+                    department_id: dept,
+                    job_title: title
+                })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    alert("註冊成功！");
+                    handleLoginSuccess(data);
+                });
+        }
+    </script>
+</body>
+
+</html>

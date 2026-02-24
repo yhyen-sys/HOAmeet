@@ -1,0 +1,135 @@
+[
+    {
+        "id": "google_auth_flow",
+        "type": "tab",
+        "label": "Google Auth Flow",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "http_in",
+        "type": "http in",
+        "z": "google_auth_flow",
+        "name": "POST /api/auth/google",
+        "url": "/api/auth/google",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 120,
+        "wires": [
+            [
+                "google_api_prep"
+            ]
+        ]
+    },
+    {
+        "id": "google_api_prep",
+        "type": "function",
+        "z": "google_auth_flow",
+        "name": "準備 Google API 請求",
+        "func": "/**\n * 節點 A：準備呼叫 Google API (第 2 個節點)\n */\n\n// 取得前端 POST 過來的 token\nlet googleToken = msg.payload.token;\n\nif (!googleToken) {\n    msg.payload = { error: \"缺少 Google Token\" };\n    msg.statusCode = 400;\n    return [null, msg]; // 結束流程並跳到錯誤回應\n}\n\n// 設定 HTTP Request 節點要呼叫的目標網址\nmsg.url = \"https://oauth2.googleapis.com/tokeninfo?id_token=\" + googleToken;\nmsg.method = \"GET\";\n\nreturn [msg, null];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 120,
+        "wires": [
+            [
+                "google_request"
+            ],
+            [
+                "http_response"
+            ]
+        ]
+    },
+    {
+        "id": "google_request",
+        "type": "http request",
+        "z": "google_auth_flow",
+        "name": "Google Tokeninfo",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 610,
+        "y": 120,
+        "wires": [
+            [
+                "mysql_prep"
+            ]
+        ]
+    },
+    {
+        "id": "mysql_prep",
+        "type": "function",
+        "z": "google_auth_flow",
+        "name": "解析結果並準備 MySQL",
+        "func": "/**\n * 節點 B：解析 Google 回應並查詢 MySQL (第 4 個節點)\n */\n\n// 解析 Google 回傳的 JSON 資料\nlet googleData = typeof msg.payload === 'string' ? JSON.parse(msg.payload) : msg.payload;\n\n// 檢查 Google 是否回傳錯誤\nif (googleData.error) {\n    msg.payload = { error: \"Google 驗證失敗\", details: googleData.error_description };\n    msg.statusCode = 401;\n    return [null, msg]; \n}\n\n// 提取出安全且經過驗證的 Email 和 姓名\nlet userEmail = googleData.email;\nlet userName = googleData.name;\n\n// 將基本資料暫存起來，後面會用到\nmsg.userData = {\n    email: userEmail,\n    name: userName\n};\n\n// 組裝 MySQL 查詢指令：檢查此 Email 是否存在我們的 Users 表中\nmsg.topic = \"SELECT * FROM Users WHERE email = ? LIMIT 1\";\nmsg.payload = [userEmail];\n\nreturn [msg, null];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 190,
+        "y": 240,
+        "wires": [
+            [
+                "mysql_node"
+            ],
+            [
+                "http_response"
+            ]
+        ]
+    },
+    {
+        "id": "mysql_node",
+        "type": "mysql",
+        "z": "google_auth_flow",
+        "mydb": "",
+        "name": "MySQL Users",
+        "x": 420,
+        "y": 240,
+        "wires": [
+            [
+                "auth_logic"
+            ]
+        ]
+    },
+    {
+        "id": "auth_logic",
+        "type": "function",
+        "z": "google_auth_flow",
+        "name": "登入邏輯判斷",
+        "func": "/**\n * 節點 C：判斷登入狀態與核發 Token (第 6 個節點)\n */\n\nlet dbResult = msg.payload; // 這是 MySQL 節點回傳的陣列結果\n\nif (dbResult.length > 0) {\n    // 🟢 情境一：舊朋友 (資料庫有紀錄)\n    let user = dbResult[0];\n    \n    // 檢查他是否已經填過單位和職稱\n    if (user.department_id === null || user.job_title_id === null) {\n        // 🟡 有 Email 但沒填妥職稱 (可能上次註冊中斷)\n        msg.payload = { \n            message: \"請補齊單位與職稱資料\", \n            action: \"REQUIRE_INFO\",\n            email: msg.userData.email\n        };\n        msg.statusCode = 206; // 206 Partial Content\n    }\ else {\n        // 🟢 資料完整，直接發放系統專屬 Token 讓他登入\n        let sessionToken = \"sys_token_\" + new Date().getTime() + \"_\" + user.id; \n        \n        msg.payload = { \n            message: \"登入成功\", \n            action: \"LOGIN_SUCCESS\",\n            token: sessionToken,\n            user: {\n                id: user.id,\n                name: user.last_name + user.first_name\n            }\n        };\n        msg.statusCode = 200;\n    }\n} else {\n    // 🔵 情境二：新朋友 (資料庫沒紀錄)\n    msg.payload = { \n        message: \"歡迎首次登入，請填寫您的單位與職稱\", \n        action: \"REQUIRE_INFO\",\n        email: msg.userData.email,\n        name: msg.userData.name\n    };\n    msg.statusCode = 206;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 240,
+        "wires": [
+            [
+                "http_response"
+            ]
+        ]
+    },
+    {
+        "id": "http_response",
+        "type": "http response",
+        "z": "google_auth_flow",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 840,
+        "y": 180,
+        "wires": []
+    }
+]

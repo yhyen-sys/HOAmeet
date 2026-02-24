@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOAmeet | 智慧會議排程平台</title>
+    <!-- Fonts & Libraries -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Outfit:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <!-- Tooltip Library (Tippy.js) -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #10b981;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 2rem;
+            background: radial-gradient(circle at bottom left, #1e1b4b, #0f172a);
+        }
+
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .role-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary-light);
+        }
+
+        .role-admin {
+            background: rgba(192, 132, 252, 0.1);
+            border-color: #c084fc;
+            color: #d8b4fe;
+        }
+
+        .calendar-wrapper {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* FullCalendar Custom */
+        .fc {
+            --fc-border-color: var(--glass-border);
+        }
+
+        .fc-theme-standard td,
+        .fc-theme-standard th {
+            border: 1px solid var(--glass-border);
+        }
+
+        .fc-timegrid-slot {
+            height: 3.5em !important;
+        }
+
+        .fc-toolbar-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.4rem !important;
+        }
+
+        /* Heatmap Elements */
+        .heatmap-label {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #fff;
+            background: rgba(239, 68, 68, 0.85);
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .heatmap-score {
+            position: absolute;
+            bottom: 6px;
+            right: 6px;
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.4);
+            pointer-events: none;
+        }
+
+        /* Mandatory Warning ⚠️ */
+        .mandatory-warning {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 14px;
+            background: #fbbf24;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+            pointer-events: none;
+        }
+
+        /* Selected Slot (User Choices) */
+        .selected-slot {
+            background-color: var(--secondary) !important;
+            border: none !important;
+            border-radius: 8px !important;
+            z-index: 10 !important;
+            cursor: pointer;
+        }
+
+        /* Admin Action Overlay (when clicking heatmap as admin) */
+        .admin-action-hint {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.2);
+            opacity: 0;
+            transition: opacity 0.2s;
+            cursor: pointer;
+            color: white;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        .fc-bg-event:hover .admin-action-hint {
+            opacity: 1;
+        }
+
+        .action-bar {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-dim);
+            border: 1px solid var(--glass-border);
+        }
+
+        .btn-ghost:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-admin {
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Tippy Tooltip Dark Theme */
+        .tippy-box[data-theme~='hoameet'] {
+            background-color: #1e293b;
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .tooltip-content {
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .tooltip-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-ok {
+            color: var(--secondary);
+        }
+
+        .status-warn {
+            color: #fbbf24;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .bg-blob {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: var(--primary);
+            filter: blur(180px);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.08;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-blob" style="top: -100px; right: -100px;"></div>
+    <div class="bg-blob" style="bottom: -100px; left: -100px; background: #c084fc;"></div>
+
+    <div class="container">
+        <header>
+            <div>
+                <h1 id="meeting-title">「績效評估優化」第二次籌備會議</h1>
+                <p class="subtitle">發起人：陳大文 組長 | 會議時數：90 分鐘</p>
+            </div>
+            <div id="role-display" class="role-badge">參與者模式</div>
+        </header>
+
+        <div class="calendar-wrapper">
+            <div id="calendar"></div>
+        </div>
+
+        <div class="action-bar">
+            <div class="tips" id="action-tips">💡 <b>拖曳時段</b> 標示您的空檔，點擊綠色塊可取消。</div>
+            <div class="btn-group">
+                <button class="btn btn-ghost" onclick="location.href='dashboard.html'"><span>🏠</span> 儀表板</button>
+                <button class="btn btn-ghost" onclick="location.href='index.html'">登出系統</button>
+
+                <!-- 參與者按鈕 -->
+                <button id="btn-submit-user" class="btn btn-primary"><span>📤</span> 送出我的空檔</button>
+
+                <!-- 管理者按鈕 (隱藏) -->
+                <button id="btn-confirm-admin" class="btn btn-admin hidden"><span>🔨</span> 一鍵拍板定案</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 初始化參數 (模擬從後端 API 取得) ---
+        const currentUser = { id: 101, name: "陳大文" };
+        const meetingInfo = {
+            id: 123,
+            admin_id: 101, // 模擬：目前登入者就是發起人
+            is_mandatory_missing: true // 模擬：某高分時段缺席核心長官
+        };
+
+        const isAdmin = currentUser.id === meetingInfo.admin_id;
+        let selectedFinalSlot = null; // 管理者挑選的定案時段
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // 更新 UI 角色狀態
+            const roleBadge = document.getElementById('role-display');
+            if (isAdmin) {
+                roleBadge.innerText = "👑 會議管理者";
+                roleBadge.classList.add('role-admin');
+                document.getElementById('btn-submit-user').classList.add('hidden');
+                document.getElementById('btn-confirm-admin').classList.remove('hidden');
+                document.getElementById('action-tips').innerHTML = "⚙️ <b>點擊熱門藍色時段</b> 即可一鍵拍板定案。";
+            }
+
+            const calendarEl = document.getElementById('calendar');
+
+            // 模擬熱力圖數據 (含詳細參與名單)
+            const heatmapData = [
+                {
+                    start: '2026-02-24T10:00:00', end: '2026-02-24T12:00:00',
+                    score: 15, isTop: false,
+                    avail: ["陳科員", "李助理", "王專員"], absent: ["林局長(必)", "張秘書"]
+                },
+                {
+                    start: '2026-02-25T14:00:00', end: '2026-02-25T16:00:00',
+                    score: 42, isTop: true,
+                    avail: ["林局長(必)", "陳大文", "王專員", "張助理"], absent: ["李教授"]
+                },
+                {
+                    start: '2026-02-26T14:00:00', end: '2026-02-26T17:00:00',
+                    score: 35, isTop: true,
+                    avail: ["王專員", "張助理", "陳大文"], absent: ["林局長(必)"]
+                }
+            ];
+
+            const maxScore = 42;
+            const heatmapEvents = heatmapData.map(data => ({
+                start: data.start,
+                end: data.end,
+                display: 'background',
+                backgroundColor: `rgba(99, 102, 241, ${0.1 + (data.score / maxScore) * 0.75})`,
+                extendedProps: { ...data }
+            }));
+
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                initialDate: '2026-02-23',
+                slotMinTime: '08:00:00',
+                slotMaxTime: '18:00:00',
+                allDaySlot: false,
+                locale: 'zh-tw',
+                selectable: !isAdmin, // 管理者主要是查看與拍板，不參與選取 (依業務需求)
+                events: heatmapEvents,
+
+                eventDidMount: function (info) {
+                    if (info.event.display === 'background') {
+                        const el = info.el;
+                        const props = info.event.extendedProps;
+                        el.style.position = 'relative';
+
+                        if (props.isTop) {
+                            const label = document.createElement('div');
+                            label.className = 'heatmap-label';
+                            label.innerHTML = '🔥 熱門推薦';
+                            el.appendChild(label);
+                        }
+
+                        // 管理者視角：顯示積分與警告
+                        if (isAdmin) {
+                            const score = document.createElement('div');
+                            score.className = 'heatmap-score';
+                            score.innerText = `${props.score} pts`;
+                            el.appendChild(score);
+
+                            // 如果必席長官缺席 (模擬邏輯：林局長在 absent 名單中)
+                            if (props.absent.some(name => name.includes("(必)"))) {
+                                const warn = document.createElement('div');
+                                warn.className = 'mandatory-warning';
+                                warn.innerText = '⚠️';
+                                el.appendChild(warn);
+                            }
+
+                            // 注入管理者拍板按鈕 (隱藏，hover 顯示)
+                            const hint = document.createElement('div');
+                            hint.className = 'admin-action-hint';
+                            hint.innerText = "🔨 點擊拍板";
+                            el.appendChild(hint);
+
+                            // --- 初始化 Tooltip (Tippy.js) ---
+                            tippy(el, {
+                                theme: 'hoameet',
+                                allowHTML: true,
+                                content: `
+                                    <div class="tooltip-content">
+                                        <div class="tooltip-title">
+                                            <span>時段分析</span>
+                                            <span class="${props.absent.some(n => n.includes("(必)")) ? 'status-warn' : 'status-ok'}">
+                                                ${props.absent.some(n => n.includes("(必)")) ? '核心缺席' : '人數充足'}
+                                            </span>
+                                        </div>
+                                        <div>✅ <b>可出席:</b> ${props.avail.join(', ')}</div>
+                                        <div style="margin-top:4px;">❌ <b>缺席:</b> <span style="color:var(--text-dim)">${props.absent.join(', ')}</span></div>
+                                    </div>
+                                `,
+                                placement: 'right',
+                                interactive: true
+                            });
+                        }
+                    }
+                },
+
+                // 參與者選取邏輯
+                select: function (info) {
+                    if (isAdmin) return;
+                    calendar.addEvent({
+                        title: '✅ 我可出席', start: info.startStr, end: info.endStr, classNames: ['selected-slot']
+                    });
+                },
+
+                // 管理者拍板邏輯
+                eventClick: function (info) {
+                    if (isAdmin && info.event.display === 'background') {
+                        const props = info.event.extendedProps;
+                        const timeStr = new Date(props.start).toLocaleString('zh-TW', { weekday: 'long', hour: 'numeric', minute: 'numeric' });
+
+                        if (confirm(`確定拍板於【${timeStr}】定案嗎？\n系統將自動發送 Email 通知所有成員。`)) {
+                            selectedFinalSlot = props;
+                            alert("✅ 會議定案成功！正在發送通知與行事曆檔案 (.ics)...");
+                            location.reload(); // 模擬定案後畫面更新
+                        }
+                    }
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
+</body>
+
+</html>
