@@ -21,11 +21,11 @@ CREATE TABLE IF NOT EXISTS Job_Titles (
 -- 使用者主表
 CREATE TABLE IF NOT EXISTS Users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NULL, -- 一般註冊密碼雜湊，Google 登入者可為 NULL
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
+    first_name VARCHAR(50) NULL,
+    last_name VARCHAR(50) NULL,
     department_id INT NULL,          -- 允許為空 (因 Google 首次登入時還沒填)
     job_title_id INT NULL,           -- 允許為空 (因 Google 首次登入時還沒填)
     auth_provider VARCHAR(20) DEFAULT 'email' COMMENT '登入方式: email, google',
