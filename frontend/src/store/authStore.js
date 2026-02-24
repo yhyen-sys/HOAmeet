@@ -2,7 +2,13 @@ import { create } from 'zustand'
 
 export const useAuthStore = create((set, get) => {
     const initToken = localStorage.getItem('hoa_token') || null;
-    const initUser = JSON.parse(localStorage.getItem('hoa_user') || 'null');
+    let initUser = null;
+    try {
+        const storedUser = localStorage.getItem('hoa_user');
+        initUser = storedUser && storedUser !== "undefined" ? JSON.parse(storedUser) : null;
+    } catch (e) {
+        console.error("Failed to parse user from localStorage", e);
+    }
 
     return {
         token: initToken,
