@@ -69,8 +69,8 @@ export default function Login() {
                     email: tempData.email,
                     first_name: tempData.first_name,
                     last_name: tempData.last_name,
-                    department_id: parseInt(dept),
-                    job_title_id: parseInt(title)
+                    department_id: parseInt(dept, 10), // department is still a select option (1, 2, 3)
+                    job_title: title // job title is a string input
                 })
             });
             const data = await res.json();
