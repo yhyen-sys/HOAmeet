@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Search } from 'lucide-react';
-
-const API_BASE = "http://localhost:1880/api";
+import { fetchAPI } from '../utils/api';
 
 export default function AdminUsers() {
     const navigate = useNavigate();
-    const { token, user } = useAuthStore();
+    const { user } = useAuthStore(); // token 已經交由 api.js 處理，這裡不再需要拿出來
     const [users, setUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
 
@@ -30,12 +29,8 @@ export default function AdminUsers() {
         setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
 
         try {
-            const res = await fetch(`${API_BASE}/admin/users/role`, {
+            const res = await fetchAPI(`/admin/users/role`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token
-                },
                 body: JSON.stringify({ user_id: userId, new_role: newRole })
             });
 

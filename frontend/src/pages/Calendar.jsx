@@ -10,13 +10,12 @@ import { ArrowLeft, CheckCircle } from 'lucide-react';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
-
-const API_BASE = "http://localhost:1880/api";
+import { fetchAPI } from '../utils/api';
 
 export default function Calendar() {
     const { id: meetingId } = useParams();
     const navigate = useNavigate();
-    const { token, hasAdminRights } = useAuthStore();
+    const { hasAdminRights } = useAuthStore();
     const calendarRef = useRef(null);
 
     const [selectedSlots, setSelectedSlots] = useState([]);
@@ -85,12 +84,8 @@ export default function Calendar() {
                 end_time: new Date(s.end).toISOString().slice(0, 19).replace('T', ' ')
             }));
 
-            const res = await fetch(`${API_BASE}/user/availability`, {
+            const res = await fetchAPI(`/user/availability`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
                 body: JSON.stringify({
                     meeting_id: meetingId,
                     slots: dbSlots

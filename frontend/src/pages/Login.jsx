@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const API_BASE = "https://yikuei.com/api";
+import { fetchAPI } from '../utils/api';
 
 export default function Login() {
     const navigate = useNavigate();
@@ -38,9 +37,8 @@ export default function Login() {
     const handleGoogleLogin = async (response) => {
         const googleToken = response.credential;
         try {
-            const res = await fetch(`${API_BASE}/auth/google`, {
+            const res = await fetchAPI(`/auth/google`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ token: googleToken })
             });
 
@@ -65,9 +63,8 @@ export default function Login() {
     const submitGoogleExtraInfo = async () => {
         if (!dept || !title) return alert("請完整填寫單位與職稱");
         try {
-            const res = await fetch(`${API_BASE}/auth/register`, {
+            const res = await fetchAPI(`/auth/register`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     email: tempData.email,
                     first_name: tempData.first_name,
@@ -91,9 +88,8 @@ export default function Login() {
         if (!email || !password) return alert("請輸入信箱與密碼");
 
         try {
-            const res = await fetch(`${API_BASE}/auth/login-local`, {
+            const res = await fetchAPI(`/auth/login-local`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
             });
 
@@ -114,9 +110,8 @@ export default function Login() {
         if (!email || !password || !name || !dept || !title) return alert("請完整填寫所有欄位");
 
         try {
-            const res = await fetch(`${API_BASE}/auth/register-local`, {
+            const res = await fetchAPI(`/auth/register-local`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password, name, department_id: dept, job_title: title })
             });
 
