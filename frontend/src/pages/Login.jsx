@@ -4,6 +4,29 @@ import { useAuthStore } from '../store/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchAPI } from '../utils/api';
 
+const mapDept = (id) => {
+    switch (id) {
+        case 1: return "政府機關";
+        case 2: return "學術單位";
+        case 3: return "外部專家";
+        default: return "";
+    }
+};
+
+const mapTitle = (id) => {
+    switch (id) {
+        case 1: return "長官";
+        case 2: return "科長";
+        case 3: return "專員";
+        default: return "";
+    }
+};
+
+const getGreeting = (user) => {
+    if (!user || !user.department_id || !user.job_title_id || !user.last_name) return user?.name || "使用者";
+    return `${mapDept(user.department_id)}${user.last_name}${mapTitle(user.job_title_id)}`;
+};
+
 export default function Login() {
     const navigate = useNavigate();
     const login = useAuthStore(state => state.login);
@@ -46,7 +69,7 @@ export default function Login() {
 
             if (res.status === 200) {
                 login(data.token, data.user);
-                alert(`歡迎回來，${data.user.name}！`);
+                alert(`歡迎回來，${getGreeting(data.user)}！`);
                 navigate('/dashboard');
             } else if (res.status === 206) {
                 setTempData({ email: data.email, first_name: data.first_name, last_name: data.last_name });
@@ -74,7 +97,7 @@ export default function Login() {
                 })
             });
             const data = await res.json();
-            alert("資料建立成功！");
+            alert(`資料建立成功！歡迎加入，${getGreeting(data.user)}！`);
             login(data.token, data.user);
             navigate('/dashboard');
         } catch (err) {
@@ -95,6 +118,7 @@ export default function Login() {
 
             const data = await res.json();
             if (res.ok) {
+                alert(`歡迎回來，${getGreeting(data.user)}！`);
                 login(data.token, data.user);
                 navigate('/dashboard');
             } else {
@@ -117,7 +141,7 @@ export default function Login() {
 
             const data = await res.json();
             if (res.ok) {
-                alert("註冊成功！");
+                alert(`註冊成功！歡迎加入，${getGreeting(data.user)}！`);
                 login(data.token, data.user);
                 navigate('/dashboard');
             } else {

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { motion } from 'framer-motion';
 import { LogOut, Plus, Settings, Calendar as CalendarIcon } from 'lucide-react';
