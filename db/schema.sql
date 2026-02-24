@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS Meetings (
     title VARCHAR(200) NOT NULL,
     subject TEXT NULL COMMENT '會議主旨',
     agenda TEXT NULL COMMENT '議程',
+    government_agenda TEXT NULL COMMENT '議程',
     discussion_points TEXT NULL COMMENT '討論重點提示清單',
     duration_minutes INT NOT NULL COMMENT '會議時數(分鐘)',
     location VARCHAR(200) NOT NULL,
@@ -105,6 +106,9 @@ COMMENT '會議版本號：每次改期加1，用於更新使用者的 Google �
 ALTER TABLE Users 
 ADD COLUMN global_role ENUM('super_admin', 'creator', 'user') DEFAULT 'user' 
 COMMENT '全域角色: super_admin(最高權限), creator(可發起會議), user(僅能參與)';
+
+-- 將特定使用者設為超級管理員 (範例：將 ID 為 2 的使用者升級)
+-- UPDATE Users SET global_role = 'super_admin' WHERE id = 2;
 
 -- 7. 初始字典資料 (Seeding)
 -- 單位字典庫
