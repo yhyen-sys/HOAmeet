@@ -310,5 +310,40 @@
         "x": 650,
         "y": 520,
         "wires": []
+    },
+    {
+        "id": "node_debug_sql_error",
+        "type": "debug",
+        "z": "cba2dbb329ebd66f",
+        "name": "SQL 錯誤追蹤",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 380,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "node_catch_mysql",
+        "type": "catch",
+        "z": "cba2dbb329ebd66f",
+        "name": "捕捉 MySQL 錯誤",
+        "scope": [
+            "b0af393d96756355",
+            "bb2e056f21140575"
+        ],
+        "uncaught": false,
+        "x": 170,
+        "y": 700,
+        "wires": [
+            [
+                "node_debug_sql_error"
+            ]
+        ]
     }
 ]
