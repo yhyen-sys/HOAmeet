@@ -4,27 +4,11 @@ import { useAuthStore } from '../store/authStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchAPI } from '../utils/api';
 
-const mapDept = (id) => {
-    switch (id) {
-        case 1: return "政府機關";
-        case 2: return "學術單位";
-        case 3: return "外部專家";
-        default: return "";
-    }
-};
-
-const mapTitle = (id) => {
-    switch (id) {
-        case 1: return "長官";
-        case 2: return "科長";
-        case 3: return "專員";
-        default: return "";
-    }
-};
-
-const getGreeting = (user) => {
+const getGreeting = (user, depts = [], titles = []) => {
     if (!user || !user.department_id || !user.job_title_id || !user.last_name) return user?.name || "使用者";
-    return `${mapDept(user.department_id)}${user.last_name}${mapTitle(user.job_title_id)}`;
+    const deptName = depts.find(d => d.id === user.department_id)?.dept_name || "";
+    const titleName = titles.find(t => t.id === user.job_title_id)?.title_name || "";
+    return `${deptName}${user.last_name}${titleName}`;
 };
 
 export default function Login() {
@@ -40,8 +24,29 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [tempData, setTempData] = useState({ email: '', name: '' }); // For Google step 2
     const [name, setName] = useState('');
+
+    // 字典與選擇狀態
+    const [departments, setDepartments] = useState([]);
+    const [jobTitles, setJobTitles] = useState([]);
+    const [selectedDeptType, setSelectedDeptType] = useState('');
     const [dept, setDept] = useState('');
     const [title, setTitle] = useState('');
+
+    // 載入字典資料
+    useEffect(() => {
+        const fetchDictionaries = async () => {
+            try {
+                // 目前先抓取 JSON Server 測試用端點或未來的正式端點
+                const resDept = await fetchAPI('/departments');
+                const resTitle = await fetchAPI('/job_titles');
+                if (resDept.ok) setDepartments(await resDept.json());
+                if (resTitle.ok) setJobTitles(await resTitle.json());
+            } catch (error) {
+                console.error("無法取得字典資料:", error);
+            }
+        };
+        fetchDictionaries();
+    }, []);
 
     // ---------------- [Google OAuth 流程] ----------------
     useEffect(() => {
@@ -69,7 +74,7 @@ export default function Login() {
 
             if (res.status === 200) {
                 login(data.token, data.user);
-                alert(`歡迎回來，${getGreeting(data.user)}！`);
+                alert(`歡迎回來，${getGreeting(data.user, departments, jobTitles)}！`);
                 navigate('/dashboard');
             } else if (res.status === 206) {
                 setTempData({ email: data.email, first_name: data.first_name, last_name: data.last_name });
@@ -97,7 +102,7 @@ export default function Login() {
                 })
             });
             const data = await res.json();
-            alert(`資料建立成功！歡迎加入，${getGreeting(data.user)}！`);
+            alert(`資料建立成功！歡迎加入，${getGreeting(data.user, departments, jobTitles)}！`);
             login(data.token, data.user);
             navigate('/dashboard');
         } catch (err) {
@@ -118,7 +123,7 @@ export default function Login() {
 
             const data = await res.json();
             if (res.ok) {
-                alert(`歡迎回來，${getGreeting(data.user)}！`);
+                alert(`歡迎回來，${getGreeting(data.user, departments, jobTitles)}！`);
                 login(data.token, data.user);
                 navigate('/dashboard');
             } else {
@@ -141,7 +146,7 @@ export default function Login() {
 
             const data = await res.json();
             if (res.ok) {
-                alert(`註冊成功！歡迎加入，${getGreeting(data.user)}！`);
+                alert(`註冊成功！歡迎加入，${getGreeting(data.user, departments, jobTitles)}！`);
                 login(data.token, data.user);
                 navigate('/dashboard');
             } else {
@@ -151,6 +156,10 @@ export default function Login() {
             alert("系統錯誤");
         }
     };
+
+    // 取得分類清單
+    const deptTypes = [...new Set(departments.map(d => d.dept_type))];
+    const filteredDepts = departments.filter(d => d.dept_type === selectedDeptType);
 
 
     return (
@@ -255,20 +264,28 @@ export default function Login() {
                             </div>
 
                             <div className="space-y-4 mb-8">
-                                <select value={dept} onChange={e => setDept(e.target.value)}
+                                <select value={selectedDeptType} onChange={e => { setSelectedDeptType(e.target.value); setDept(''); }}
                                     className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors">
-                                    <option value="" className="bg-stone-800">請選擇單位類型...</option>
-                                    <option value="1" className="bg-stone-800">政府機關 (Government)</option>
-                                    <option value="2" className="bg-stone-800">學術單位 (Academic)</option>
-                                    <option value="3" className="bg-stone-800">外部/專家 (External)</option>
+                                    <option value="" className="bg-stone-800">1. 請選擇體系類別...</option>
+                                    {deptTypes.map(t => (
+                                        <option key={t} value={t} className="bg-stone-800">{t}</option>
+                                    ))}
                                 </select>
 
-                                <select value={title} onChange={e => setTitle(e.target.value)}
-                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors">
-                                    <option value="" className="bg-stone-800">請選擇職稱級別...</option>
-                                    <option value="1" className="bg-stone-800">局處首長 / 長官 (權重 5)</option>
-                                    <option value="2" className="bg-stone-800">單位主管 / 科長 (權重 3)</option>
-                                    <option value="3" className="bg-stone-800">基層承辦 / 專員 (權重 1)</option>
+                                <select value={dept} onChange={e => setDept(e.target.value)} disabled={!selectedDeptType}
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors disabled:opacity-50">
+                                    <option value="" className="bg-stone-800">2. 請選擇所屬單位...</option>
+                                    {filteredDepts.map(d => (
+                                        <option key={d.id} value={d.id} className="bg-stone-800">{d.dept_name}</option>
+                                    ))}
+                                </select>
+
+                                <select value={title} onChange={e => setTitle(e.target.value)} disabled={!dept}
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors disabled:opacity-50">
+                                    <option value="" className="bg-stone-800">3. 請選擇職稱級別...</option>
+                                    {jobTitles.map(t => (
+                                        <option key={t.id} value={t.id} className="bg-stone-800">{t.title_name} (Tier {t.tier_level})</option>
+                                    ))}
                                 </select>
                             </div>
 
@@ -304,20 +321,28 @@ export default function Login() {
                                 <input type="text" placeholder="真實姓名" value={name} onChange={e => setName(e.target.value)} required
                                     className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors" />
 
-                                <select value={dept} onChange={e => setDept(e.target.value)} required
+                                <select value={selectedDeptType} onChange={e => { setSelectedDeptType(e.target.value); setDept(''); }} required
                                     className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-stone-300 outline-none focus:border-amber-500 transition-colors">
-                                    <option value="" className="bg-stone-800">請選擇單位類型...</option>
-                                    <option value="1" className="bg-stone-800">政府機關 (Government)</option>
-                                    <option value="2" className="bg-stone-800">學術單位 (Academic)</option>
-                                    <option value="3" className="bg-stone-800">外部/專家 (External)</option>
+                                    <option value="" className="bg-stone-800">1. 請選擇體系類別...</option>
+                                    {deptTypes.map(t => (
+                                        <option key={t} value={t} className="bg-stone-800">{t}</option>
+                                    ))}
                                 </select>
 
-                                <select value={title} onChange={e => setTitle(e.target.value)} required
-                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-stone-300 outline-none focus:border-amber-500 transition-colors">
-                                    <option value="" className="bg-stone-800">請選擇職稱級別...</option>
-                                    <option value="1" className="bg-stone-800">局處首長 / 長官 (權重 5)</option>
-                                    <option value="2" className="bg-stone-800">單位主管 / 科長 (權重 3)</option>
-                                    <option value="3" className="bg-stone-800">基層承辦 / 專員 (權重 1)</option>
+                                <select value={dept} onChange={e => setDept(e.target.value)} disabled={!selectedDeptType} required
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-stone-300 outline-none focus:border-amber-500 transition-colors disabled:opacity-50">
+                                    <option value="" className="bg-stone-800">2. 請選擇所屬單位...</option>
+                                    {filteredDepts.map(d => (
+                                        <option key={d.id} value={d.id} className="bg-stone-800">{d.dept_name}</option>
+                                    ))}
+                                </select>
+
+                                <select value={title} onChange={e => setTitle(e.target.value)} disabled={!dept} required
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-stone-300 outline-none focus:border-amber-500 transition-colors disabled:opacity-50">
+                                    <option value="" className="bg-stone-800">3. 請選擇職稱級別...</option>
+                                    {jobTitles.map(t => (
+                                        <option key={t.id} value={t.id} className="bg-stone-800">{t.title_name} (Tier {t.tier_level})</option>
+                                    ))}
                                 </select>
 
                                 <div className="flex gap-3 pt-4">
