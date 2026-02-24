@@ -69,8 +69,8 @@ export default function Login() {
                     email: tempData.email,
                     first_name: tempData.first_name,
                     last_name: tempData.last_name,
-                    department_id: parseInt(dept, 10), // department is still a select option (1, 2, 3)
-                    job_title: title // job title is a string input
+                    department_id: parseInt(dept, 10),
+                    job_title_id: parseInt(title, 10)
                 })
             });
             const data = await res.json();
@@ -112,7 +112,7 @@ export default function Login() {
         try {
             const res = await fetchAPI(`/auth/register-local`, {
                 method: "POST",
-                body: JSON.stringify({ email, password, name, department_id: dept, job_title: title })
+                body: JSON.stringify({ email, password, name, department_id: parseInt(dept, 10), job_title_id: parseInt(title, 10) })
             });
 
             const data = await res.json();
@@ -239,8 +239,13 @@ export default function Login() {
                                     <option value="3" className="bg-stone-800">外部/專家 (External)</option>
                                 </select>
 
-                                <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="職稱 (例如：局長、主任、教授)"
-                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors" />
+                                <select value={title} onChange={e => setTitle(e.target.value)}
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors">
+                                    <option value="" className="bg-stone-800">請選擇職稱級別...</option>
+                                    <option value="1" className="bg-stone-800">局處首長 / 長官 (權重 5)</option>
+                                    <option value="2" className="bg-stone-800">單位主管 / 科長 (權重 3)</option>
+                                    <option value="3" className="bg-stone-800">基層承辦 / 專員 (權重 1)</option>
+                                </select>
                             </div>
 
                             <div className="flex gap-3">
@@ -283,8 +288,13 @@ export default function Login() {
                                     <option value="3" className="bg-stone-800">外部/專家 (External)</option>
                                 </select>
 
-                                <input type="text" placeholder="職稱 (例如：主任)" value={title} onChange={e => setTitle(e.target.value)} required
-                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors" />
+                                <select value={title} onChange={e => setTitle(e.target.value)} required
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-stone-300 outline-none focus:border-amber-500 transition-colors">
+                                    <option value="" className="bg-stone-800">請選擇職稱級別...</option>
+                                    <option value="1" className="bg-stone-800">局處首長 / 長官 (權重 5)</option>
+                                    <option value="2" className="bg-stone-800">單位主管 / 科長 (權重 3)</option>
+                                    <option value="3" className="bg-stone-800">基層承辦 / 專員 (權重 1)</option>
+                                </select>
 
                                 <div className="flex gap-3 pt-4">
                                     <button type="button" onClick={() => setStep(1)} className="flex-1 p-3.5 bg-white/5 hover:bg-white/10 text-stone-300 rounded-xl transition-all">
