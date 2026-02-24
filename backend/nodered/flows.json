@@ -154,7 +154,7 @@
         "type": "function",
         "z": "cba2dbb329ebd66f",
         "name": "準備 INSERT MySQL",
-        "func": "let data = msg.payload;\n\nif (!data.email || !data.first_name || !data.last_name || !data.department_id || !data.job_title_id) {\n    msg.payload = { error: '註冊資料不完整' };\n    msg.statusCode = 400;\n    return [null, msg];\n}\n\nmsg.userData = data;\n\nmsg.topic = 'INSERT INTO Users (email, first_name, last_name, department_id, job_title_id) VALUES (?, ?, ?, ?, ?)';\n\nmsg.payload = [\n    data.email, \n    data.first_name, \n    data.last_name, \n    data.department_id, \n    data.job_title_id\n];\n\nreturn [msg, null];",
+        "func": "let data = msg.payload;\n\nif (!data.email || !data.first_name || !data.last_name || !data.department_id || !data.job_title_id) {\n    msg.payload = { error: '註冊資料不完整' };\n    msg.statusCode = 400;\n    return [null, msg];\n}\n\nmsg.userData = data;\n\nlet fullName = data.last_name + data.first_name;\n\nmsg.topic = 'INSERT INTO Users (name, email, first_name, last_name, department_id, job_title_id) VALUES (?, ?, ?, ?, ?, ?)';\n\nmsg.payload = [\n    fullName,\n    data.email, \n    data.first_name, \n    data.last_name, \n    data.department_id, \n    data.job_title_id\n];\n\nreturn [msg, null];",
         "outputs": 2,
         "noerr": 0,
         "initialize": "",
