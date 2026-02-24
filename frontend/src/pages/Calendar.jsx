@@ -10,7 +10,9 @@ import { ArrowLeft, CheckCircle } from 'lucide-react';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
+import 'tippy.js/themes/light.css';
 import { fetchAPI } from '../utils/api';
+import Header from '../components/Header';
 
 export default function Calendar() {
     const { id: meetingId } = useParams();
@@ -116,32 +118,20 @@ export default function Calendar() {
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-6xl z-10 relative">
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                <div>
-                    <h1 className="font-outfit text-3xl font-bold text-stone-100 flex items-center gap-2">
-                        📅 排程選擇
-                    </h1>
-                    <p className="text-stone-400 mt-1 text-sm">請在下方拖曳選取您的空檔時段</p>
-                </div>
-
-                <div className="flex items-center gap-3">
-                    {hasAdminRights() && (
+            <Header
+                title={<span>📅 排程選擇</span>}
+                description="請在下方拖曳選取您的空檔時段"
+                customRightAction={
+                    hasAdminRights() && (
                         <button
                             onClick={() => alert("✅ 已拍板此時段！")}
                             className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-500 hover:opacity-90 font-bold text-white shadow-lg transition-all"
                         >
                             <CheckCircle className="w-4 h-4" /> 管理者定案
                         </button>
-                    )}
-
-                    <button
-                        onClick={() => navigate('/dashboard')}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-stone-300 text-sm"
-                    >
-                        <ArrowLeft className="w-4 h-4" /> 返回
-                    </button>
-                </div>
-            </header>
+                    )
+                }
+            />
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}

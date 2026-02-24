@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Mail, CheckCircle2, AlertCircle } from 'lucide-react';
+import Header from '../components/Header';
 
 export default function ChaseUpList() {
     const { id: meetingId } = useParams();
@@ -36,21 +37,10 @@ export default function ChaseUpList() {
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-4xl z-10 relative">
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-                <div>
-                    <h1 className="font-outfit text-3xl font-bold text-stone-100 flex items-center gap-2">
-                        <span>📊</span> 會議更動通知追蹤
-                    </h1>
-                    <p className="text-stone-400 mt-1 text-sm">會議編號 #{meetingId} 的更動收悉回報狀況</p>
-                </div>
-
-                <button
-                    onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-stone-300 text-sm"
-                >
-                    <ArrowLeft className="w-4 h-4" /> 返回
-                </button>
-            </header>
+            <Header
+                title={<span>📊 會議更動通知追蹤</span>}
+                description={`會議編號 #${meetingId} 的更動收悉回報狀況`}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 

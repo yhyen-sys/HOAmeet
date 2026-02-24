@@ -1,30 +1,14 @@
-import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { motion } from 'framer-motion';
 import { LogOut, Plus, Settings, Calendar as CalendarIcon } from 'lucide-react';
+import Header from '../components/Header';
 
 export default function Dashboard() {
-    const navigate = useNavigate();
-    const { user, logout, hasAdminRights, isSuperAdmin } = useAuthStore();
-
-    const handleLogout = () => {
-        logout();
-        navigate('/login');
-    };
+    const { hasAdminRights, isSuperAdmin } = useAuthStore(); // user and logout handled by Header now
 
     return (
         <div className="container mx-auto px-4 py-12 max-w-6xl z-10 relative">
-            <header className="flex justify-between items-center mb-12">
-                <h1 className="font-outfit text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-amber-600">
-                    HOAmeet
-                </h1>
-                <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-full border border-white/10 backdrop-blur-md">
-                    <span className="text-sm font-semibold">{user?.name || '使用者'}</span>
-                    <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-sm font-bold shadow-sm">
-                        {user?.name?.substring(0, 1) || '?'}
-                    </div>
-                </div>
-            </header>
+            <Header title="HOAmeet" showUser={true} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -96,12 +80,7 @@ export default function Dashboard() {
                             </Link>
                         )}
 
-                        <button
-                            onClick={handleLogout}
-                            className="w-full p-4 rounded-xl font-semibold flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 active:scale-95 transition-all text-stone-300"
-                        >
-                            <LogOut className="w-5 h-5" /> 登出系統
-                        </button>
+                        {/* LogOut button removed here as it's now in the Header */}
                     </div>
 
                     {/* Hint for normal users */}

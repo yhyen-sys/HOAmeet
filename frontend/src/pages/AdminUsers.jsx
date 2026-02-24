@@ -4,6 +4,7 @@ import { useAuthStore } from '../store/authStore';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Search } from 'lucide-react';
 import { fetchAPI } from '../utils/api';
+import Header from '../components/Header';
 
 export default function AdminUsers() {
     const navigate = useNavigate();
@@ -52,26 +53,15 @@ export default function AdminUsers() {
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-5xl z-10 relative">
-            <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-                <div>
-                    <h1 className="font-outfit text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-red-400 flex items-center gap-2">
-                        <span>⚙️</span> 系統權限管理
-                    </h1>
-                    <p className="text-stone-400 mt-1 text-sm">超級管理者模式：管控全域發起會議權限</p>
-                </div>
-
-                <div className="flex items-center gap-4">
+            <Header
+                title={<span>⚙️ 系統權限管理</span>}
+                description="超級管理者模式：管控全域發起會議權限"
+                customRightAction={
                     <div className="px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-500 text-xs font-bold rounded-full tracking-wider">
                         SUPER ADMIN
                     </div>
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-stone-300 text-sm"
-                    >
-                        <ArrowLeft className="w-4 h-4" /> 返回
-                    </button>
-                </div>
-            </header>
+                }
+            />
 
             <div className="mb-6 bg-white/5 border border-white/10 rounded-xl p-3 max-w-md flex items-center gap-3">
                 <Search className="w-5 h-5 text-stone-400 pl-1" />
