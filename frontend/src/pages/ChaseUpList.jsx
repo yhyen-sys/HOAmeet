@@ -38,15 +38,15 @@ export default function ChaseUpList() {
         <div className="container mx-auto px-4 py-8 max-w-4xl z-10 relative">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
-                    <h1 className="font-outfit text-3xl font-bold text-slate-100 flex items-center gap-2">
+                    <h1 className="font-outfit text-3xl font-bold text-stone-100 flex items-center gap-2">
                         <span>📊</span> 會議更動通知追蹤
                     </h1>
-                    <p className="text-slate-400 mt-1 text-sm">會議編號 #{meetingId} 的更動收悉回報狀況</p>
+                    <p className="text-stone-400 mt-1 text-sm">會議編號 #{meetingId} 的更動收悉回報狀況</p>
                 </div>
 
                 <button
                     onClick={() => navigate('/dashboard')}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-slate-300 text-sm"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-stone-300 text-sm"
                 >
                     <ArrowLeft className="w-4 h-4" /> 返回
                 </button>
@@ -58,9 +58,9 @@ export default function ChaseUpList() {
                 <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="glass-panel p-6 border border-emerald-500/20 shadow-emerald-500/5"
+                    className="glass-panel p-6 border border-amber-500/20 shadow-amber-500/5"
                 >
-                    <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-emerald-400">
+                    <h2 className="text-xl font-bold flex items-center gap-2 mb-6 text-amber-400">
                         <CheckCircle2 className="w-6 h-6" /> 🟢 已確認收悉 ({acknowledged.length})
                     </h2>
 
@@ -68,13 +68,13 @@ export default function ChaseUpList() {
                         {acknowledged.map(p => (
                             <li key={p.id} className="bg-white/5 p-4 rounded-xl border border-white/10 flex justify-between items-center hover:bg-white/10 transition-colors">
                                 <div>
-                                    <div className="font-semibold text-slate-200">{p.name}</div>
-                                    <div className="text-xs text-slate-400">{p.dept}</div>
+                                    <div className="font-semibold text-stone-200">{p.name}</div>
+                                    <div className="text-xs text-stone-400">{p.dept}</div>
                                 </div>
-                                <span className="text-emerald-500 font-bold bg-emerald-500/10 px-3 py-1 rounded-full text-xs border border-emerald-500/20">已讀</span>
+                                <span className="text-amber-500 font-bold bg-amber-500/10 px-3 py-1 rounded-full text-xs border border-amber-500/20">已讀</span>
                             </li>
                         ))}
-                        {acknowledged.length === 0 && <li className="text-slate-500 text-sm p-4 text-center">暫無已確認成員</li>}
+                        {acknowledged.length === 0 && <li className="text-stone-500 text-sm p-4 text-center">暫無已確認成員</li>}
                     </ul>
                 </motion.div>
 
@@ -82,9 +82,9 @@ export default function ChaseUpList() {
                 <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="glass-panel p-6 border border-rose-500/20 shadow-rose-500/5"
+                    className="glass-panel p-6 border border-red-500/20 shadow-red-500/5"
                 >
-                    <h2 className="text-xl font-bold flex items-center justify-between mb-6 text-rose-400">
+                    <h2 className="text-xl font-bold flex items-center justify-between mb-6 text-red-400">
                         <div className="flex items-center gap-2">
                             <AlertCircle className="w-6 h-6" /> 🔴 尚未確認 ({pending.length})
                         </div>
@@ -102,13 +102,13 @@ export default function ChaseUpList() {
                         {pending.map(p => (
                             <li key={p.id} className="bg-white/5 p-4 rounded-xl border border-white/10 flex justify-between items-center opacity-80 hover:opacity-100 transition-opacity">
                                 <div>
-                                    <div className="font-semibold text-slate-200">{p.name}</div>
-                                    <div className="text-xs text-slate-400">{p.dept}</div>
+                                    <div className="font-semibold text-stone-200">{p.name}</div>
+                                    <div className="text-xs text-stone-400">{p.dept}</div>
                                 </div>
-                                <span className="text-rose-400 font-bold bg-rose-500/10 px-3 py-1 rounded-full text-xs border border-rose-500/20">未讀</span>
+                                <span className="text-red-400 font-bold bg-red-500/10 px-3 py-1 rounded-full text-xs border border-red-500/20">未讀</span>
                             </li>
                         ))}
-                        {pending.length === 0 && <li className="text-slate-500 text-sm p-4 text-center">所有成員皆已確認！🎉</li>}
+                        {pending.length === 0 && <li className="text-stone-500 text-sm p-4 text-center">所有成員皆已確認！🎉</li>}
                     </ul>
                 </motion.div>
 

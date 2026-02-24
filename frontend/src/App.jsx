@@ -20,10 +20,10 @@ const PrivateRoute = ({ children }) => {
 function App() {
   return (
     <Router>
-      <div className="w-full min-h-screen font-inter text-slate-100 relative">
+      <div className="w-full min-h-screen font-inter text-stone-100 relative">
         {/* Background Blobs (Global) */}
-        <div className="bg-blob bg-indigo-500 top-[-10vw] right-[-10vw] w-[40vw] h-[40vw]"></div>
-        <div className="bg-blob bg-fuchsia-500 bottom-[-10vw] left-[-10vw] w-[40vw] h-[40vw]"></div>
+        <div className="bg-blob bg-amber-500 top-[-10vw] right-[-10vw] w-[40vw] h-[40vw]"></div>
+        <div className="bg-blob bg-amber-500 bottom-[-10vw] left-[-10vw] w-[40vw] h-[40vw]"></div>
 
         <Routes>
           {/* Public Routes */}

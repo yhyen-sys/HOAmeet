@@ -149,23 +149,23 @@ export default function Login() {
                             className="glass-panel p-8"
                         >
                             <div className="text-center mb-8">
-                                <h1 className="font-outfit text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-400 mb-2">
+                                <h1 className="font-outfit text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-amber-600 mb-2">
                                     HOAmeet
                                 </h1>
-                                <p className="text-slate-400 text-sm">智慧會議排程與媒合平台</p>
+                                <p className="text-stone-400 text-sm">智慧會議排程與媒合平台</p>
                             </div>
 
                             {/* Tab Switcher */}
                             <div className="flex p-1 mb-8 bg-black/20 rounded-xl backdrop-blur-sm border border-white/5">
                                 <button
                                     onClick={() => setAuthMode('login')}
-                                    className={`flex - 1 py - 2 text - sm font - semibold rounded - lg transition - all ${authMode === 'login' ? 'bg-indigo-500/20 text-indigo-300 shadow-sm border border-indigo-500/30' : 'text-slate-500 hover:text-slate-300'} `}
+                                    className={`flex - 1 py - 2 text - sm font - semibold rounded - lg transition - all ${authMode === 'login' ? 'bg-amber-500/20 text-amber-300 shadow-sm border border-amber-500/30' : 'text-stone-500 hover:text-stone-300'} `}
                                 >
                                     登入
                                 </button>
                                 <button
                                     onClick={() => setAuthMode('register')}
-                                    className={`flex - 1 py - 2 text - sm font - semibold rounded - lg transition - all ${authMode === 'register' ? 'bg-indigo-500/20 text-indigo-300 shadow-sm border border-indigo-500/30' : 'text-slate-500 hover:text-slate-300'} `}
+                                    className={`flex - 1 py - 2 text - sm font - semibold rounded - lg transition - all ${authMode === 'register' ? 'bg-amber-500/20 text-amber-300 shadow-sm border border-amber-500/30' : 'text-stone-500 hover:text-stone-300'} `}
                                 >
                                     註冊新帳號
                                 </button>
@@ -176,19 +176,19 @@ export default function Login() {
                                 <form onSubmit={handleLocalLogin} className="space-y-4">
                                     <div>
                                         <input type="email" placeholder="電子郵件" value={email} onChange={e => setEmail(e.target.value)}
-                                            className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-indigo-500 transition-colors" />
+                                            className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors" />
                                     </div>
                                     <div>
                                         <input type="password" placeholder="密碼" value={password} onChange={e => setPassword(e.target.value)}
-                                            className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-indigo-500 transition-colors" />
+                                            className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors" />
                                     </div>
-                                    <button type="submit" className="w-full p-3.5 bg-indigo-500 hover:bg-indigo-600 active:scale-95 text-white font-semibold rounded-xl transition-all shadow-lg shadow-indigo-500/20">
+                                    <button type="submit" className="w-full p-3.5 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-semibold rounded-xl transition-all shadow-lg shadow-amber-500/20">
                                         登入系統
                                     </button>
 
                                     <div className="relative flex py-5 items-center">
                                         <div className="flex-grow border-t border-white/10"></div>
-                                        <span className="flex-shrink-0 mx-4 text-slate-500 text-xs">或使用第三方帳號</span>
+                                        <span className="flex-shrink-0 mx-4 text-stone-500 text-xs">或使用第三方帳號</span>
                                         <div className="flex-grow border-t border-white/10"></div>
                                     </div>
 
@@ -197,14 +197,14 @@ export default function Login() {
                             ) : (
                                 // --- 註冊引導 ---
                                 <div className="space-y-6">
-                                    <p className="text-center text-slate-400 text-sm">
+                                    <p className="text-center text-stone-400 text-sm">
                                         推薦使用 Google 帳號快速註冊，系統將自動為您綁定信箱。
                                     </p>
                                     <div id="google-button-container" className="flex justify-center h-[40px] overflow-hidden rounded-xl"></div>
 
                                     <div className="relative flex py-2 items-center">
                                         <div className="flex-grow border-t border-white/10"></div>
-                                        <span className="flex-shrink-0 mx-4 text-slate-500 text-xs">或</span>
+                                        <span className="flex-shrink-0 mx-4 text-stone-500 text-xs">或</span>
                                         <div className="flex-grow border-t border-white/10"></div>
                                     </div>
 
@@ -228,31 +228,31 @@ export default function Login() {
                             className="glass-panel p-8"
                         >
                             <h2 className="text-2xl font-bold mb-2 text-center text-white">完善基本資料</h2>
-                            <p className="text-slate-400 text-sm text-center mb-6">Google 驗證成功，請補充您的身分以利權重計算</p>
+                            <p className="text-stone-400 text-sm text-center mb-6">Google 驗證成功，請補充您的身分以利權重計算</p>
 
                             <div className="mb-6 bg-white/5 rounded-lg p-3 border border-white/5">
-                                <p className="text-xs text-slate-400 mb-1">綁定帳號</p>
+                                <p className="text-xs text-stone-400 mb-1">綁定帳號</p>
                                 <p className="text-sm text-white font-semibold">{tempData.email}</p>
                             </div>
 
                             <div className="space-y-4 mb-8">
                                 <select value={dept} onChange={e => setDept(e.target.value)}
-                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-indigo-500 transition-colors">
-                                    <option value="" className="bg-slate-800">請選擇單位類型...</option>
-                                    <option value="1" className="bg-slate-800">政府機關 (Government)</option>
-                                    <option value="2" className="bg-slate-800">學術單位 (Academic)</option>
-                                    <option value="3" className="bg-slate-800">外部/專家 (External)</option>
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors">
+                                    <option value="" className="bg-stone-800">請選擇單位類型...</option>
+                                    <option value="1" className="bg-stone-800">政府機關 (Government)</option>
+                                    <option value="2" className="bg-stone-800">學術單位 (Academic)</option>
+                                    <option value="3" className="bg-stone-800">外部/專家 (External)</option>
                                 </select>
 
                                 <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="職稱 (例如：局長、主任、教授)"
-                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-indigo-500 transition-colors" />
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors" />
                             </div>
 
                             <div className="flex gap-3">
-                                <button onClick={() => setStep(1)} className="flex-1 p-3.5 bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl transition-all">
+                                <button onClick={() => setStep(1)} className="flex-1 p-3.5 bg-white/5 hover:bg-white/10 text-stone-300 rounded-xl transition-all">
                                     取消
                                 </button>
-                                <button onClick={submitGoogleExtraInfo} className="flex-1 p-3.5 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-all">
+                                <button onClick={submitGoogleExtraInfo} className="flex-1 p-3.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl shadow-lg shadow-amber-500/20 transition-all">
                                     完成註冊
                                 </button>
                             </div>
@@ -268,34 +268,34 @@ export default function Login() {
                             className="glass-panel p-8 max-h-[90vh] overflow-y-auto no-scrollbar"
                         >
                             <h2 className="text-2xl font-bold mb-2 text-center text-white">建立新帳號</h2>
-                            <p className="text-slate-400 text-sm text-center mb-6">填寫以下資料完成註冊</p>
+                            <p className="text-stone-400 text-sm text-center mb-6">填寫以下資料完成註冊</p>
 
                             <form onSubmit={handleLocalRegister} className="space-y-4 mb-8">
                                 <input type="email" placeholder="電子郵件" value={email} onChange={e => setEmail(e.target.value)} required
-                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-indigo-500 transition-colors" />
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors" />
 
                                 <input type="password" placeholder="密碼 (至少 6 字元)" value={password} onChange={e => setPassword(e.target.value)} required minLength={6}
-                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-indigo-500 transition-colors" />
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors" />
 
                                 <input type="text" placeholder="真實姓名" value={name} onChange={e => setName(e.target.value)} required
-                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-indigo-500 transition-colors" />
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors" />
 
                                 <select value={dept} onChange={e => setDept(e.target.value)} required
-                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-slate-300 outline-none focus:border-indigo-500 transition-colors">
-                                    <option value="" className="bg-slate-800">請選擇單位類型...</option>
-                                    <option value="1" className="bg-slate-800">政府機關 (Government)</option>
-                                    <option value="2" className="bg-slate-800">學術單位 (Academic)</option>
-                                    <option value="3" className="bg-slate-800">外部/專家 (External)</option>
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-stone-300 outline-none focus:border-amber-500 transition-colors">
+                                    <option value="" className="bg-stone-800">請選擇單位類型...</option>
+                                    <option value="1" className="bg-stone-800">政府機關 (Government)</option>
+                                    <option value="2" className="bg-stone-800">學術單位 (Academic)</option>
+                                    <option value="3" className="bg-stone-800">外部/專家 (External)</option>
                                 </select>
 
                                 <input type="text" placeholder="職稱 (例如：主任)" value={title} onChange={e => setTitle(e.target.value)} required
-                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-indigo-500 transition-colors" />
+                                    className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-white outline-none focus:border-amber-500 transition-colors" />
 
                                 <div className="flex gap-3 pt-4">
-                                    <button type="button" onClick={() => setStep(1)} className="flex-1 p-3.5 bg-white/5 hover:bg-white/10 text-slate-300 rounded-xl transition-all">
+                                    <button type="button" onClick={() => setStep(1)} className="flex-1 p-3.5 bg-white/5 hover:bg-white/10 text-stone-300 rounded-xl transition-all">
                                         返回
                                     </button>
-                                    <button type="submit" className="flex-1 p-3.5 bg-indigo-500 hover:bg-indigo-600 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/20 transition-all">
+                                    <button type="submit" className="flex-1 p-3.5 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl shadow-lg shadow-amber-500/20 transition-all">
                                         註冊並登入
                                     </button>
                                 </div>

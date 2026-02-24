@@ -123,17 +123,17 @@ export default function Calendar() {
         <div className="container mx-auto px-4 py-8 max-w-6xl z-10 relative">
             <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
                 <div>
-                    <h1 className="font-outfit text-3xl font-bold text-slate-100 flex items-center gap-2">
+                    <h1 className="font-outfit text-3xl font-bold text-stone-100 flex items-center gap-2">
                         📅 排程選擇
                     </h1>
-                    <p className="text-slate-400 mt-1 text-sm">請在下方拖曳選取您的空檔時段</p>
+                    <p className="text-stone-400 mt-1 text-sm">請在下方拖曳選取您的空檔時段</p>
                 </div>
 
                 <div className="flex items-center gap-3">
                     {hasAdminRights() && (
                         <button
                             onClick={() => alert("✅ 已拍板此時段！")}
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-90 font-bold text-white shadow-lg transition-all"
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-500 hover:opacity-90 font-bold text-white shadow-lg transition-all"
                         >
                             <CheckCircle className="w-4 h-4" /> 管理者定案
                         </button>
@@ -141,7 +141,7 @@ export default function Calendar() {
 
                     <button
                         onClick={() => navigate('/dashboard')}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-slate-300 text-sm"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors text-stone-300 text-sm"
                     >
                         <ArrowLeft className="w-4 h-4" /> 返回
                     </button>
@@ -186,7 +186,7 @@ export default function Calendar() {
                     eventContent={(arg) => {
                         if (arg.event.extendedProps.isHeatmap && arg.event.extendedProps.isTop) {
                             return (
-                                <div className="absolute top-1 left-1 right-1 bg-rose-500/90 text-white text-[10px] font-bold px-1 rounded shadow-sm text-center">
+                                <div className="absolute top-1 left-1 right-1 bg-red-500/90 text-white text-[10px] font-bold px-1 rounded shadow-sm text-center">
                                     🔥 熱門推薦 (積分 {arg.event.extendedProps.score})
                                 </div>
                             );
@@ -198,7 +198,7 @@ export default function Calendar() {
             <div className="mt-8 flex justify-end">
                 <button
                     onClick={submitAvailability}
-                    className="px-8 py-3 bg-indigo-500 hover:bg-indigo-600 active:scale-95 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all flex items-center gap-2"
+                    className="px-8 py-3 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold rounded-xl shadow-lg shadow-amber-500/30 transition-all flex items-center gap-2"
                 >
                     🚀 送出我的空檔
                 </button>

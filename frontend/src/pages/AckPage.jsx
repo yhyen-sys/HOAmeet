@@ -51,9 +51,9 @@ export default function AckPage() {
                         animate={{ opacity: 1, scale: 1 }}
                         className="glass-panel p-10 text-center flex flex-col items-center gap-4"
                     >
-                        <RotateCw className="w-12 h-12 text-indigo-400 animate-spin" />
-                        <h2 className="text-xl font-bold text-slate-200">正在處理您的確認回報...</h2>
-                        <p className="text-sm text-slate-400">請稍候，系統正在通知創建者</p>
+                        <RotateCw className="w-12 h-12 text-amber-400 animate-spin" />
+                        <h2 className="text-xl font-bold text-stone-200">正在處理您的確認回報...</h2>
+                        <p className="text-sm text-stone-400">請稍候，系統正在通知創建者</p>
                     </motion.div>
                 )}
 
@@ -62,18 +62,18 @@ export default function AckPage() {
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ type: "spring", bounce: 0.4 }}
-                        className="glass-panel p-10 text-center flex flex-col items-center gap-4 border border-emerald-500/20 shadow-[0_0_60px_-15px_rgba(16,185,129,0.3)]"
+                        className="glass-panel p-10 text-center flex flex-col items-center gap-4 border border-amber-500/20 shadow-[0_0_60px_-15px_rgba(16,185,129,0.3)]"
                     >
-                        <div className="w-20 h-20 rounded-full bg-emerald-500/10 flex items-center justify-center mb-2 border border-emerald-500/20">
-                            <CheckCircle2 className="w-12 h-12 text-emerald-400" />
+                        <div className="w-20 h-20 rounded-full bg-amber-500/10 flex items-center justify-center mb-2 border border-amber-500/20">
+                            <CheckCircle2 className="w-12 h-12 text-amber-400" />
                         </div>
-                        <h1 className="text-3xl font-outfit font-bold text-emerald-400">確認成功！</h1>
-                        <p className="text-slate-300 text-sm leading-relaxed mb-6">
+                        <h1 className="text-3xl font-outfit font-bold text-amber-400">確認成功！</h1>
+                        <p className="text-stone-300 text-sm leading-relaxed mb-6">
                             系統已成功紀錄您的狀態。<br />感謝您的配合，您可以關閉此視窗了。
                         </p>
                         <a
                             href="#/"
-                            className="px-6 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-sm font-semibold text-slate-300 transition-colors"
+                            className="px-6 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-sm font-semibold text-stone-300 transition-colors"
                         >
                             返回平台首頁
                         </a>
@@ -84,14 +84,14 @@ export default function AckPage() {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="glass-panel p-10 text-center flex flex-col items-center gap-4 border border-rose-500/20"
+                        className="glass-panel p-10 text-center flex flex-col items-center gap-4 border border-red-500/20"
                     >
-                        <div className="w-16 h-16 rounded-full bg-rose-500/10 flex items-center justify-center mb-2 border border-rose-500/20">
+                        <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-2 border border-red-500/20">
                             <span className="text-2xl">⚠️</span>
                         </div>
-                        <h2 className="text-xl font-bold text-rose-400">發生錯誤</h2>
-                        <p className="text-sm text-slate-400 mb-4">無法完成確認，連結可能已失效或參數錯誤。</p>
-                        <a href="#/" className="text-indigo-400 hover:text-indigo-300 text-sm underline">回到首頁</a>
+                        <h2 className="text-xl font-bold text-red-400">發生錯誤</h2>
+                        <p className="text-sm text-stone-400 mb-4">無法完成確認，連結可能已失效或參數錯誤。</p>
+                        <a href="#/" className="text-amber-400 hover:text-amber-300 text-sm underline">回到首頁</a>
                     </motion.div>
                 )}
 
