@@ -71,7 +71,7 @@
         "type": "function",
         "z": "google_auth_flow",
         "name": "解析結果並準備 MySQL",
-        "func": "/**\n * 節點 B：解析 Google 回應並查詢 MySQL (第 4 個節點)\n */\n\n// 解析 Google 回傳的 JSON 資料\nlet googleData = typeof msg.payload === 'string' ? JSON.parse(msg.payload) : msg.payload;\n\n// 檢查 Google 是否回傳錯誤\nif (googleData.error) {\n    msg.payload = { error: \"Google 驗證失敗\", details: googleData.error_description };\n    msg.statusCode = 401;\n    return [null, msg]; \n}\n\n// 提取出安全且經過驗證的 Email 和 姓名\nlet userEmail = googleData.email;\nlet userName = googleData.name;\n\n// 將基本資料暫存起來，後面會用到\nmsg.userData = {\n    email: userEmail,\n    name: userName\n};\n\n// 組裝 MySQL 查詢指令：檢查此 Email 是否存在我們的 Users 表中\nmsg.topic = \"SELECT * FROM Users WHERE email = ? LIMIT 1\";\nmsg.payload = [userEmail];\n\nreturn [msg, null];",
+        "func": "/**\n * 節點 B：解析 Google 回應並查詢 MySQL (第 4 個節點)\n */\n\n// 解析 Google 回傳的 JSON 資料\nlet googleData = typeof msg.payload === 'string' ? JSON.parse(msg.payload) : msg.payload;\n\n// 檢查 Google 是否回傳錯誤\nif (googleData.error) {\n    msg.payload = { error: \"Google 驗證失敗\", details: googleData.error_description };\n    msg.statusCode = 401;\n    return [null, msg]; \n}\n\n// 提取出安全且經過驗證的 Email 和 姓名\nlet userEmail = googleData.email;\nlet firstName = googleData.given_name || '';\nlet lastName = googleData.family_name || '';\n\n// 將基本資料暫存起來，後面會用到\nmsg.userData = {\n    email: userEmail,\n    first_name: firstName,\n    last_name: lastName\n};\n\n// 組裝 MySQL 查詢指令：檢查此 Email 是否存在我們的 Users 表中\nmsg.topic = \"SELECT * FROM Users WHERE email = ? LIMIT 1\";\nmsg.payload = [userEmail];\n\nreturn [msg, null];",
         "outputs": 2,
         "noerr": 0,
         "initialize": "",
@@ -107,7 +107,7 @@
         "type": "function",
         "z": "google_auth_flow",
         "name": "登入邏輯判斷",
-        "func": "/**\n * 節點 C：判斷登入狀態與核發 Token (第 6 個節點)\n */\n\nlet dbResult = msg.payload; // 這是 MySQL 節點回傳的陣列結果\n\nif (dbResult.length > 0) {\n    // 🟢 情境一：舊朋友 (資料庫有紀錄)\n    let user = dbResult[0];\n    \n    // 檢查他是否已經填過單位和職稱\n    if (user.department_id === null || user.job_title_id === null) {\n        // 🟡 有 Email 但沒填妥職稱 (可能上次註冊中斷)\n        msg.payload = { \n            message: \"請補齊單位與職稱資料\", \n            action: \"REQUIRE_INFO\",\n            email: msg.userData.email\n        };\n        msg.statusCode = 206; // 206 Partial Content\n    }\ else {\n        // 🟢 資料完整，直接發放系統專屬 Token 讓他登入\n        let sessionToken = \"sys_token_\" + new Date().getTime() + \"_\" + user.id; \n        \n        msg.payload = { \n            message: \"登入成功\", \n            action: \"LOGIN_SUCCESS\",\n            token: sessionToken,\n            user: {\n                id: user.id,\n                name: user.last_name + user.first_name\n            }\n        };\n        msg.statusCode = 200;\n    }\n} else {\n    // 🔵 情境二：新朋友 (資料庫沒紀錄)\n    msg.payload = { \n        message: \"歡迎首次登入，請填寫您的單位與職稱\", \n        action: \"REQUIRE_INFO\",\n        email: msg.userData.email,\n        name: msg.userData.name\n    };\n    msg.statusCode = 206;\n}\n\nreturn msg;",
+        "func": "/**\n * 節點 C：判斷登入狀態與核發 Token (第 6 個節點)\n */\n\nlet dbResult = msg.payload; // 這是 MySQL 節點回傳的陣列結果\n\nif (dbResult.length > 0) {\n    // 🟢 情境一：舊朋友 (資料庫有紀錄)\n    let user = dbResult[0];\n    \n    // 檢查他是否已經填過單位和職稱\n    if (user.department_id === null || user.job_title_id === null) {\n        // 🟡 有 Email 但沒填妥職稱 (可能上次註冊中斷)\n        msg.payload = { \n            message: \"請補齊單位與職稱資料\", \n            action: \"REQUIRE_INFO\",\n            email: msg.userData.email\n        };\n        msg.statusCode = 206; // 206 Partial Content\n    } else {\n        // 🟢 資料完整，直接發放系統專屬 Token 讓他登入\n        let sessionToken = \"sys_token_\" + new Date().getTime() + \"_\" + user.id; \n        \n        msg.payload = { \n            message: \"登入成功\", \n            action: \"LOGIN_SUCCESS\",\n            token: sessionToken,\n            user: {\n                id: user.id,\n                name: user.last_name + user.first_name\n            }\n        };\n        msg.statusCode = 200;\n    }\n} else {\n    // 🔵 情境二：新朋友 (資料庫沒紀錄)\n    msg.payload = { \n        message: \"歡迎首次登入，請填寫您的單位與職稱\", \n        action: \"REQUIRE_INFO\",\n        email: msg.userData.email,\n        first_name: msg.userData.first_name,\n        last_name: msg.userData.last_name\n    };\n    msg.statusCode = 206;\n}\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -130,6 +130,89 @@
         "headers": {},
         "x": 840,
         "y": 180,
+        "wires": []
+    },
+    {
+        "id": "http_in_register",
+        "type": "http in",
+        "z": "google_auth_flow",
+        "name": "POST /api/auth/register",
+        "url": "/api/auth/register",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 160,
+        "y": 360,
+        "wires": [
+            [
+                "prep_register_sql"
+            ]
+        ]
+    },
+    {
+        "id": "prep_register_sql",
+        "type": "function",
+        "z": "google_auth_flow",
+        "name": "準備 INSERT MySQL",
+        "func": "let data = msg.payload;\n\nif (!data.email || !data.first_name || !data.last_name || !data.department_id || !data.job_title_id) {\n    msg.payload = { error: '註冊資料不完整' };\n    msg.statusCode = 400;\n    return [null, msg];\n}\n\nmsg.userData = data;\n\nmsg.topic = 'INSERT INTO Users (email, first_name, last_name, department_id, job_title_id) VALUES (?, ?, ?, ?, ?)';\n\nmsg.payload = [\n    data.email, \n    data.first_name, \n    data.last_name, \n    data.department_id, \n    data.job_title_id\n];\n\nreturn [msg, null];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 360,
+        "wires": [
+            [
+                "mysql_register_node"
+            ],
+            [
+                "http_response_register"
+            ]
+        ]
+    },
+    {
+        "id": "mysql_register_node",
+        "type": "mysql",
+        "z": "google_auth_flow",
+        "mydb": "dummy-mysql-config",
+        "name": "MySQL Insert User",
+        "x": 630,
+        "y": 360,
+        "wires": [
+            [
+                "register_success_logic"
+            ]
+        ]
+    },
+    {
+        "id": "register_success_logic",
+        "type": "function",
+        "z": "google_auth_flow",
+        "name": "註冊成功核發 Token",
+        "func": "let sessionToken = 'sys_token_' + new Date().getTime() + '_' + Buffer.from(msg.userData.email).toString('base64');\n\nmsg.payload = {\n    message: '註冊並登入成功',\n    action: 'LOGIN_SUCCESS',\n    token: sessionToken,\n    user: {\n        name: msg.userData.last_name + msg.userData.first_name,\n        email: msg.userData.email\n    }\n};\nmsg.statusCode = 200;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 850,
+        "y": 360,
+        "wires": [
+            [
+                "http_response_register"
+            ]
+        ]
+    },
+    {
+        "id": "http_response_register",
+        "type": "http response",
+        "z": "google_auth_flow",
+        "name": "HTTP Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 1080,
+        "y": 400,
         "wires": []
     }
 ]
