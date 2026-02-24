@@ -1,15 +1,36 @@
 [
     {
-        "id": "cba2dbb329ebd66f",
+        "id": "ea4442fe01f5d3d8",
         "type": "tab",
         "label": "Google Auth Flow",
         "disabled": false,
         "info": ""
     },
     {
-        "id": "c248818590732ae2",
+        "id": "e7e0c1b5022f3c34",
+        "type": "group",
+        "z": "ea4442fe01f5d3d8",
+        "name": "保護的 API 路由 (需要 Token)",
+        "style": {
+            "stroke": "#009933",
+            "fill": "#e6ffe6",
+            "label": true
+        },
+        "nodes": [
+            "9b7d1aa060c45a08",
+            "bbf09cfda60090a3",
+            "12b797160d89148a",
+            "fe822fc929297468"
+        ],
+        "x": 44,
+        "y": 479,
+        "w": 722,
+        "h": 182
+    },
+    {
+        "id": "0141f627f02079e7",
         "type": "http in",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "name": "POST /api/auth/google",
         "url": "/api/auth/google",
         "method": "post",
@@ -19,14 +40,14 @@
         "y": 120,
         "wires": [
             [
-                "888d0d88b2507872"
+                "38faa62eb4d33a01"
             ]
         ]
     },
     {
-        "id": "888d0d88b2507872",
+        "id": "38faa62eb4d33a01",
         "type": "function",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "name": "準備 Google API 請求",
         "func": "/**\n * 節點 A：準備呼叫 Google API (第 2 個節點)\n */\n\n// 取得前端 POST 過來的 token\nlet googleToken = msg.payload.token;\n\nif (!googleToken) {\n    msg.payload = { error: \"缺少 Google Token\" };\n    msg.statusCode = 400;\n    return [null, msg]; // 結束流程並跳到錯誤回應\n}\n\n// 設定 HTTP Request 節點要呼叫的目標網址\nmsg.url = \"https://oauth2.googleapis.com/tokeninfo?id_token=\" + googleToken;\nmsg.method = \"GET\";\n\nreturn [msg, null];",
         "outputs": 2,
@@ -38,17 +59,18 @@
         "y": 120,
         "wires": [
             [
-                "952797bc53388c6b"
+                "a65e0318934e310e",
+                "3b21892b5d1f7ec5"
             ],
             [
-                "c653fc824e52015a"
+                "54bcf19b46711739"
             ]
         ]
     },
     {
-        "id": "952797bc53388c6b",
+        "id": "a65e0318934e310e",
         "type": "http request",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "name": "Google Tokeninfo",
         "method": "use",
         "ret": "obj",
@@ -62,14 +84,14 @@
         "y": 120,
         "wires": [
             [
-                "583fa83f025d1893"
+                "d89d9185abdea119"
             ]
         ]
     },
     {
-        "id": "583fa83f025d1893",
+        "id": "d89d9185abdea119",
         "type": "function",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "name": "解析結果並準備 MySQL",
         "func": "/**\n * 節點 B：解析 Google 回應並查詢 MySQL (第 4 個節點)\n */\n\n// 解析 Google 回傳的 JSON 資料\nlet googleData = typeof msg.payload === 'string' ? JSON.parse(msg.payload) : msg.payload;\n\n// 檢查 Google 是否回傳錯誤\nif (googleData.error) {\n    msg.payload = { error: \"Google 驗證失敗\", details: googleData.error_description };\n    msg.statusCode = 401;\n    return [null, msg]; \n}\n\n// 提取出安全且經過驗證的 Email 和 姓名\nlet userEmail = googleData.email;\nlet firstName = googleData.given_name || '';\nlet lastName = googleData.family_name || '';\n\n// 將基本資料暫存起來，後面會用到\nmsg.userData = {\n    email: userEmail,\n    first_name: firstName,\n    last_name: lastName\n};\n\n// 組裝 MySQL 查詢指令：檢查此 Email 是否存在我們的 Users 表中\nmsg.topic = \"SELECT * FROM Users WHERE email = ? LIMIT 1\";\nmsg.payload = [userEmail];\n\nreturn [msg, null];",
         "outputs": 2,
@@ -81,31 +103,33 @@
         "y": 240,
         "wires": [
             [
-                "b0af393d96756355"
+                "16ea2a7cf1e0c9e5"
             ],
             [
-                "c653fc824e52015a"
+                "54bcf19b46711739",
+                "222b17a3b91a99d5"
             ]
         ]
     },
     {
-        "id": "b0af393d96756355",
+        "id": "16ea2a7cf1e0c9e5",
         "type": "mysql",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "mydb": "0bdc806336f756dc",
         "name": "MySQL Users",
         "x": 420,
         "y": 240,
         "wires": [
             [
-                "b950aed829468a8d"
+                "6ca89a47eec1b2e5",
+                "834e80bab6cfe9e9"
             ]
         ]
     },
     {
-        "id": "b950aed829468a8d",
+        "id": "6ca89a47eec1b2e5",
         "type": "function",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "name": "登入邏輯判斷",
         "func": "/**\n * 節點 C：判斷登入狀態與核發 Token (第 6 個節點)\n */\n\nlet dbResult = msg.payload; // 這是 MySQL 節點回傳的陣列結果\n\nif (dbResult.length > 0) {\n    // 🟢 情境一：舊朋友 (資料庫有紀錄)\n    let user = dbResult[0];\n    \n    // 檢查他是否已經填過單位和職稱\n    if (user.department_id === null || user.job_title_id === null) {\n        // 🟡 有 Email 但沒填妥職稱 (可能上次註冊中斷)\n        msg.payload = { \n            message: \"請補齊單位與職稱資料\", \n            action: \"REQUIRE_INFO\",\n            email: msg.userData.email\n        };\n        msg.statusCode = 206; // 206 Partial Content\n    } else {\n        // 🟢 資料完整，直接發放系統專屬 Token 讓他登入\n        let sessionToken = \"sys_token_\" + new Date().getTime() + \"_\" + user.id; \n        \n        msg.payload = { \n            message: \"登入成功\", \n            action: \"LOGIN_SUCCESS\",\n            token: sessionToken,\n            user: {\n                id: user.id,\n                name: user.last_name + user.first_name,\n                email: user.email,\n                // 強制指定目前的負責人 Email 為超級管理員\n                global_role: (user.email === \"yi.kuei.co@gmail.com\") ? \"super_admin\" : (user.global_role || \"user\")\n            }\n        };\n        msg.statusCode = 200;\n    }\n} else {\n    // 🔵 情境二：新朋友 (資料庫沒紀錄)\n    msg.payload = { \n        message: \"歡迎首次登入，請填寫您的單位與職稱\", \n        action: \"REQUIRE_INFO\",\n        email: msg.userData.email,\n        first_name: msg.userData.first_name,\n        last_name: msg.userData.last_name\n    };\n    msg.statusCode = 206;\n}\n\nreturn msg;",
         "outputs": 1,
@@ -117,14 +141,15 @@
         "y": 240,
         "wires": [
             [
-                "c653fc824e52015a"
+                "54bcf19b46711739",
+                "0b5da6382a3a626f"
             ]
         ]
     },
     {
-        "id": "c653fc824e52015a",
+        "id": "54bcf19b46711739",
         "type": "http response",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "name": "HTTP Response",
         "statusCode": "",
         "headers": {},
@@ -133,9 +158,9 @@
         "wires": []
     },
     {
-        "id": "092a45dbc8f2207a",
+        "id": "03426062b0789543",
         "type": "http in",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "name": "POST /api/auth/register",
         "url": "/api/auth/register",
         "method": "post",
@@ -145,16 +170,16 @@
         "y": 360,
         "wires": [
             [
-                "153aa2fe168723e3"
+                "f124bc5b680143a2"
             ]
         ]
     },
     {
-        "id": "153aa2fe168723e3",
+        "id": "f124bc5b680143a2",
         "type": "function",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "name": "準備 INSERT MySQL",
-        "func": "let data = msg.payload;\n\nif (!data.email || !data.first_name || !data.last_name || !data.department_id || !data.job_title_id) {\n    msg.payload = { error: '註冊資料不完整' };\n    msg.statusCode = 400;\n    return [null, msg];\n}\n\nmsg.userData = data;\n\nlet fullName = data.last_name + data.first_name;\n\nmsg.topic = 'INSERT INTO Users (name, email, first_name, last_name, department_id, job_title_id) VALUES (?, ?, ?, ?, ?, ?)';\n\nmsg.payload = [\n    fullName,\n    data.email, \n    data.first_name, \n    data.last_name, \n    data.department_id, \n    data.job_title_id\n];\n\nreturn [msg, null];",
+        "func": "let data = msg.payload;\nnode.warn(\"Login Register Payload received:\");\nnode.warn(data);\n\nif (!data.email || !data.first_name || !data.last_name || (!data.department_id && data.department_id !== 0) || (!data.job_title_id && data.job_title_id !== 0)) {\n    msg.payload = { error: '註冊資料不完整', received: data };\n    msg.statusCode = 400;\n    return [null, msg];\n}\n\nmsg.userData = data;\n\nmsg.topic = 'INSERT INTO Users (email, first_name, last_name, department_id, job_title_id) VALUES (?, ?, ?, ?, ?)';\n\nmsg.payload = [\n    data.email, \n    data.first_name, \n    data.last_name, \n    data.department_id, \n    data.job_title_id\n];\n\nreturn [msg, null];",
         "outputs": 2,
         "noerr": 0,
         "initialize": "",
@@ -164,31 +189,33 @@
         "y": 360,
         "wires": [
             [
-                "bb2e056f21140575"
+                "f6deaf0956dfb62b"
             ],
             [
-                "e0792c48c2c36ad7"
+                "b04e53ef39615204",
+                "283c8031ec939d2c"
             ]
         ]
     },
     {
-        "id": "bb2e056f21140575",
+        "id": "f6deaf0956dfb62b",
         "type": "mysql",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "mydb": "0bdc806336f756dc",
         "name": "MySQL Insert User",
         "x": 630,
         "y": 360,
         "wires": [
             [
-                "f2868a13f5153fb1"
+                "ca0e2d77592bede9",
+                "01cdbe07c9d0cfee"
             ]
         ]
     },
     {
-        "id": "f2868a13f5153fb1",
+        "id": "ca0e2d77592bede9",
         "type": "function",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "name": "註冊成功核發 Token",
         "func": "let sessionToken = 'sys_token_' + new Date().getTime() + '_' + Buffer.from(msg.userData.email).toString('base64');\n\nmsg.payload = {\n    message: '註冊並登入成功',\n    action: 'LOGIN_SUCCESS',\n    token: sessionToken,\n    user: {\n        name: msg.userData.last_name + msg.userData.first_name,\n        email: msg.userData.email\n    }\n};\nmsg.statusCode = 200;\n\nreturn msg;",
         "outputs": 1,
@@ -200,14 +227,14 @@
         "y": 360,
         "wires": [
             [
-                "e0792c48c2c36ad7"
+                "b04e53ef39615204"
             ]
         ]
     },
     {
-        "id": "e0792c48c2c36ad7",
+        "id": "b04e53ef39615204",
         "type": "http response",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "name": "HTTP Response",
         "statusCode": "",
         "headers": {},
@@ -216,41 +243,10 @@
         "wires": []
     },
     {
-        "id": "0bdc806336f756dc",
-        "type": "MySQLdatabase",
-        "name": "",
-        "host": "10.0.0.5",
-        "port": "3306",
-        "db": "office",
-        "tz": "",
-        "charset": "UTF8"
-    },
-    {
-        "id": "group_protected_api",
-        "type": "group",
-        "z": "cba2dbb329ebd66f",
-        "name": "保護的 API 路由 (需要 Token)",
-        "style": {
-            "stroke": "#009933",
-            "fill": "#e6ffe6",
-            "label": true
-        },
-        "nodes": [
-            "node_auth_middleware",
-            "node_401_unauthorized",
-            "node_get_admin_users",
-            "node_get_admin_users_response"
-        ],
-        "x": 100,
-        "y": 480,
-        "w": 800,
-        "h": 200
-    },
-    {
-        "id": "node_auth_middleware",
+        "id": "9b7d1aa060c45a08",
         "type": "function",
-        "z": "cba2dbb329ebd66f",
-        "g": "group_protected_api",
+        "z": "ea4442fe01f5d3d8",
+        "g": "e7e0c1b5022f3c34",
         "name": "Token 驗證 (Middleware)",
         "func": "const authHeader = msg.req.headers['authorization'];\n\nif (authHeader && authHeader.startsWith(\"Bearer \")) {\n    const token = authHeader.substring(7);\n    // 這裡通常會解析 Token (例如 JWT 或是去 DB 核對)\n    // 為了簡化，只要有 sys_token_ 開頭就先放行\n    if (token.startsWith('sys_token_')) {\n        msg.userToken = token;\n        return [msg, null];\n    }\n}\n\nmsg.payload = { error: \"Unauthorized\", message: \"尚未登入或 Token 無效\" };\nmsg.statusCode = 401;\nreturn [null, msg];",
         "outputs": 2,
@@ -262,18 +258,19 @@
         "y": 560,
         "wires": [
             [
-                "node_get_admin_users_response"
+                "fe822fc929297468"
             ],
             [
-                "node_401_unauthorized"
+                "bbf09cfda60090a3",
+                "d5929d236fb746f1"
             ]
         ]
     },
     {
-        "id": "node_401_unauthorized",
+        "id": "bbf09cfda60090a3",
         "type": "http response",
-        "z": "cba2dbb329ebd66f",
-        "g": "group_protected_api",
+        "z": "ea4442fe01f5d3d8",
+        "g": "e7e0c1b5022f3c34",
         "name": "401 Unauthorized",
         "statusCode": "401",
         "headers": {},
@@ -282,10 +279,10 @@
         "wires": []
     },
     {
-        "id": "node_get_admin_users",
+        "id": "12b797160d89148a",
         "type": "http in",
-        "z": "cba2dbb329ebd66f",
-        "g": "group_protected_api",
+        "z": "ea4442fe01f5d3d8",
+        "g": "e7e0c1b5022f3c34",
         "name": "GET /api/admin/users",
         "url": "/api/admin/users",
         "method": "get",
@@ -295,15 +292,15 @@
         "y": 560,
         "wires": [
             [
-                "node_auth_middleware"
+                "9b7d1aa060c45a08"
             ]
         ]
     },
     {
-        "id": "node_get_admin_users_response",
+        "id": "fe822fc929297468",
         "type": "http response",
-        "z": "cba2dbb329ebd66f",
-        "g": "group_protected_api",
+        "z": "ea4442fe01f5d3d8",
+        "g": "e7e0c1b5022f3c34",
         "name": "Success Response",
         "statusCode": "200",
         "headers": {},
@@ -312,9 +309,9 @@
         "wires": []
     },
     {
-        "id": "node_debug_sql_error",
+        "id": "f117ebdb522f5af4",
         "type": "debug",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "name": "SQL 錯誤追蹤",
         "active": true,
         "tosidebar": true,
@@ -329,21 +326,143 @@
         "wires": []
     },
     {
-        "id": "node_catch_mysql",
+        "id": "04b636f418903864",
         "type": "catch",
-        "z": "cba2dbb329ebd66f",
+        "z": "ea4442fe01f5d3d8",
         "name": "捕捉 MySQL 錯誤",
         "scope": [
-            "b0af393d96756355",
-            "bb2e056f21140575"
+            "16ea2a7cf1e0c9e5",
+            "f6deaf0956dfb62b"
         ],
         "uncaught": false,
         "x": 170,
         "y": 700,
         "wires": [
             [
-                "node_debug_sql_error"
+                "f117ebdb522f5af4"
             ]
         ]
+    },
+    {
+        "id": "222b17a3b91a99d5",
+        "type": "debug",
+        "z": "ea4442fe01f5d3d8",
+        "name": "debug 53",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 440,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "3b21892b5d1f7ec5",
+        "type": "debug",
+        "z": "ea4442fe01f5d3d8",
+        "name": "debug 54",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "0b5da6382a3a626f",
+        "type": "debug",
+        "z": "ea4442fe01f5d3d8",
+        "name": "debug 55",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "834e80bab6cfe9e9",
+        "type": "debug",
+        "z": "ea4442fe01f5d3d8",
+        "name": "debug 56",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "283c8031ec939d2c",
+        "type": "debug",
+        "z": "ea4442fe01f5d3d8",
+        "name": "debug 57",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 580,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "01cdbe07c9d0cfee",
+        "type": "debug",
+        "z": "ea4442fe01f5d3d8",
+        "name": "debug 58",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 800,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "d5929d236fb746f1",
+        "type": "debug",
+        "z": "ea4442fe01f5d3d8",
+        "name": "debug 59",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "0bdc806336f756dc",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "10.0.0.5",
+        "port": "3306",
+        "db": "office",
+        "tz": "",
+        "charset": "UTF8"
     }
 ]
