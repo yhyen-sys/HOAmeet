@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS Users (
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NULL, -- 一般註冊密碼雜湊，Google 登入者可為 NULL
     first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
     department_id INT NULL,          -- 允許為空 (因 Google 首次登入時還沒填)
     job_title_id INT NULL,           -- 允許為空 (因 Google 首次登入時還沒填)
     auth_provider VARCHAR(20) DEFAULT 'email' COMMENT '登入方式: email, google',
