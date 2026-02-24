@@ -8,5 +8,5 @@ export default defineConfig({
     tailwindcss(),
     react()
   ],
-  base: './', // 為了 GitHub Pages 部署使用相對路徑
+  base: '/HOAmeet/', // 為了 GitHub Pages 部署使用絕對儲存庫路徑
 })
