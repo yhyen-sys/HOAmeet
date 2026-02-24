@@ -1,0 +1,155 @@
+[
+    {
+        "id": "group_get_single_meeting",
+        "type": "group",
+        "name": "GET /api/meetings/:id",
+        "style": {
+            "stroke": "#00cc66",
+            "fill": "#e6fffa",
+            "fill-opacity": "0.5",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "http_in_get_meeting",
+            "func_prep_get_meeting",
+            "mysql_get_meeting",
+            "func_prep_slots_list",
+            "mysql_get_slots",
+            "func_format_meeting_res",
+            "http_out_meeting_res",
+            "catch_get_meeting"
+        ],
+        "x": 50,
+        "y": 500,
+        "w": 1000,
+        "h": 200
+    },
+    {
+        "id": "http_in_get_meeting",
+        "type": "http in",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_get_single_meeting",
+        "name": "",
+        "url": "/api/meetings/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 560,
+        "wires": [
+            [
+                "func_prep_get_meeting"
+            ]
+        ]
+    },
+    {
+        "id": "func_prep_get_meeting",
+        "type": "function",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_get_single_meeting",
+        "name": "Prepare GET Meeting SQL",
+        "func": "msg.meetingId = msg.req.params.id;\nmsg.topic = `\n    SELECT m.*, u.first_name AS admin_first_name, u.last_name AS admin_last_name\n    FROM Meetings m\n    JOIN Users u ON m.admin_id = u.id\n    WHERE m.id = ?;\n`;\nmsg.payload = [msg.meetingId];\nreturn msg;",
+        "outputs": 1,
+        "x": 360,
+        "y": 560,
+        "wires": [
+            [
+                "mysql_get_meeting"
+            ]
+        ]
+    },
+    {
+        "id": "mysql_get_meeting",
+        "type": "mysql",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_get_single_meeting",
+        "mydb": "YOUR_MYSQL_DB_ID",
+        "name": "Get Meeting Meta",
+        "x": 580,
+        "y": 560,
+        "wires": [
+            [
+                "func_prep_slots_list"
+            ]
+        ]
+    },
+    {
+        "id": "func_prep_slots_list",
+        "type": "function",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_get_single_meeting",
+        "name": "Prepare Slots SQL",
+        "func": "if (!msg.payload || msg.payload.length === 0) {\n    return [null, msg]; // 會帶到 http out 404\n}\nmsg.meetingMeta = msg.payload[0];\nmsg.topic = \"SELECT * FROM Time_Slots WHERE meeting_id = ?\";\nmsg.payload = [msg.meetingId];\nreturn [msg, null];",
+        "outputs": 2,
+        "x": 160,
+        "y": 640,
+        "wires": [
+            [
+                "mysql_get_slots"
+            ],
+            [
+                "http_out_meeting_res"
+            ]
+        ]
+    },
+    {
+        "id": "mysql_get_slots",
+        "type": "mysql",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_get_single_meeting",
+        "mydb": "YOUR_MYSQL_DB_ID",
+        "name": "Get Slots",
+        "x": 380,
+        "y": 640,
+        "wires": [
+            [
+                "func_format_meeting_res"
+            ]
+        ]
+    },
+    {
+        "id": "func_format_meeting_res",
+        "type": "function",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_get_single_meeting",
+        "name": "Format Response",
+        "func": "msg.payload = {\n    ...msg.meetingMeta,\n    time_slots: msg.payload\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 560,
+        "y": 640,
+        "wires": [
+            [
+                "http_out_meeting_res"
+            ]
+        ]
+    },
+    {
+        "id": "http_out_meeting_res",
+        "type": "http response",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_get_single_meeting",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 780,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "catch_get_meeting",
+        "type": "catch",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_get_single_meeting",
+        "name": "Catch Error",
+        "scope": null,
+        "uncaught": false,
+        "x": 140,
+        "y": 700,
+        "wires": [
+            [
+                "http_out_meeting_res"
+            ]
+        ]
+    }
+]

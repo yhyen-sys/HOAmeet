@@ -22,13 +22,26 @@ export default function Calendar() {
 
     const [selectedSlots, setSelectedSlots] = useState([]);
     const [heatmapData, setHeatmapData] = useState([]);
+    const [meeting, setMeeting] = useState(null);
 
     useEffect(() => {
-        // 模擬呼叫 API 取得已勾選時段與熱力圖資料
-        setHeatmapData([
-            { start: '2026-03-02T10:00:00', end: '2026-03-02T12:00:00', score: 8, isTop: true, availableCount: 5 },
-            { start: '2026-03-03T14:00:00', end: '2026-03-03T15:00:00', score: 4, isTop: false, availableCount: 2 }
-        ]);
+        const loadMeeting = async () => {
+            try {
+                const res = await fetchAPI(`/meetings/${meetingId}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setMeeting(data);
+
+                    // If its confirmed, we might want to show different colors or something
+                    // For now, let's just use the heatmap placeholder if backend doesn't provide it yet
+                    // In real scenario, heatmap would be a separate API or included
+                    setHeatmapData(data.heatmap || []);
+                }
+            } catch (error) {
+                console.error("載入會議資料失敗:", error);
+            }
+        };
+        loadMeeting();
     }, [meetingId]);
 
     const handleSelect = (selectInfo) => {
@@ -119,8 +132,24 @@ export default function Calendar() {
     return (
         <div className="container mx-auto px-4 py-8 max-w-6xl z-10 relative">
             <Header
-                title={<span>📅 排程選擇</span>}
-                description="請在下方拖曳選取您的空檔時段"
+                title={<span>📅 {meeting ? meeting.title : '排程選擇'}</span>}
+                description={
+                    <div className="flex flex-col gap-1 mt-1">
+                        <div className="text-stone-400">請選取您的空檔時段</div>
+                        {meeting && (
+                            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs mt-2">
+                                <div className="bg-white/5 px-2 py-1 rounded border border-white/10 text-stone-300">
+                                    📍 {meeting.location}
+                                </div>
+                                {meeting.is_online === 1 && (
+                                    <div className="bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20 text-amber-500">
+                                        🌐 提供線上參與 {meeting.online_url && `(${meeting.online_url})`}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                }
                 customRightAction={
                     hasAdminRights() && (
                         <button
