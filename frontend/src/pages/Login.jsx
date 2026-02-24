@@ -36,7 +36,7 @@ export default function Login() {
     useEffect(() => {
         const fetchDictionaries = async () => {
             try {
-                // 目前先抓取 JSON Server 測試用端點或未來的正式端點
+                // 呼叫 Node-RED 實際端點
                 const resDept = await fetchAPI('/departments');
                 const resTitle = await fetchAPI('/job_titles');
                 if (resDept.ok) setDepartments(await resDept.json());
