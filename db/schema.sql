@@ -39,6 +39,9 @@ CREATE TABLE IF NOT EXISTS Users (
 CREATE TABLE IF NOT EXISTS Meetings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
+    subject TEXT NULL COMMENT '會議主旨',
+    agenda TEXT NULL COMMENT '議程',
+    discussion_points TEXT NULL COMMENT '討論重點提示清單',
     duration_minutes INT NOT NULL COMMENT '會議時數(分鐘)',
     location VARCHAR(200) NOT NULL,
     is_online BOOLEAN DEFAULT FALSE COMMENT '是否為線上會議',
