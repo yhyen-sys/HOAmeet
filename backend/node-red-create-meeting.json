@@ -1,0 +1,249 @@
+[
+    {
+        "id": "group_create_meeting",
+        "type": "group",
+        "name": "Meeting Creation & User List API",
+        "style": {
+            "stroke": "#0099ff",
+            "fill": "#e6f8ff",
+            "fill-opacity": "0.5",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "http_get_users",
+            "func_prep_users",
+            "mysql_users",
+            "http_out_users",
+            "http_post_meeting",
+            "func_prep_meeting",
+            "mysql_meeting",
+            "func_prep_slots",
+            "mysql_slots",
+            "func_prep_parts",
+            "mysql_parts",
+            "http_out_meeting",
+            "catch_create_error",
+            "http_out_create_error"
+        ],
+        "x": 50,
+        "y": 50,
+        "w": 1250,
+        "h": 400
+    },
+    {
+        "id": "http_get_users",
+        "type": "http in",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "name": "",
+        "url": "/api/users/list",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 100,
+        "wires": [
+            [
+                "func_prep_users"
+            ]
+        ]
+    },
+    {
+        "id": "func_prep_users",
+        "type": "function",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "name": "Prepare Users SQL",
+        "func": "msg.topic = `\n    SELECT u.id, u.first_name, u.last_name, d.dept_name, jt.title_name \n    FROM Users u\n    LEFT JOIN Departments d ON u.department_id = d.id\n    LEFT JOIN Job_Titles jt ON u.job_title_id = jt.id\n    ORDER BY d.id ASC, jt.tier_level ASC;\n`;\nmsg.payload = [];\nreturn msg;",
+        "outputs": 1,
+        "x": 350,
+        "y": 100,
+        "wires": [
+            [
+                "mysql_users"
+            ]
+        ]
+    },
+    {
+        "id": "mysql_users",
+        "type": "mysql",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "mydb": "YOUR_MYSQL_DB_ID",
+        "name": "MySQL Users",
+        "x": 580,
+        "y": 100,
+        "wires": [
+            [
+                "http_out_users"
+            ]
+        ]
+    },
+    {
+        "id": "http_out_users",
+        "type": "http response",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 780,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "http_post_meeting",
+        "type": "http in",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "name": "",
+        "url": "/api/meetings",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 200,
+        "wires": [
+            [
+                "func_prep_meeting"
+            ]
+        ]
+    },
+    {
+        "id": "func_prep_meeting",
+        "type": "function",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "name": "1. Prepare Meeting Data",
+        "func": "const d = msg.payload;\nlet adminId = 1; // 預設ID\nif (msg.req && msg.req.user && msg.req.user.id) {\n    adminId = msg.req.user.id;\n}\n\n// 保留前端傳來的原始資料，供後續節點使用\nmsg.meetingData = d;\n\nmsg.topic = `\n    INSERT INTO Meetings \n    (title, subject, agenda, government_agenda, discussion_points, location, duration_minutes, is_online, status, admin_id) \n    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'polling', ?)`;\n\nmsg.payload = [\n    d.title,\n    d.subject || null,\n    d.agenda || null,\n    d.government_agenda || null,\n    d.discussion_points || null,\n    d.location,\n    d.duration_minutes,\n    d.is_online ? 1 : 0,\n    adminId\n];\nreturn msg;",
+        "outputs": 1,
+        "x": 370,
+        "y": 200,
+        "wires": [
+            [
+                "mysql_meeting"
+            ]
+        ]
+    },
+    {
+        "id": "mysql_meeting",
+        "type": "mysql",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "mydb": "YOUR_MYSQL_DB_ID",
+        "name": "Insert Meeting",
+        "x": 580,
+        "y": 200,
+        "wires": [
+            [
+                "func_prep_slots"
+            ]
+        ]
+    },
+    {
+        "id": "func_prep_slots",
+        "type": "function",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "name": "2. Prepare Time Slots",
+        "func": "const meetingId = msg.payload.insertId;\nif (!meetingId) throw new Error(\"Meeting insertion failed\");\nmsg.meetingId = meetingId;\n\nconst slots = msg.meetingData.time_slots;\nlet values = [];\nlet params = [];\nslots.forEach(s => {\n    values.push(\"(?, ?, ?)\");\n    params.push(meetingId, s.start, s.end);\n});\n\nmsg.topic = `INSERT INTO Time_Slots (meeting_id, start_time, end_time) VALUES ${values.join(',')}`;\nmsg.payload = params;\nreturn msg;",
+        "outputs": 1,
+        "x": 780,
+        "y": 200,
+        "wires": [
+            [
+                "mysql_slots"
+            ]
+        ]
+    },
+    {
+        "id": "mysql_slots",
+        "type": "mysql",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "mydb": "YOUR_MYSQL_DB_ID",
+        "name": "Insert Slots",
+        "x": 970,
+        "y": 200,
+        "wires": [
+            [
+                "func_prep_parts"
+            ]
+        ]
+    },
+    {
+        "id": "func_prep_parts",
+        "type": "function",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "name": "3. Prepare Participants",
+        "func": "const meetingId = msg.meetingId;\nconst parts = msg.meetingData.participants;\n\nif (!parts || parts.length === 0) {\n    // 若無參與者直接回傳空陣列\n    msg.payload = { success: true, meeting_id: meetingId };\n    return [null, msg]; // 我們用第二個 output 直接跳過資料庫\n}\n\nlet values = [];\nlet params = [];\nparts.forEach(p => {\n    values.push(\"(?, ?, ?)\");\n    params.push(meetingId, p.user_id, p.is_mandatory ? 1 : 0);\n});\n\nmsg.topic = `INSERT INTO Meeting_Participants (meeting_id, user_id, is_mandatory) VALUES ${values.join(',')}`;\nmsg.payload = params;\nreturn [msg, null];",
+        "outputs": 2,
+        "x": 400,
+        "y": 280,
+        "wires": [
+            [
+                "mysql_parts"
+            ],
+            [
+                "http_out_meeting"
+            ]
+        ]
+    },
+    {
+        "id": "mysql_parts",
+        "type": "mysql",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "mydb": "YOUR_MYSQL_DB_ID",
+        "name": "Insert Parts",
+        "x": 610,
+        "y": 280,
+        "wires": [
+            [
+                "http_out_meeting"
+            ]
+        ]
+    },
+    {
+        "id": "http_out_meeting",
+        "type": "http response",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "name": "200 Success",
+        "statusCode": "200",
+        "headers": {},
+        "x": 830,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "catch_create_error",
+        "type": "catch",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "name": "Catch Everything",
+        "scope": null,
+        "uncaught": false,
+        "x": 140,
+        "y": 380,
+        "wires": [
+            [
+                "http_out_create_error"
+            ]
+        ]
+    },
+    {
+        "id": "http_out_create_error",
+        "type": "http response",
+        "z": "YOUR_FLOW_ID",
+        "g": "group_create_meeting",
+        "name": "500 Array Format Error",
+        "statusCode": "500",
+        "headers": {},
+        "x": 350,
+        "y": 380,
+        "wires": []
+    }
+]
