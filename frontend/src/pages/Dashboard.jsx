@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { fetchAPI } from '../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Settings, Calendar as CalendarIcon, ChevronDown, AlignLeft, Info } from 'lucide-react';
+import { Plus, Settings, Calendar as CalendarIcon, ChevronDown, AlignLeft, Info, MapPin, Link as LinkIcon } from 'lucide-react';
 import Header from '../components/Header';
 
 export default function Dashboard() {
@@ -104,6 +104,30 @@ export default function Dashboard() {
                                                     className="overflow-hidden border-t border-white/10"
                                                 >
                                                     <div className="p-6 bg-black/20 space-y-4 text-sm text-stone-300">
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-2 border-b border-white/5">
+                                                            <div>
+                                                                <h4 className="flex items-center gap-2 font-semibold text-stone-400 mb-1">
+                                                                    <MapPin className="w-4 h-4" /> 實體地點
+                                                                </h4>
+                                                                <p className="pl-6 text-stone-200">{m.location}</p>
+                                                            </div>
+                                                            {m.is_online === 1 && (
+                                                                <div>
+                                                                    <h4 className="flex items-center gap-2 font-semibold text-stone-400 mb-1">
+                                                                        <LinkIcon className="w-4 h-4" /> 線上參與
+                                                                    </h4>
+                                                                    <p className="pl-6 text-amber-400">
+                                                                        {m.online_url ? (
+                                                                            <a href={m.online_url} target="_blank" rel="noreferrer" className="hover:underline break-all">
+                                                                                {m.online_url}
+                                                                            </a>
+                                                                        ) : (
+                                                                            <span className="text-stone-500 italic">網址待補</span>
+                                                                        )}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                         {m.subject && (
                                                             <div>
                                                                 <h4 className="flex items-center gap-2 font-semibold text-amber-500 mb-1">

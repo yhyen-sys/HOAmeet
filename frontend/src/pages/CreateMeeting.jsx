@@ -22,6 +22,7 @@ export default function CreateMeeting() {
         government_agenda: '',
         discussion_points: '',
         location: '',
+        online_url: '',
         duration_minutes: 60,
         is_online: false,
         time_slots: [{ start: '', end: '' }],
@@ -186,9 +187,18 @@ export default function CreateMeeting() {
                         className="w-full p-3.5 bg-white/5 border border-white/10 rounded-xl text-stone-200 outline-none focus:border-amber-500 transition-colors" />
                 </div>
             </div>
-            <div className="flex items-center gap-3 bg-white/5 p-4 rounded-xl border border-white/10">
-                <input type="checkbox" id="is_online" name="is_online" checked={formData.is_online} onChange={handleInputChange} className="w-5 h-5 accent-amber-500" />
-                <label htmlFor="is_online" className="text-stone-300 font-semibold cursor-pointer">這是一場線上會議 (Online)</label>
+            <div className="flex flex-col gap-3 bg-white/5 p-4 rounded-xl border border-white/10">
+                <div className="flex items-center gap-3">
+                    <input type="checkbox" id="is_online" name="is_online" checked={formData.is_online} onChange={handleInputChange} className="w-5 h-5 accent-amber-500 cursor-pointer" />
+                    <label htmlFor="is_online" className="text-stone-300 font-semibold cursor-pointer">提供線上參與選項 (例如: 會議室網址)</label>
+                </div>
+                {formData.is_online && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} className="pt-2 border-t border-white/5">
+                        <label className="block text-xs font-semibold text-stone-400 mb-2">線上會議連結 (選填，可於拍板確定時再補上)</label>
+                        <input type="text" name="online_url" value={formData.online_url} onChange={handleInputChange} placeholder="https://meet.google.com/..."
+                            className="w-full p-3 bg-black/20 border border-white/10 rounded-lg text-stone-200 outline-none focus:border-amber-500 transition-colors text-sm" />
+                    </motion.div>
+                )}
             </div>
 
             <hr className="border-white/5 my-4" />
@@ -351,7 +361,14 @@ export default function CreateMeeting() {
                         <span className="text-stone-100 font-bold text-lg">{formData.title}</span>
 
                         <span className="text-stone-500 mt-2">地點</span>
-                        <span className="mt-2">{formData.location} {formData.is_online ? '(線上)' : ''}</span>
+                        <div className="mt-2 flex flex-col">
+                            <span>{formData.location}</span>
+                            {formData.is_online && (
+                                <span className="text-amber-400 text-sm mt-1">
+                                    + 線上參與 {formData.online_url ? `(${formData.online_url})` : '(網址待補)'}
+                                </span>
+                            )}
+                        </div>
 
                         <span className="text-stone-500">時長</span>
                         <span>{formData.duration_minutes} 分鐘</span>

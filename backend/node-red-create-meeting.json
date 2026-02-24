@@ -116,7 +116,7 @@
         "z": "YOUR_FLOW_ID",
         "g": "group_create_meeting",
         "name": "1. Prepare Meeting Data",
-        "func": "const d = msg.payload;\nlet adminId = 1; // 預設ID\nif (msg.req && msg.req.user && msg.req.user.id) {\n    adminId = msg.req.user.id;\n}\n\n// 保留前端傳來的原始資料，供後續節點使用\nmsg.meetingData = d;\n\nmsg.topic = `\n    INSERT INTO Meetings \n    (title, subject, agenda, government_agenda, discussion_points, location, duration_minutes, is_online, status, admin_id) \n    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'polling', ?)`;\n\nmsg.payload = [\n    d.title,\n    d.subject || null,\n    d.agenda || null,\n    d.government_agenda || null,\n    d.discussion_points || null,\n    d.location,\n    d.duration_minutes,\n    d.is_online ? 1 : 0,\n    adminId\n];\nreturn msg;",
+        "func": "const d = msg.payload;\nlet adminId = 1; // 預設ID\nif (msg.req && msg.req.user && msg.req.user.id) {\n    adminId = msg.req.user.id;\n}\n\n// 保留前端傳來的原始資料，供後續節點使用\nmsg.meetingData = d;\n\nmsg.topic = `\n    INSERT INTO Meetings \n    (title, subject, agenda, government_agenda, discussion_points, location, online_url, duration_minutes, is_online, status, admin_id) \n    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'polling', ?)`;\n\nmsg.payload = [\n    d.title,\n    d.subject || null,\n    d.agenda || null,\n    d.government_agenda || null,\n    d.discussion_points || null,\n    d.location,\n    d.online_url || null,\n    d.duration_minutes,\n    d.is_online ? 1 : 0,\n    adminId\n];\nreturn msg;",
         "outputs": 1,
         "x": 370,
         "y": 200,
