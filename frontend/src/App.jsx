@@ -5,6 +5,7 @@ import { useAuthStore } from './store/authStore'
 import Login from './pages/Login'
 
 import Dashboard from './pages/Dashboard'
+import CreateMeeting from './pages/CreateMeeting'
 
 import AdminUsers from './pages/AdminUsers'
 import Calendar from './pages/Calendar'
@@ -34,6 +35,7 @@ function App() {
           <Route path="/" element={<PrivateRoute><Navigate to="/dashboard" replace /></PrivateRoute>} />
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/calendar/:id" element={<PrivateRoute><Calendar /></PrivateRoute>} />
+          <Route path="/meetings/new" element={<PrivateRoute><CreateMeeting /></PrivateRoute>} />
 
           {/* Admin Routes - Should be protected by Role later */}
           <Route path="/admin/users" element={<PrivateRoute><AdminUsers /></PrivateRoute>} />

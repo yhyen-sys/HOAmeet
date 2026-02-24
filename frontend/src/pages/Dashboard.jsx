@@ -161,7 +161,7 @@ export default function Dashboard() {
                     <div className="flex flex-col gap-4">
                         {/* RBAC: Creator or Super Admin */}
                         {hasAdminRights() && (
-                            <button className="w-full p-4 rounded-xl font-semibold flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 active:scale-95 transition-all shadow-lg shadow-amber-500/20">
+                            <button onClick={() => navigate('/meetings/new')} className="w-full p-4 rounded-xl font-semibold flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 active:scale-95 transition-all shadow-lg shadow-amber-500/20">
                                 <Plus className="w-5 h-5" /> 發起新會議
                             </button>
                         )}
