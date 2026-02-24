@@ -49,6 +49,7 @@ export default function Login() {
     }, []);
 
     // ---------------- [Google OAuth 流程] ----------------
+    // // ---------------- [Google OAuth 流程] ----------------
     useEffect(() => {
         if (step === 1 && window.google) {
             window.google.accounts.id.initialize({
