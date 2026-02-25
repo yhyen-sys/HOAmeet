@@ -338,6 +338,17 @@ export default function Calendar() {
                     selectMirror={true}
                     selectOverlap={true}
                     unselectAuto={false}
+                    navLinks={true}
+                    navLinkDayClick={(date, jsEvent) => {
+                        const api = calendarRef.current.getApi();
+                        if (api.view.type === 'dayGridMonth') {
+                            api.changeView('timeGridWeek', date);
+                        } else if (api.view.type === 'timeGridWeek') {
+                            api.changeView('timeGridDay', date);
+                        } else {
+                            api.changeView('timeGridDay', date);
+                        }
+                    }}
                     select={handleSelect}
                     eventClick={handleEventClick}
                     events={allEvents}
