@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS Users (
     department_id INT NULL,          -- 允許為空 (因 Google 首次登入時還沒填)
     job_title_id INT NULL,           -- 允許為空 (因 Google 首次登入時還沒填)
     auth_provider VARCHAR(20) DEFAULT 'email' COMMENT '登入方式: email, google',
+    global_status ENUM('active', 'inactive', 'deleted') DEFAULT 'active' COMMENT '帳號狀態',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (department_id) REFERENCES Departments(id),
     FOREIGN KEY (job_title_id) REFERENCES Job_Titles(id)

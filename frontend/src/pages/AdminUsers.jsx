@@ -113,13 +113,30 @@ export default function AdminUsers() {
                             {filteredUsers.map(u => {
                                 const isSelf = (user && u.id === user.id) || u.role === 'super_admin';
                                 const isChecked = u.role === 'creator' || u.role === 'super_admin';
+                                const isActive = u.status === 'active';
                                 const displayName = u.name || `${u.last_name || ''}${u.first_name || ''}` || "未命名";
 
+                                const toggleStatus = async () => {
+                                    if (isSelf) return;
+                                    const nextStatus = isActive ? 'inactive' : 'active';
+                                    try {
+                                        const res = await fetchAPI('/admin/users/status', {
+                                            method: 'PUT',
+                                            body: JSON.stringify({ user_id: u.id, new_status: nextStatus })
+                                        });
+                                        if (res.ok) {
+                                            setUsers(users.map(userItem => userItem.id === u.id ? { ...userItem, status: nextStatus } : userItem));
+                                        }
+                                    } catch (err) {
+                                        console.error("更新狀態失敗:", err);
+                                    }
+                                };
+
                                 return (
-                                    <tr key={u.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                                    <tr key={u.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${!isActive ? 'opacity-50' : ''}`}>
                                         <td className="p-5">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shadow-inner ${isSelf ? 'bg-red-500' : 'bg-amber-500'}`}>
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shadow-inner ${isSelf ? 'bg-red-500' : (isActive ? 'bg-amber-500' : 'bg-stone-500')}`}>
                                                     {displayName.substring(0, 2)}
                                                 </div>
                                                 <div className="flex flex-col">
@@ -130,9 +147,18 @@ export default function AdminUsers() {
                                         </td>
                                         <td className="p-5 text-sm text-stone-300">{u.dept || "未分配"}</td>
                                         <td className="p-5">
-                                            {u.role === 'super_admin' && <span className="text-amber-400 font-bold text-sm">超級管理者</span>}
-                                            {u.role === 'creator' && <span className="text-amber-400 text-sm">授權發起人</span>}
-                                            {u.role === 'user' && <span className="text-stone-400 text-sm">一般使用者</span>}
+                                            <div className="flex flex-col gap-1">
+                                                {u.role === 'super_admin' && <span className="text-amber-400 font-bold text-sm">超級管理者</span>}
+                                                {u.role === 'creator' && <span className="text-amber-400 text-sm">授權發起人</span>}
+                                                {u.role === 'user' && <span className="text-stone-400 text-sm">一般使用者</span>}
+                                                <button
+                                                    onClick={toggleStatus}
+                                                    disabled={isSelf}
+                                                    className={`text-[10px] w-fit px-2 py-0.5 rounded border ${isActive ? 'text-emerald-500 border-emerald-500/30 bg-emerald-500/5' : 'text-stone-500 border-stone-500/30 bg-stone-500/5'} ${isSelf ? 'cursor-not-allowed opacity-50' : 'hover:bg-white/5'}`}
+                                                >
+                                                    {isActive ? '● 作用中' : '○ 已停用'}
+                                                </button>
+                                            </div>
                                         </td>
                                         <td className="p-5 text-center">
                                             {isSelf ? (
@@ -142,10 +168,11 @@ export default function AdminUsers() {
                                                     <input
                                                         type="checkbox"
                                                         className="sr-only peer"
+                                                        disabled={!isActive}
                                                         checked={isChecked}
                                                         onChange={(e) => toggleRole(u.id, e.target.checked)}
                                                     />
-                                                    <div className="w-11 h-6 bg-stone-700 peer-focus:outline-none rounded-full peer peer-checked:after:transtone-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                                                    <div className="w-11 h-6 bg-stone-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500 disabled:opacity-30"></div>
                                                 </label>
                                             )}
                                         </td>

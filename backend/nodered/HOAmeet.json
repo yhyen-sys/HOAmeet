@@ -933,7 +933,7 @@
         "type": "function",
         "z": "124419962d0f0420",
         "name": "登入邏輯判斷",
-        "func": "/**\n * 節點 C：判斷登入狀態與核發 Token (第 6 個節點)\n */\n\nlet dbResult = msg.payload;\n\nif (dbResult.length > 0) {\n    let user = dbResult[0];\n    \n    if (user.department_id === null || user.job_title_id === null) {\n        msg.payload = { \n            message: \"請補齊單位與職稱資料\", \n            action: \"REQUIRE_INFO\",\n            email: msg.userData.email\n        };\n        msg.statusCode = 206;\n    } else {\n        let role = (user.email === \"yi.kuei.co@gmail.com\") ? \"super_admin\" : (user.global_role || \"user\");\n        let sessionToken = \"sys_token_\" + role + \"_\" + new Date().getTime() + \"_\" + user.id; \n        \n        msg.payload = { \n            message: \"登入成功\", \n            action: \"LOGIN_SUCCESS\",\n            token: sessionToken,\n            user: {\n                id: user.id,\n                name: user.last_name + user.first_name,\n                global_role: role,\n                last_name: user.last_name,\n                department_id: user.department_id,\n                job_title_id: user.job_title_id,\n                email: user.email\n            }\n        };\n        msg.statusCode = 200;\n    }\n} else {\n    msg.payload = { \n        message: \"歡迎首次登入，請填寫您的單位與職稱\", \n        action: \"REQUIRE_INFO\",\n        email: msg.userData.email,\n        first_name: msg.userData.first_name,\n        last_name: msg.userData.last_name\n    };\n    msg.statusCode = 206;\n}\n\nreturn msg;",
+        "func": "/**\n * 節點 C：判斷登入狀態與核發 Token (第 6 個節點)\n */\n\nlet dbResult = msg.payload;\n\nif (dbResult.length > 0) {\n    let user = dbResult[0];\n    \n    // 🔴 檢查帳號狀態\n    if (user.global_status !== 'active') {\n        msg.payload = { \n            error: \"Forbidden\", \n            message: \"您的帳號已被停用或刪除，請洽管理員\" \n        };\n        msg.statusCode = 403;\n        return [null, msg];\n    }\n    \n    if (user.department_id === null || user.job_title_id === null) {\n        msg.payload = { \n            message: \"請補齊單位與職稱資料\", \n            action: \"REQUIRE_INFO\",\n            email: msg.userData.email\n        };\n        msg.statusCode = 206;\n    } else {\n        let role = (user.email === \"yi.kuei.co@gmail.com\") ? \"super_admin\" : (user.global_role || \"user\");\n        let sessionToken = \"sys_token_\" + role + \"_\" + new Date().getTime() + \"_\" + user.id; \n        \n        msg.payload = { \n            message: \"登入成功\", \n            action: \"LOGIN_SUCCESS\",\n            token: sessionToken,\n            user: {\n                id: user.id,\n                name: user.last_name + user.first_name,\n                global_role: role,\n                global_status: user.global_status,\n                last_name: user.last_name,\n                department_id: user.department_id,\n                job_title_id: user.job_title_id,\n                email: user.email\n            }\n        };\n        msg.statusCode = 200;\n    }\n} else {\n    msg.payload = { \n        message: \"歡迎首次登入，請填寫您的單位與職稱\", \n        action: \"REQUIRE_INFO\",\n        email: msg.userData.email,\n        first_name: msg.userData.first_name,\n        last_name: msg.userData.last_name\n    };\n    msg.statusCode = 206;\n}\n\nreturn msg;",
         "outputs": 1,
         "x": 630,
         "y": 240,
@@ -1026,17 +1026,22 @@
         "type": "switch",
         "z": "124419962d0f0420",
         "name": "Route by Method",
-        "property": "req.method",
+        "property": "req.url",
         "propertyType": "msg",
         "rules": [
             {
                 "t": "eq",
-                "v": "GET",
+                "v": "/api/admin/users",
                 "vt": "str"
             },
             {
                 "t": "eq",
-                "v": "PUT",
+                "v": "/api/admin/users/role",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "/api/admin/users/status",
                 "vt": "str"
             }
         ],
@@ -1049,6 +1054,9 @@
             ],
             [
                 "admin_prep_put_sql"
+            ],
+            [
+                "admin_prep_status_sql"
             ]
         ]
     },
@@ -1057,7 +1065,7 @@
         "type": "function",
         "z": "124419962d0f0420",
         "name": "Prepare GET Users SQL",
-        "func": "msg.topic = 'SELECT u.id, u.name, u.first_name, u.last_name, u.email, d.dept_name as dept, u.global_role as role FROM Users u LEFT JOIN Departments d ON u.department_id = d.id';\nreturn msg;",
+        "func": "msg.topic = 'SELECT u.id, u.name, u.first_name, u.last_name, u.email, d.dept_name as dept, u.global_role as role, u.global_status FROM Users u LEFT JOIN Departments d ON u.department_id = d.id WHERE u.global_status != \"deleted\"';\nreturn msg;",
         "outputs": 1,
         "wires": [
             [
@@ -1118,5 +1126,34 @@
         "x": 600,
         "y": 750,
         "wires": []
+    },
+    {
+        "id": "admin_prep_status_sql",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "name": "Prepare PUT Status SQL",
+        "func": "let data = msg.payload;\nif (!data.user_id || !data.new_status) {\n    msg.statusCode = 400;\n    msg.payload = { error: 'Missing parameters' };\n    return [null, msg];\n}\nmsg.topic = 'UPDATE Users SET global_status = ? WHERE id = ?';\nmsg.payload = [data.new_status, data.user_id];\nreturn [msg, null];",
+        "outputs": 2,
+        "wires": [
+            [
+                "admin_mysql_node"
+            ],
+            [
+                "4c09a6a47d45bff3"
+            ]
+        ]
+    },
+    {
+        "id": "admin_put_status_in",
+        "type": "http in",
+        "z": "124419962d0f0420",
+        "name": "PUT /api/admin/users/status",
+        "url": "/api/admin/users/status",
+        "method": "put",
+        "wires": [
+            [
+                "admin_auth_middleware"
+            ]
+        ]
     }
 ]
