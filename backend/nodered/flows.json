@@ -1,26 +1,26 @@
 [
     {
-        "id": "ea4442fe01f5d3d8",
+        "id": "124419962d0f0420",
         "type": "tab",
         "label": "Google Auth Flow",
         "disabled": false,
         "info": ""
     },
     {
-        "id": "e7e0c1b5022f3c34",
+        "id": "fa1b53f20053a304",
         "type": "group",
-        "z": "ea4442fe01f5d3d8",
-        "name": "保護??API 路由 (?��?Token)",
+        "z": "124419962d0f0420",
+        "name": "保護的 API 路由 (需要 Token)",
         "style": {
             "stroke": "#009933",
             "fill": "#e6ffe6",
             "label": true
         },
         "nodes": [
-            "9b7d1aa060c45a08",
-            "bbf09cfda60090a3",
-            "12b797160d89148a",
-            "fe822fc929297468"
+            "928cdce6a21b1368",
+            "28f03ce542ad94dc",
+            "9e100c9799469997",
+            "837b7ac985cc13ea"
         ],
         "x": 44,
         "y": 479,
@@ -28,9 +28,95 @@
         "h": 182
     },
     {
-        "id": "0141f627f02079e7",
+        "id": "group_my_meetings",
+        "type": "group",
+        "z": "124419962d0f0420",
+        "name": "GET /api/meetings/my",
+        "style": {
+            "stroke": "#ff9900",
+            "fill": "#fff1d0",
+            "fill-opacity": "0.5",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "http_in_my_meetings",
+            "func_prepare_sql",
+            "mysql_my_meetings",
+            "func_format_response",
+            "http_out_my_meetings",
+            "catch_my_meetings",
+            "http_out_error_meetings"
+        ],
+        "x": -26,
+        "y": 999,
+        "w": 972,
+        "h": 162
+    },
+    {
+        "id": "911dbd3240e0046e",
+        "type": "group",
+        "z": "124419962d0f0420",
+        "name": "Meeting Creation & User List API",
+        "style": {
+            "stroke": "#0099ff",
+            "fill": "#e6f8ff",
+            "fill-opacity": "0.5",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "e9c8775ddcd41bc4",
+            "9b305cf18937b9b6",
+            "6b9a749ad06fe415",
+            "d880ab4e17ae449e",
+            "20a8f3cf8bc6cf3b",
+            "9cd82291e7e18ec7",
+            "c5226553c7f8f4fd",
+            "edc1699eeba4d523",
+            "7ae215c1b0cc30c2",
+            "977c040b7e9f9da2",
+            "3b14db09738b0ebc",
+            "59c2f2284a972dab",
+            "b809faec8f6a2872",
+            "218f1a5009f43501"
+        ],
+        "x": 14,
+        "y": 1219,
+        "w": 1052,
+        "h": 362
+    },
+    {
+        "id": "group_get_single_meeting",
+        "type": "group",
+        "z": "124419962d0f0420",
+        "name": "GET /api/meetings/:id",
+        "style": {
+            "stroke": "#00cc66",
+            "fill": "#e6fffa",
+            "fill-opacity": "0.5",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "http_in_get_meeting",
+            "func_prep_get_meeting",
+            "mysql_get_meeting",
+            "func_prep_slots_list",
+            "mysql_get_slots",
+            "func_format_meeting_res",
+            "http_out_meeting_res",
+            "catch_get_meeting"
+        ],
+        "x": 14,
+        "y": 1639,
+        "w": 852,
+        "h": 222
+    },
+    {
+        "id": "efa7f42a825fcca2",
         "type": "http in",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "POST /api/auth/google",
         "url": "/api/auth/google",
         "method": "post",
@@ -40,37 +126,14 @@
         "y": 120,
         "wires": [
             [
-                "38faa62eb4d33a01"
+                "393785d52015c177"
             ]
         ]
     },
     {
-        "id": "38faa62eb4d33a01",
-        "type": "function",
-        "z": "ea4442fe01f5d3d8",
-        "name": "準�? Google API 請�?",
-        "func": "/**\n * 節�?A：�??�呼??Google API (�?2 ?��?�?\n */\n\n// ?��??�端 POST ?��???token\nlet googleToken = msg.payload.token;\n\nif (!googleToken) {\n    msg.payload = { error: \"缺�? Google Token\" };\n    msg.statusCode = 400;\n    return [null, msg]; // 結�?流�?並跳?�錯誤�??�\n}\n\n// 設�? HTTP Request 節點�??�叫?�目標網?�\nmsg.url = \"https://oauth2.googleapis.com/tokeninfo?id_token=\" + googleToken;\nmsg.method = \"GET\";\n\nreturn [msg, null];",
-        "outputs": 2,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 380,
-        "y": 120,
-        "wires": [
-            [
-                "a65e0318934e310e",
-                "3b21892b5d1f7ec5"
-            ],
-            [
-                "54bcf19b46711739"
-            ]
-        ]
-    },
-    {
-        "id": "a65e0318934e310e",
+        "id": "5b4ab398b3886f4b",
         "type": "http request",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "Google Tokeninfo",
         "method": "use",
         "ret": "obj",
@@ -84,72 +147,29 @@
         "y": 120,
         "wires": [
             [
-                "d89d9185abdea119"
+                "a91cf307603cde4c"
             ]
         ]
     },
     {
-        "id": "d89d9185abdea119",
-        "type": "function",
-        "z": "ea4442fe01f5d3d8",
-        "name": "�??結�?並�???MySQL",
-        "func": "/**\n * 節�?B：解??Google ?��?並查�?MySQL (�?4 ?��?�?\n */\n\n// �?? Google ?�傳??JSON 資�?\nlet googleData = typeof msg.payload === 'string' ? JSON.parse(msg.payload) : msg.payload;\n\n// 檢查 Google ?�否?�傳?�誤\nif (googleData.error) {\n    msg.payload = { error: \"Google 驗�?失�?\", details: googleData.error_description };\n    msg.statusCode = 401;\n    return [null, msg]; \n}\n\n// ?��??��??��?經�?驗�???Email ??姓�?\nlet userEmail = googleData.email;\nlet firstName = googleData.given_name || '';\nlet lastName = googleData.family_name || '';\n\n// 將基?��??�暫存起來�?後面?�用?�\nmsg.userData = {\n    email: userEmail,\n    first_name: firstName,\n    last_name: lastName\n};\n\n// 組�? MySQL ?�詢?�令：檢?�此 Email ?�否存在?�們�? Users 表中\nmsg.topic = \"SELECT * FROM Users WHERE email = ? LIMIT 1\";\nmsg.payload = [userEmail];\n\nreturn [msg, null];",
-        "outputs": 2,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 190,
-        "y": 240,
-        "wires": [
-            [
-                "16ea2a7cf1e0c9e5"
-            ],
-            [
-                "54bcf19b46711739",
-                "222b17a3b91a99d5"
-            ]
-        ]
-    },
-    {
-        "id": "16ea2a7cf1e0c9e5",
+        "id": "8e635957712faec4",
         "type": "mysql",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "mydb": "0bdc806336f756dc",
         "name": "MySQL Users",
         "x": 420,
         "y": 240,
         "wires": [
             [
-                "6ca89a47eec1b2e5",
-                "834e80bab6cfe9e9"
+                "15b0f2e403805e65",
+                "070cd52b685e8cfc"
             ]
         ]
     },
     {
-        "id": "6ca89a47eec1b2e5",
-        "type": "function",
-        "z": "ea4442fe01f5d3d8",
-        "name": "?�入?�輯?�斷",
-        "func": "/**\n * 節�?C：判?�登?��??��??�發 Token (�?6 ?��?�?\n */\n\nlet dbResult = msg.payload; // ?�是 MySQL 節點�??��????結�?\n\nif (dbResult.length > 0) {\n    // ?�� ?��?一：�??��? (資�?庫�?紀??\n    let user = dbResult[0];\n    \n    // 檢查他是?�已經填?�單位�??�稱\n    if (user.department_id === null || user.job_title_id === null) {\n        // ?�� ??Email 但�?填妥?�稱 (?�能上次註�?中斷)\n        msg.payload = { \n            message: \"請�?齊單位�??�稱資�?\", \n            action: \"REQUIRE_INFO\",\n            email: msg.userData.email\n        };\n        msg.statusCode = 206; // 206 Partial Content\n    } else {\n        // ?�� 資�?完整，直?�發?�系統�?�?Token 讓�??�入\n        let sessionToken = \"sys_token_\" + new Date().getTime() + \"_\" + user.id; \n        \n        msg.payload = { \n            message: \"?�入?��?\", \n            action: \"LOGIN_SUCCESS\",\n            token: sessionToken,\n            user: {\n                id: user.id,\n                name: user.last_name + user.first_name, global_role: role,\n                last_name: user.last_name,\n                department_id: user.department_id,\n                job_title_id: user.job_title_id,\n                email: user.email,\n                // 強制?��??��??��?責人 Email ?��?級管?�員\n                global_role: (user.email === \"yi.kuei.co@gmail.com\") ? \"super_admin\" : (user.global_role || \"user\")\n            }\n        };\n        msg.statusCode = 200;\n    }\n} else {\n    // ?�� ?��?二�??��???(資�?庫�?紀??\n    msg.payload = { \n        message: \"歡�?首次?�入，�?填寫?��??��??�職稱\", \n        action: \"REQUIRE_INFO\",\n        email: msg.userData.email,\n        first_name: msg.userData.first_name,\n        last_name: msg.userData.last_name\n    };\n    msg.statusCode = 206;\n}\n\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 630,
-        "y": 240,
-        "wires": [
-            [
-                "54bcf19b46711739",
-                "0b5da6382a3a626f"
-            ]
-        ]
-    },
-    {
-        "id": "54bcf19b46711739",
+        "id": "4c09a6a47d45bff3",
         "type": "http response",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "HTTP Response",
         "statusCode": "",
         "headers": {},
@@ -158,9 +178,9 @@
         "wires": []
     },
     {
-        "id": "03426062b0789543",
+        "id": "5bb443298fbdbfd1",
         "type": "http in",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "POST /api/auth/register",
         "url": "/api/auth/register",
         "method": "post",
@@ -170,71 +190,29 @@
         "y": 360,
         "wires": [
             [
-                "f124bc5b680143a2"
+                "982bb0a24f90e078"
             ]
         ]
     },
     {
-        "id": "f124bc5b680143a2",
-        "type": "function",
-        "z": "ea4442fe01f5d3d8",
-        "name": "準�? INSERT MySQL",
-        "func": "let data = msg.payload;\nnode.warn(\"Login Register Payload received:\");\nnode.warn(data);\n\nif (!data.email || !data.first_name || !data.last_name || (!data.department_id && data.department_id !== 0) || (!data.job_title_id && data.job_title_id !== 0)) {\n    msg.payload = { error: '註�?資�?不�???, received: data };\n    msg.statusCode = 400;\n    return [null, msg];\n}\n\nmsg.userData = data;\n\nmsg.topic = 'INSERT INTO Users (email, first_name, last_name, department_id, job_title_id) VALUES (?, ?, ?, ?, ?)';\n\nmsg.payload = [\n    data.email, \n    data.first_name, \n    data.last_name, \n    data.department_id, \n    data.job_title_id\n];\n\nreturn [msg, null];",
-        "outputs": 2,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 410,
-        "y": 360,
-        "wires": [
-            [
-                "f6deaf0956dfb62b"
-            ],
-            [
-                "b04e53ef39615204",
-                "283c8031ec939d2c"
-            ]
-        ]
-    },
-    {
-        "id": "f6deaf0956dfb62b",
+        "id": "f595b69a0fd326c3",
         "type": "mysql",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "mydb": "0bdc806336f756dc",
         "name": "MySQL Insert User",
         "x": 630,
         "y": 360,
         "wires": [
             [
-                "ca0e2d77592bede9",
-                "01cdbe07c9d0cfee"
+                "cfd5d8dcc48ca58f",
+                "18adab484827f35a"
             ]
         ]
     },
     {
-        "id": "ca0e2d77592bede9",
-        "type": "function",
-        "z": "ea4442fe01f5d3d8",
-        "name": "註�??��??�發 Token",
-        "func": "let sessionToken = 'sys_token_creator_' + new Date().getTime() + '_' + Buffer.from(msg.userData.email).toString('base64');\n\nmsg.payload = {\n    message: '註�?並登?��???,\n    action: 'LOGIN_SUCCESS',\n    token: sessionToken,\n    user: {\n        name: msg.userData.last_name + msg.userData.first_name,\n        last_name: msg.userData.last_name,\n        department_id: msg.userData.department_id,\n        job_title_id: msg.userData.job_title_id,\n        email: msg.userData.email\n    }\n};\nmsg.statusCode = 200;\n\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 850,
-        "y": 360,
-        "wires": [
-            [
-                "b04e53ef39615204"
-            ]
-        ]
-    },
-    {
-        "id": "b04e53ef39615204",
+        "id": "e42553cb9572c93a",
         "type": "http response",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "HTTP Response",
         "statusCode": "",
         "headers": {},
@@ -243,76 +221,10 @@
         "wires": []
     },
     {
-        "id": "9b7d1aa060c45a08",
-        "type": "function",
-        "z": "ea4442fe01f5d3d8",
-        "g": "e7e0c1b5022f3c34",
-        "name": "Token 驗�? (Middleware)",
-        "func": "const authHeader = msg.req.headers['authorization'];\n\nif (authHeader && authHeader.startsWith(\"Bearer \")) {\n    const token = authHeader.substring(7);\n    // ?�裡?�常?�解??Token (例�? JWT ?�是??DB ?��?)\n    // ?��?簡�?，只要�? sys_token_ ?�頭就�??��?\n    if (token.startsWith('sys_token_')) {\n        msg.userToken = token;\n        return [msg, null];\n    }\n}\n\nmsg.payload = { error: \"Unauthorized\", message: \"尚未?�入??Token ?��?\" };\nmsg.statusCode = 401;\nreturn [null, msg];",
-        "outputs": 2,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 390,
-        "y": 560,
-        "wires": [
-            [
-                "fe822fc929297468"
-            ],
-            [
-                "bbf09cfda60090a3",
-                "d5929d236fb746f1"
-            ]
-        ]
-    },
-    {
-        "id": "bbf09cfda60090a3",
-        "type": "http response",
-        "z": "ea4442fe01f5d3d8",
-        "g": "e7e0c1b5022f3c34",
-        "name": "401 Unauthorized",
-        "statusCode": "401",
-        "headers": {},
-        "x": 650,
-        "y": 620,
-        "wires": []
-    },
-    {
-        "id": "12b797160d89148a",
-        "type": "http in",
-        "z": "ea4442fe01f5d3d8",
-        "g": "e7e0c1b5022f3c34",
-        "name": "GET /api/admin/users",
-        "url": "/api/admin/users",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 170,
-        "y": 560,
-        "wires": [
-            [
-                "9b7d1aa060c45a08"
-            ]
-        ]
-    },
-    {
-        "id": "fe822fc929297468",
-        "type": "http response",
-        "z": "ea4442fe01f5d3d8",
-        "g": "e7e0c1b5022f3c34",
-        "name": "Success Response",
-        "statusCode": "200",
-        "headers": {},
-        "x": 650,
-        "y": 520,
-        "wires": []
-    },
-    {
-        "id": "f117ebdb522f5af4",
+        "id": "04dcc1f0576cd11f",
         "type": "debug",
-        "z": "ea4442fe01f5d3d8",
-        "name": "SQL ?�誤追蹤",
+        "z": "124419962d0f0420",
+        "name": "SQL 錯誤追蹤",
         "active": true,
         "tosidebar": true,
         "console": false,
@@ -326,27 +238,25 @@
         "wires": []
     },
     {
-        "id": "04b636f418903864",
+        "id": "e551dcbbcfafb478",
         "type": "catch",
-        "z": "ea4442fe01f5d3d8",
-        "name": "?��? MySQL ?�誤",
-        "scope": [
-            "16ea2a7cf1e0c9e5",
-            "f6deaf0956dfb62b"
-        ],
+        "z": "124419962d0f0420",
+        "name": "捕捉 MySQL 錯誤",
+        "scope": null,
         "uncaught": false,
         "x": 170,
         "y": 700,
         "wires": [
             [
-                "f117ebdb522f5af4"
+                "admin_debug_error",
+                "4c09a6a47d45bff3"
             ]
         ]
     },
     {
-        "id": "222b17a3b91a99d5",
+        "id": "90c1ba422e906c82",
         "type": "debug",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "debug 53",
         "active": true,
         "tosidebar": true,
@@ -360,9 +270,9 @@
         "wires": []
     },
     {
-        "id": "3b21892b5d1f7ec5",
+        "id": "d365704fa76468e1",
         "type": "debug",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "debug 54",
         "active": true,
         "tosidebar": true,
@@ -376,9 +286,9 @@
         "wires": []
     },
     {
-        "id": "0b5da6382a3a626f",
+        "id": "9b0d50f8678cc4be",
         "type": "debug",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "debug 55",
         "active": true,
         "tosidebar": true,
@@ -392,9 +302,9 @@
         "wires": []
     },
     {
-        "id": "834e80bab6cfe9e9",
+        "id": "070cd52b685e8cfc",
         "type": "debug",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "debug 56",
         "active": true,
         "tosidebar": true,
@@ -408,9 +318,9 @@
         "wires": []
     },
     {
-        "id": "283c8031ec939d2c",
+        "id": "6a44bcab95cf8e2e",
         "type": "debug",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "debug 57",
         "active": true,
         "tosidebar": true,
@@ -424,9 +334,9 @@
         "wires": []
     },
     {
-        "id": "01cdbe07c9d0cfee",
+        "id": "18adab484827f35a",
         "type": "debug",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "debug 58",
         "active": true,
         "tosidebar": true,
@@ -440,9 +350,9 @@
         "wires": []
     },
     {
-        "id": "d5929d236fb746f1",
+        "id": "36704b236d9a1b2e",
         "type": "debug",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "debug 59",
         "active": true,
         "tosidebar": true,
@@ -456,6 +366,521 @@
         "wires": []
     },
     {
+        "id": "http_get_departments",
+        "type": "http in",
+        "z": "124419962d0f0420",
+        "name": "GET /api/departments",
+        "url": "/api/departments",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 260,
+        "y": 840,
+        "wires": [
+            [
+                "query_departments"
+            ]
+        ]
+    },
+    {
+        "id": "query_departments",
+        "type": "mysql",
+        "z": "124419962d0f0420",
+        "mydb": "0bdc806336f756dc",
+        "name": "SELECT Departments",
+        "x": 510,
+        "y": 840,
+        "wires": [
+            [
+                "http_resp_departments"
+            ]
+        ]
+    },
+    {
+        "id": "http_resp_departments",
+        "type": "http response",
+        "z": "124419962d0f0420",
+        "name": "Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 730,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "http_get_jobtitles",
+        "type": "http in",
+        "z": "124419962d0f0420",
+        "name": "GET /api/job_titles",
+        "url": "/api/job_titles",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 250,
+        "y": 920,
+        "wires": [
+            [
+                "query_jobtitles"
+            ]
+        ]
+    },
+    {
+        "id": "query_jobtitles",
+        "type": "mysql",
+        "z": "124419962d0f0420",
+        "mydb": "0bdc806336f756dc",
+        "name": "SELECT Job Titles",
+        "x": 500,
+        "y": 920,
+        "wires": [
+            [
+                "http_resp_jobtitles"
+            ]
+        ]
+    },
+    {
+        "id": "http_resp_jobtitles",
+        "type": "http response",
+        "z": "124419962d0f0420",
+        "name": "Response",
+        "statusCode": "",
+        "headers": {},
+        "x": 730,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "http_in_my_meetings",
+        "type": "http in",
+        "z": "124419962d0f0420",
+        "g": "group_my_meetings",
+        "name": "",
+        "url": "/api/meetings/my",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 100,
+        "y": 1040,
+        "wires": [
+            [
+                "func_prepare_sql"
+            ]
+        ]
+    },
+    {
+        "id": "func_prepare_sql",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "g": "group_my_meetings",
+        "name": "Prepare GET Meetings SQL",
+        "func": "// 假定 Token 解析後的使用者 ID 放在 msg.req.user.id\n// 這裡簡單從 query string 或 JWT 讀取 user_id\nlet userId = 1; // 預設測試用，請替換為您系統裡的 JWT 解碼後的使用者 ID\n\nif (msg.req && msg.req.user && msg.req.user.id) {\n    userId = msg.req.user.id;\n}\n\n// 撈取與該使用者有相關聯的會議 (發起人 或 受邀人)\nmsg.topic = `\n    SELECT \n        m.*,\n        u.first_name AS admin_first_name,\n        u.last_name AS admin_last_name,\n        d.dept_name AS admin_dept_name,\n        jt.title_name AS admin_title_name\n    FROM Meetings m\n    JOIN Users u ON m.admin_id = u.id\n    LEFT JOIN Departments d ON u.department_id = d.id\n    LEFT JOIN Job_Titles jt ON u.job_title_id = jt.id\n    WHERE m.admin_id = ? \n       OR m.id IN (SELECT meeting_id FROM Meeting_Participants WHERE user_id = ?)\n    ORDER BY m.created_at DESC;\n`;\n\nmsg.payload = [userId, userId];\nreturn msg;",
+        "outputs": 1,
+        "x": 320,
+        "y": 1040,
+        "wires": [
+            [
+                "mysql_my_meetings"
+            ]
+        ]
+    },
+    {
+        "id": "mysql_my_meetings",
+        "type": "mysql",
+        "z": "124419962d0f0420",
+        "g": "group_my_meetings",
+        "mydb": "0bdc806336f756dc",
+        "name": "MySQL Meetings",
+        "x": 520,
+        "y": 1040,
+        "wires": [
+            [
+                "func_format_response"
+            ]
+        ]
+    },
+    {
+        "id": "func_format_response",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "g": "group_my_meetings",
+        "name": "Format JSON",
+        "func": "msg.payload = msg.payload || [];\nreturn msg;",
+        "outputs": 1,
+        "x": 700,
+        "y": 1040,
+        "wires": [
+            [
+                "http_out_my_meetings"
+            ]
+        ]
+    },
+    {
+        "id": "http_out_my_meetings",
+        "type": "http response",
+        "z": "124419962d0f0420",
+        "g": "group_my_meetings",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 860,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "catch_my_meetings",
+        "type": "catch",
+        "z": "124419962d0f0420",
+        "g": "group_my_meetings",
+        "name": "Catch Errors",
+        "scope": [
+            "mysql_my_meetings",
+            "func_prepare_sql"
+        ],
+        "uncaught": false,
+        "x": 330,
+        "y": 1120,
+        "wires": [
+            [
+                "http_out_error_meetings"
+            ]
+        ]
+    },
+    {
+        "id": "http_out_error_meetings",
+        "type": "http response",
+        "z": "124419962d0f0420",
+        "g": "group_my_meetings",
+        "name": "500 Error",
+        "statusCode": "500",
+        "headers": {},
+        "x": 500,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "e9c8775ddcd41bc4",
+        "type": "http in",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "name": "",
+        "url": "/api/users/list",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 1260,
+        "wires": [
+            [
+                "9b305cf18937b9b6"
+            ]
+        ]
+    },
+    {
+        "id": "9b305cf18937b9b6",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "name": "Prepare Users SQL",
+        "func": "msg.topic = `\n    SELECT u.id, u.first_name, u.last_name, d.dept_name, jt.title_name \n    FROM Users u\n    LEFT JOIN Departments d ON u.department_id = d.id\n    LEFT JOIN Job_Titles jt ON u.job_title_id = jt.id\n    ORDER BY d.id ASC, jt.tier_level ASC;\n`;\nmsg.payload = [];\nreturn msg;",
+        "outputs": 1,
+        "x": 350,
+        "y": 1260,
+        "wires": [
+            [
+                "6b9a749ad06fe415"
+            ]
+        ]
+    },
+    {
+        "id": "6b9a749ad06fe415",
+        "type": "mysql",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "mydb": "0bdc806336f756dc",
+        "name": "MySQL Users",
+        "x": 580,
+        "y": 1260,
+        "wires": [
+            [
+                "d880ab4e17ae449e"
+            ]
+        ]
+    },
+    {
+        "id": "d880ab4e17ae449e",
+        "type": "http response",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 780,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "20a8f3cf8bc6cf3b",
+        "type": "http in",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "name": "",
+        "url": "/api/meetings",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 1360,
+        "wires": [
+            [
+                "9cd82291e7e18ec7"
+            ]
+        ]
+    },
+    {
+        "id": "9cd82291e7e18ec7",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "name": "1. Prepare Meeting Data",
+        "func": "const d = msg.payload;\nlet adminId = 1; \nif (msg.req && msg.req.user && msg.req.user.id) {\n    adminId = msg.req.user.id;\n}\n\nmsg.meetingData = d;\n\nmsg.topic = `\n    INSERT INTO Meetings \n    (title, subject, agenda, government_agenda, discussion_points, location, online_url, duration_minutes, is_online, status, admin_id) \n    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'polling', ?)`;\n\nmsg.payload = [\n    d.title,\n    d.subject || null,\n    d.agenda || null,\n    d.government_agenda || null,\n    d.discussion_points || null,\n    d.location,\n    d.online_url || null,\n    d.duration_minutes,\n    d.is_online ? 1 : 0,\n    adminId\n];\nreturn msg;",
+        "outputs": 1,
+        "x": 370,
+        "y": 1360,
+        "wires": [
+            [
+                "c5226553c7f8f4fd"
+            ]
+        ]
+    },
+    {
+        "id": "c5226553c7f8f4fd",
+        "type": "mysql",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "mydb": "0bdc806336f756dc",
+        "name": "Insert Meeting",
+        "x": 580,
+        "y": 1360,
+        "wires": [
+            [
+                "edc1699eeba4d523"
+            ]
+        ]
+    },
+    {
+        "id": "edc1699eeba4d523",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "name": "2. Prepare Time Slots",
+        "func": "const meetingId = msg.payload.insertId;\nif (!meetingId) throw new Error(\"Meeting insertion failed\");\nmsg.meetingId = meetingId;\n\nconst slots = msg.meetingData.time_slots;\nlet values = [];\nlet params = [];\nslots.forEach(s => {\n    values.push(\"(?, ?, ?)\");\n    params.push(meetingId, s.start, s.end);\n});\n\nmsg.topic = `INSERT INTO Time_Slots (meeting_id, start_time, end_time) VALUES ${values.join(',')}`;\nmsg.payload = params;\nreturn msg;",
+        "outputs": 1,
+        "x": 780,
+        "y": 1360,
+        "wires": [
+            [
+                "7ae215c1b0cc30c2"
+            ]
+        ]
+    },
+    {
+        "id": "7ae215c1b0cc30c2",
+        "type": "mysql",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "mydb": "0bdc806336f756dc",
+        "name": "Insert Slots",
+        "x": 970,
+        "y": 1360,
+        "wires": [
+            [
+                "977c040b7e9f9da2"
+            ]
+        ]
+    },
+    {
+        "id": "3b14db09738b0ebc",
+        "type": "mysql",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "mydb": "0bdc806336f756dc",
+        "name": "Insert Parts",
+        "x": 610,
+        "y": 1440,
+        "wires": [
+            [
+                "59c2f2284a972dab"
+            ]
+        ]
+    },
+    {
+        "id": "59c2f2284a972dab",
+        "type": "http response",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "name": "200 Success",
+        "statusCode": "200",
+        "headers": {},
+        "x": 830,
+        "y": 1440,
+        "wires": []
+    },
+    {
+        "id": "b809faec8f6a2872",
+        "type": "catch",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "name": "Catch Everything",
+        "scope": null,
+        "uncaught": false,
+        "x": 140,
+        "y": 1540,
+        "wires": [
+            [
+                "218f1a5009f43501"
+            ]
+        ]
+    },
+    {
+        "id": "218f1a5009f43501",
+        "type": "http response",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "name": "500 Error",
+        "statusCode": "500",
+        "headers": {},
+        "x": 350,
+        "y": 1540,
+        "wires": []
+    },
+    {
+        "id": "http_in_get_meeting",
+        "type": "http in",
+        "z": "124419962d0f0420",
+        "g": "group_get_single_meeting",
+        "name": "",
+        "url": "/api/meetings/:id",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 1680,
+        "wires": [
+            [
+                "func_prep_get_meeting"
+            ]
+        ]
+    },
+    {
+        "id": "func_prep_get_meeting",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "g": "group_get_single_meeting",
+        "name": "Prepare GET Meeting SQL",
+        "func": "msg.meetingId = msg.req.params.id;\nmsg.topic = `\n    SELECT m.*, u.first_name AS admin_first_name, u.last_name AS admin_last_name\n    FROM Meetings m\n    JOIN Users u ON m.admin_id = u.id\n    WHERE m.id = ?;\n`;\nmsg.payload = [msg.meetingId];\nreturn msg;",
+        "outputs": 1,
+        "x": 360,
+        "y": 1680,
+        "wires": [
+            [
+                "mysql_get_meeting"
+            ]
+        ]
+    },
+    {
+        "id": "mysql_get_meeting",
+        "type": "mysql",
+        "z": "124419962d0f0420",
+        "g": "group_get_single_meeting",
+        "mydb": "0bdc806336f756dc",
+        "name": "Get Meeting Meta",
+        "x": 580,
+        "y": 1680,
+        "wires": [
+            [
+                "func_prep_slots_list"
+            ]
+        ]
+    },
+    {
+        "id": "func_prep_slots_list",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "g": "group_get_single_meeting",
+        "name": "Prepare Slots SQL",
+        "func": "if (!msg.payload || msg.payload.length === 0) {\n    return [null, msg]; \n}\nmsg.meetingMeta = msg.payload[0];\nmsg.topic = \"SELECT * FROM Time_Slots WHERE meeting_id = ?\";\nmsg.payload = [msg.meetingId];\nreturn [msg, null];",
+        "outputs": 2,
+        "x": 160,
+        "y": 1760,
+        "wires": [
+            [
+                "mysql_get_slots"
+            ],
+            [
+                "http_out_meeting_res"
+            ]
+        ]
+    },
+    {
+        "id": "mysql_get_slots",
+        "type": "mysql",
+        "z": "124419962d0f0420",
+        "g": "group_get_single_meeting",
+        "mydb": "0bdc806336f756dc",
+        "name": "Get Slots",
+        "x": 380,
+        "y": 1760,
+        "wires": [
+            [
+                "func_format_meeting_res"
+            ]
+        ]
+    },
+    {
+        "id": "func_format_meeting_res",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "g": "group_get_single_meeting",
+        "name": "Format Response",
+        "func": "msg.payload = {\n    ...msg.meetingMeta,\n    time_slots: msg.payload\n};\nreturn msg;",
+        "outputs": 1,
+        "x": 560,
+        "y": 1760,
+        "wires": [
+            [
+                "http_out_meeting_res"
+            ]
+        ]
+    },
+    {
+        "id": "http_out_meeting_res",
+        "type": "http response",
+        "z": "124419962d0f0420",
+        "g": "group_get_single_meeting",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 780,
+        "y": 1760,
+        "wires": []
+    },
+    {
+        "id": "catch_get_meeting",
+        "type": "catch",
+        "z": "124419962d0f0420",
+        "g": "group_get_single_meeting",
+        "name": "Catch Error",
+        "scope": null,
+        "uncaught": false,
+        "x": 140,
+        "y": 1820,
+        "wires": [
+            [
+                "http_out_meeting_res"
+            ]
+        ]
+    },
+    {
         "id": "0bdc806336f756dc",
         "type": "MySQLdatabase",
         "name": "",
@@ -465,11 +890,98 @@
         "tz": "",
         "charset": "UTF8"
     },
-
+    {
+        "id": "393785d52015c177",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "name": "準備 Google API 請求",
+        "func": "/**\n * 節點 A：準備呼叫 Google API (第 2 個節點)\n */\n\n// 取得前端 POST 過來的 token\nlet googleToken = msg.payload.token;\n\nif (!googleToken) {\n    msg.payload = { error: \"缺少 Google Token\" };\n    msg.statusCode = 400;\n    return [null, msg]; // 結束流程並跳到錯誤回應\n}\n\n// 設定 HTTP Request 節點要呼叫的目標網址\nmsg.url = \"https://oauth2.googleapis.com/tokeninfo?id_token=\" + googleToken;\nmsg.method = \"GET\";\n\nreturn [msg, null];",
+        "outputs": 2,
+        "x": 380,
+        "y": 120,
+        "wires": [
+            [
+                "5b4ab398b3886f4b",
+                "d365704fa76468e1"
+            ],
+            [
+                "4c09a6a47d45bff3"
+            ]
+        ]
+    },
+    {
+        "id": "a91cf307603cde4c",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "name": "解析結果並準備 MySQL",
+        "func": "/**\n * 節點 B：解析 Google 回應並查詢 MySQL (第 4 個節點)\n */\n\n// 解析 Google 回傳的 JSON 資料\nlet googleData = typeof msg.payload === 'string' ? JSON.parse(msg.payload) : msg.payload;\n\n// 檢查 Google 是否回傳錯誤\nif (googleData.error) {\n    msg.payload = { error: \"Google 驗證失敗\", details: googleData.error_description };\n    msg.statusCode = 401;\n    return [null, msg]; \n}\n\n// 提取出安全且經過驗證的 Email 和 姓名\nlet userEmail = googleData.email;\nlet firstName = googleData.given_name || '';\nlet lastName = googleData.family_name || '';\n\n// 將基本資料暫存起來，後面會用到\nmsg.userData = {\n    email: userEmail,\n    first_name: firstName,\n    last_name: lastName\n};\n\n// 組裝 MySQL 查詢指令：檢查此 Email 是否存在我們的 Users 表中\nmsg.topic = \"SELECT * FROM Users WHERE email = ? LIMIT 1\";\nmsg.payload = [userEmail];\n\nreturn [msg, null];",
+        "outputs": 2,
+        "x": 190,
+        "y": 240,
+        "wires": [
+            [
+                "8e635957712faec4"
+            ],
+            [
+                "4c09a6a47d45bff3",
+                "90c1ba422e906c82"
+            ]
+        ]
+    },
+    {
+        "id": "15b0f2e403805e65",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "name": "登入邏輯判斷",
+        "func": "/**\n * 節點 C：判斷登入狀態與核發 Token (第 6 個節點)\n */\n\nlet dbResult = msg.payload;\n\nif (dbResult.length > 0) {\n    let user = dbResult[0];\n    \n    if (user.department_id === null || user.job_title_id === null) {\n        msg.payload = { \n            message: \"請補齊單位與職稱資料\", \n            action: \"REQUIRE_INFO\",\n            email: msg.userData.email\n        };\n        msg.statusCode = 206;\n    } else {\n        let role = (user.email === \"yi.kuei.co@gmail.com\") ? \"super_admin\" : (user.global_role || \"user\");\n        let sessionToken = \"sys_token_\" + role + \"_\" + new Date().getTime() + \"_\" + user.id; \n        \n        msg.payload = { \n            message: \"登入成功\", \n            action: \"LOGIN_SUCCESS\",\n            token: sessionToken,\n            user: {\n                id: user.id,\n                name: user.last_name + user.first_name,\n                global_role: role,\n                last_name: user.last_name,\n                department_id: user.department_id,\n                job_title_id: user.job_title_id,\n                email: user.email\n            }\n        };\n        msg.statusCode = 200;\n    }\n} else {\n    msg.payload = { \n        message: \"歡迎首次登入，請填寫您的單位與職稱\", \n        action: \"REQUIRE_INFO\",\n        email: msg.userData.email,\n        first_name: msg.userData.first_name,\n        last_name: msg.userData.last_name\n    };\n    msg.statusCode = 206;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "x": 630,
+        "y": 240,
+        "wires": [
+            [
+                "4c09a6a47d45bff3",
+                "9b0d50f8678cc4be"
+            ]
+        ]
+    },
+    {
+        "id": "982bb0a24f90e078",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "name": "準備 INSERT MySQL",
+        "func": "let data = msg.payload;\nif (!data.email || !data.first_name || !data.last_name || (!data.department_id && data.department_id !== 0) || (!data.job_title_id && data.job_title_id !== 0)) {\n    msg.payload = { error: '註冊資料不完整', received: data };\n    msg.statusCode = 400;\n    return [null, msg];\n}\nmsg.userData = data;\nmsg.topic = 'INSERT INTO Users (email, first_name, last_name, department_id, job_title_id) VALUES (?, ?, ?, ?, ?)';\nmsg.payload = [data.email, data.first_name, data.last_name, data.department_id, data.job_title_id];\nreturn [msg, null];",
+        "outputs": 2,
+        "x": 410,
+        "y": 360,
+        "wires": [
+            [
+                "f595b69a0fd326c3"
+            ],
+            [
+                "e42553cb9572c93a",
+                "6a44bcab95cf8e2e"
+            ]
+        ]
+    },
+    {
+        "id": "cfd5d8dcc48ca58f",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "name": "註冊成功核發 Token",
+        "func": "let sessionToken = 'sys_token_creator_' + new Date().getTime() + '_' + Buffer.from(msg.userData.email).toString('base64');\nmsg.payload = {\n    message: '註冊並登入成功',\n    action: 'LOGIN_SUCCESS',\n    token: sessionToken,\n    user: {\n        name: msg.userData.last_name + msg.userData.first_name,\n        last_name: msg.userData.last_name,\n        department_id: msg.userData.department_id,\n        job_title_id: msg.userData.job_title_id,\n        email: msg.userData.email\n    }\n};\nmsg.statusCode = 200;\nreturn msg;",
+        "outputs": 1,
+        "x": 850,
+        "y": 360,
+        "wires": [
+            [
+                "e42553cb9572c93a"
+            ]
+        ]
+    },
     {
         "id": "admin_get_users_in",
         "type": "http in",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "GET /api/admin/users",
         "url": "/api/admin/users",
         "method": "get",
@@ -482,7 +994,7 @@
     {
         "id": "admin_put_role_in",
         "type": "http in",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "PUT /api/admin/users/role",
         "url": "/api/admin/users/role",
         "method": "put",
@@ -495,23 +1007,24 @@
     {
         "id": "admin_auth_middleware",
         "type": "function",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "Admin Auth Guard",
-        "func": "const authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    if (token.includes('super_admin')) {\n        return [msg, null];\n    }\n}\nmsg.payload = { error: 'Unauthorized', message: '管�?權�?不足' };\nmsg.statusCode = 403;\nreturn [null, msg];",
+        "func": "const authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    if (token.includes('super_admin')) {\n        return [msg, null];\n    }\n}\nmsg.payload = { error: 'Unauthorized', message: '管理權限不足' };\nmsg.statusCode = 403;\nreturn [null, msg];",
         "outputs": 2,
         "wires": [
             [
-                "admin_routing_switch"
+                "admin_routing_switch",
+                "admin_debug_success"
             ],
             [
-                "54bcf19b46711739"
+                "4c09a6a47d45bff3"
             ]
         ]
     },
     {
         "id": "admin_routing_switch",
         "type": "switch",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "Route by Method",
         "property": "req.method",
         "propertyType": "msg",
@@ -542,7 +1055,7 @@
     {
         "id": "admin_prep_get_sql",
         "type": "function",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "Prepare GET Users SQL",
         "func": "msg.topic = 'SELECT u.id, u.name, u.first_name, u.last_name, u.email, d.dept_name as dept, u.global_role as role FROM Users u LEFT JOIN Departments d ON u.department_id = d.id';\nreturn msg;",
         "outputs": 1,
@@ -555,7 +1068,7 @@
     {
         "id": "admin_prep_put_sql",
         "type": "function",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "name": "Prepare PUT Role SQL",
         "func": "let data = msg.payload;\nif (!data.user_id || !data.new_role) {\n    msg.statusCode = 400;\n    msg.payload = { error: 'Missing parameters' };\n    return [null, msg];\n}\nmsg.topic = 'UPDATE Users SET global_role = ? WHERE id = ?';\nmsg.payload = [data.new_role, data.user_id];\nreturn [msg, null];",
         "outputs": 2,
@@ -564,21 +1077,46 @@
                 "admin_mysql_node"
             ],
             [
-                "54bcf19b46711739"
+                "4c09a6a47d45bff3"
             ]
         ]
     },
     {
         "id": "admin_mysql_node",
         "type": "mysql",
-        "z": "ea4442fe01f5d3d8",
+        "z": "124419962d0f0420",
         "mydb": "0bdc806336f756dc",
         "name": "Admin MySQL",
         "wires": [
             [
-                "54bcf19b46711739"
+                "4c09a6a47d45bff3"
             ]
         ]
+    },
+    {
+        "id": "admin_debug_success",
+        "type": "debug",
+        "z": "124419962d0f0420",
+        "name": "Admin Auth Success",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "complete": "true",
+        "x": 600,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "admin_debug_error",
+        "type": "debug",
+        "z": "124419962d0f0420",
+        "name": "Admin Error Catch",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "complete": "true",
+        "x": 600,
+        "y": 750,
+        "wires": []
     }
-
 ]

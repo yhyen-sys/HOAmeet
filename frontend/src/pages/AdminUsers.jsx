@@ -17,8 +17,19 @@ export default function AdminUsers() {
             try {
                 const res = await fetchAPI('/admin/users');
                 if (res.ok) {
-                    const data = await res.json();
-                    setUsers(Array.isArray(data) ? data : []);
+                    const contentType = res.headers.get("content-type");
+                    if (contentType && contentType.includes("application/json")) {
+                        const data = await res.json();
+                        setUsers(Array.isArray(data) ? data : []);
+                    } else {
+                        const text = await res.text();
+                        console.error("預期收到 JSON 但收到:", contentType, text.substring(0, 100));
+                        throw new Error("伺服器回傳格式不正確 (可能是 HTML)");
+                    }
+                } else {
+                    const text = await res.text();
+                    console.error("API 請求失敗:", res.status, text);
+                    throw new Error(`伺服器回應錯誤: ${res.status}`);
                 }
             } catch (err) {
                 console.error("載入使用者失敗:", err);
