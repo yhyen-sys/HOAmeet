@@ -22,6 +22,39 @@ export default function Calendar() {
     const [selectedSlots, setSelectedSlots] = useState([]);
     const [heatmapData, setHeatmapData] = useState([]);
     const [meeting, setMeeting] = useState(null);
+    const [otherMeetingsEvents, setOtherMeetingsEvents] = useState([]);
+
+    useEffect(() => {
+        const loadOtherMeetings = async () => {
+            try {
+                // Fetch all user's meetings
+                const res = await fetchAPI('/meetings/my');
+                if (res.ok) {
+                    const allMeetings = await res.json();
+                    const confirmed = allMeetings.filter(m =>
+                        m.status === 'confirmed' &&
+                        m.id !== parseInt(meetingId) &&
+                        m.confirmed_start && m.confirmed_end
+                    );
+
+                    const events = confirmed.map(m => ({
+                        id: `conf_${m.id}`,
+                        title: `🔒 ${m.title} (已排定)`,
+                        start: m.confirmed_start,
+                        end: m.confirmed_end,
+                        backgroundColor: 'rgba(100, 116, 139, 0.4)',
+                        borderColor: '#64748b',
+                        editable: false,
+                        classNames: ['confirmed-meeting-event']
+                    }));
+                    setOtherMeetingsEvents(events);
+                }
+            } catch (error) {
+                console.error("載入其他會議失敗:", error);
+            }
+        };
+        loadOtherMeetings();
+    }, [meetingId]);
 
     useEffect(() => {
         const loadMeeting = async () => {
@@ -92,9 +125,8 @@ export default function Calendar() {
 
     const handleEventClick = (clickInfo) => {
         if (clickInfo.event.classNames.includes('selectable-event')) {
-            if (confirm('確定要取消這個時段嗎？')) {
-                setSelectedSlots(selectedSlots.filter(s => s.id !== clickInfo.event.id));
-            }
+            // 直接取消，不再詢問
+            setSelectedSlots(prev => prev.filter(s => s.id !== clickInfo.event.id));
         } else if (hasAdminRights() && clickInfo.event.extendedProps.isHeatmap) {
             // 顯示神明視角 Tooltip
             tippy(clickInfo.el, {
@@ -151,7 +183,7 @@ export default function Calendar() {
         extendedProps: { isHeatmap: true, score: h.score, isTop: h.isTop, availableCount: h.availableCount }
     }));
 
-    const allEvents = [...heatmapEvents, ...selectedSlots];
+    const allEvents = [...heatmapEvents, ...otherMeetingsEvents, ...selectedSlots];
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-6xl z-10 relative">
