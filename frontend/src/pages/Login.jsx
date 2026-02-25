@@ -95,10 +95,7 @@ export default function Login() {
             }
         } catch (err) {
             console.error("Google Auth Error:", err);
-            const errorMsg = err.message === "Authentication failed"
-                ? "後端驗證失敗 (可能是 Client ID 不匹配或後端 API 異常)"
-                : `網路連線失敗 (${err.message})。請檢查後端服務是否運行中，以及 API_BASE 是否正確。`;
-            alert(errorMsg);
+            alert("Google 驗證失敗：連線或驗證過程發生錯誤。請確認網路狀態或稍後再試。");
         }
     };
 
