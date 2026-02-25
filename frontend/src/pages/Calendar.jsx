@@ -16,7 +16,7 @@ import Header from '../components/Header';
 export default function Calendar() {
     const { uuid } = useParams();
     const navigate = useNavigate();
-    const { hasAdminRights } = useAuthStore();
+    const { user, hasAdminRights } = useAuthStore();
     const calendarRef = useRef(null);
 
     const [selectedSlots, setSelectedSlots] = useState([]);
@@ -207,14 +207,24 @@ export default function Calendar() {
                     </div>
                 }
                 customRightAction={
-                    hasAdminRights() && (
-                        <button
-                            onClick={() => alert("✅ 已拍板此時段！")}
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-500 hover:opacity-90 font-bold text-white shadow-lg transition-all"
-                        >
-                            <CheckCircle className="w-4 h-4" /> 管理者定案
-                        </button>
-                    )
+                    <div className="flex gap-3">
+                        {user && meeting && user.id === meeting.admin_id && (
+                            <button
+                                onClick={() => navigate(`/meetings/edit/${meeting.uuid}`)}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 font-bold text-stone-200 transition-all"
+                            >
+                                ✏️ 編輯會議
+                            </button>
+                        )}
+                        {hasAdminRights() && (
+                            <button
+                                onClick={() => alert("✅ 已拍板此時段！")}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-500 hover:opacity-90 font-bold text-white shadow-lg transition-all"
+                            >
+                                <CheckCircle className="w-4 h-4" /> 管理者定案
+                            </button>
+                        )}
+                    </div>
                 }
             />
 

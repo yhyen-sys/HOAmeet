@@ -36,6 +36,7 @@ function App() {
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/calendar/:uuid" element={<PrivateRoute><Calendar /></PrivateRoute>} />
           <Route path="/meetings/new" element={<PrivateRoute><CreateMeeting /></PrivateRoute>} />
+          <Route path="/meetings/edit/:uuid" element={<PrivateRoute><CreateMeeting /></PrivateRoute>} />
 
           {/* Admin Routes - Should be protected by Role later */}
           <Route path="/admin/users" element={<PrivateRoute><AdminUsers /></PrivateRoute>} />

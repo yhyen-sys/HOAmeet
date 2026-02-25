@@ -7,7 +7,7 @@ import { Plus, Settings, Calendar as CalendarIcon, ChevronDown, AlignLeft, Info,
 import Header from '../components/Header';
 
 export default function Dashboard() {
-    const { hasAdminRights, isSuperAdmin } = useAuthStore();
+    const { user, hasAdminRights, isSuperAdmin } = useAuthStore();
     const navigate = useNavigate();
     const [meetings, setMeetings] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -152,12 +152,20 @@ export default function Dashboard() {
                                                                 <p className="pl-6 whitespace-pre-wrap">{m.discussion_points}</p>
                                                             </div>
                                                         )}
-                                                        <div className="pt-4 flex justify-end">
+                                                        <div className="pt-4 flex justify-end gap-3">
+                                                            {user && user.id === m.admin_id && (
+                                                                <button
+                                                                    onClick={(e) => { e.stopPropagation(); navigate(`/meetings/edit/${m.uuid}`); }}
+                                                                    className="px-4 py-2 bg-white/5 hover:bg-white/10 text-stone-300 rounded-lg text-xs font-semibold transition-colors border border-white/20 hover:border-white/40"
+                                                                >
+                                                                    ✏️ 編輯
+                                                                </button>
+                                                            )}
                                                             <button
                                                                 onClick={(e) => { e.stopPropagation(); navigate(`/calendar/${m.uuid}`); }}
                                                                 className="px-4 py-2 bg-white/5 hover:bg-white/10 text-amber-400 rounded-lg text-xs font-semibold transition-colors border border-amber-500/30 hover:border-amber-400"
                                                             >
-                                                                查看完整名單與報表 &rarr;
+                                                                查看完整報表 &rarr;
                                                             </button>
                                                         </div>
                                                     </div>

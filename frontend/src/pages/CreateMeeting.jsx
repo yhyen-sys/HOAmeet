@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, Calendar as CalendarIcon, Users, CheckCircle2, FileText, Plus, Trash2, UserCheck, Search } from 'lucide-react';
 import Header from '../components/Header';
@@ -7,6 +7,9 @@ import { fetchAPI } from '../utils/api';
 
 export default function CreateMeeting() {
     const navigate = useNavigate();
+    const { uuid } = useParams();
+    const isEditMode = Boolean(uuid);
+
     const [step, setStep] = useState(1);
     const [submitting, setSubmitting] = useState(false);
 
@@ -43,6 +46,55 @@ export default function CreateMeeting() {
         };
         loadUsers();
     }, []);
+
+    // 編輯模式：載入既有會議資料
+    useEffect(() => {
+        if (!isEditMode) return;
+        const loadMeeting = async () => {
+            try {
+                const res = await fetchAPI(`/meetings/${uuid}`);
+                if (res.ok) {
+                    const data = await res.json();
+
+                    // 格式化時間以符合 datetime-local input
+                    const formatLocal = (dateStr) => {
+                        if (!dateStr) return '';
+                        const d = new Date(dateStr);
+                        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+                        return d.toISOString().slice(0, 16);
+                    };
+
+                    const formattedSlots = data.time_slots ? data.time_slots.map(s => ({
+                        start: formatLocal(s.start_time),
+                        end: formatLocal(s.end_time)
+                    })) : [{ start: '', end: '' }];
+
+                    setFormData({
+                        title: data.title || '',
+                        subject: data.subject || '',
+                        agenda: data.agenda || '',
+                        government_agenda: data.government_agenda || '',
+                        discussion_points: data.discussion_points || '',
+                        location: data.location || '',
+                        online_url: data.online_url || '',
+                        duration_minutes: data.duration_minutes || 60,
+                        is_online: Boolean(data.is_online),
+                        time_slots: formattedSlots.length > 0 ? formattedSlots : [{ start: '', end: '' }],
+                        participants: data.participants ? data.participants.map(p => ({
+                            user_id: p.user_id,
+                            is_mandatory: Boolean(p.is_mandatory)
+                        })) : []
+                    });
+                } else {
+                    alert("無法載入會議資料，可能不存在或您無權威編輯。");
+                    navigate('/dashboard');
+                }
+            } catch (err) {
+                console.error("載入會議資料失敗:", err);
+            }
+        };
+        loadMeeting();
+    }, [uuid, isEditMode, navigate]);
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -94,18 +146,17 @@ export default function CreateMeeting() {
     const handleSubmit = async () => {
         setSubmitting(true);
         try {
-            const res = await fetchAPI('/meetings', {
-                method: 'POST',
+            const res = await fetchAPI(isEditMode ? `/meetings/${uuid}` : '/meetings', {
+                method: isEditMode ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)
             });
 
             if (res.ok) {
-                const data = await res.json();
-                alert('會議籌備發起成功！');
+                alert(isEditMode ? '會議更新成功！' : '會議籌備發起成功！');
                 navigate('/dashboard');
             } else {
-                alert('發起失敗，請檢查資料或稍後再試。');
+                alert(isEditMode ? '更新失敗，請稍後再試。' : '發起失敗，請檢查資料或稍後再試。');
             }
         } catch (error) {
             console.error(error);
@@ -141,7 +192,7 @@ export default function CreateMeeting() {
             { icon: FileText, label: '基本資訊' },
             { icon: CalendarIcon, label: '時間調查' },
             { icon: Users, label: '參與者名單' },
-            { icon: CheckCircle2, label: '確認發起' }
+            { icon: CheckCircle2, label: isEditMode ? '儲存變更' : '確認發起' }
         ];
 
         return (
@@ -352,7 +403,7 @@ export default function CreateMeeting() {
         <div className="space-y-6">
             <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-6">
                 <h3 className="text-xl font-bold text-amber-400 mb-6 flex items-center gap-2">
-                    <CheckCircle2 className="w-6 h-6" /> 即將發出會議調查
+                    <CheckCircle2 className="w-6 h-6" /> {isEditMode ? '儲存變更前最後確認' : '即將發出會議調查'}
                 </h3>
 
                 <div className="space-y-4 text-sm text-stone-300">
@@ -396,14 +447,14 @@ export default function CreateMeeting() {
                 </div>
             </div>
             <p className="text-center text-stone-400 text-xs mt-4">
-                按下發起會議後，系統將自動寄發通知與時段調查給所有參與者。
+                {isEditMode ? '按下儲存後，會議資料與時段將被覆寫更新。' : '按下發起會議後，系統將自動寄發通知與時段調查給所有參與者。'}
             </p>
         </div>
     );
 
     return (
         <div className="container mx-auto px-4 py-12 max-w-4xl z-10 relative">
-            <Header title="HOAmeet / 發起會議" showUser={true} />
+            <Header title={isEditMode ? "HOAmeet / 編輯會議" : "HOAmeet / 發起會議"} showUser={true} />
 
             <div className="glass-panel p-8 mt-6">
                 {renderStepIndicators()}
@@ -444,7 +495,7 @@ export default function CreateMeeting() {
                             disabled={submitting}
                             className={`flex items-center gap-2 px-8 py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-semibold rounded-xl shadow-lg shadow-emerald-500/20 transition-all ${submitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
-                            {submitting ? '處理中...' : '確認並發起會議'}
+                            {submitting ? '處理中...' : (isEditMode ? '確認並儲存變更' : '確認並發起會議')}
                         </button>
                     )}
                 </div>
