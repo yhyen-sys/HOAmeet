@@ -18,7 +18,7 @@ export default function AdminUsers() {
                 const res = await fetchAPI('/admin/users');
                 if (res.ok) {
                     const data = await res.json();
-                    setUsers(data);
+                    setUsers(Array.isArray(data) ? data : []);
                 }
             } catch (err) {
                 console.error("載入使用者失敗:", err);
@@ -50,11 +50,15 @@ export default function AdminUsers() {
         }
     };
 
-    const filteredUsers = users.filter(u =>
-        u.name.includes(searchTerm) ||
-        u.email.includes(searchTerm) ||
-        u.dept.includes(searchTerm)
-    );
+    const filteredUsers = Array.isArray(users) ? users.filter(u => {
+        const name = u.name || `${u.last_name || ''}${u.first_name || ''}` || "未命名";
+        const email = u.email || "";
+        const dept = u.dept || "未分配單位";
+
+        return name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            dept.toLowerCase().includes(searchTerm.toLowerCase());
+    }) : [];
 
     return (
         <div className="container mx-auto px-4 py-8 max-w-5xl z-10 relative">
@@ -98,21 +102,22 @@ export default function AdminUsers() {
                             {filteredUsers.map(u => {
                                 const isSelf = (user && u.id === user.id) || u.role === 'super_admin';
                                 const isChecked = u.role === 'creator' || u.role === 'super_admin';
+                                const displayName = u.name || `${u.last_name || ''}${u.first_name || ''}` || "未命名";
 
                                 return (
                                     <tr key={u.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                         <td className="p-5">
                                             <div className="flex items-center gap-3">
                                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white shadow-inner ${isSelf ? 'bg-red-500' : 'bg-amber-500'}`}>
-                                                    {u.name.substring(0, 2)}
+                                                    {displayName.substring(0, 2)}
                                                 </div>
                                                 <div className="flex flex-col">
-                                                    <span className="font-semibold text-stone-200 text-sm">{u.name}</span>
+                                                    <span className="font-semibold text-stone-200 text-sm">{displayName}</span>
                                                     <span className="text-xs text-stone-400">{u.email}</span>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="p-5 text-sm text-stone-300">{u.dept}</td>
+                                        <td className="p-5 text-sm text-stone-300">{u.dept || "未分配"}</td>
                                         <td className="p-5">
                                             {u.role === 'super_admin' && <span className="text-amber-400 font-bold text-sm">超級管理者</span>}
                                             {u.role === 'creator' && <span className="text-amber-400 text-sm">授權發起人</span>}
