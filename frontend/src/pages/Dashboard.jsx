@@ -72,7 +72,7 @@ export default function Dashboard() {
                                     <div key={m.id} className={`group bg-white/5 border border-white/10 rounded-2xl transition-all ${isExpanded ? 'bg-white/10 border-amber-500/30' : 'hover:bg-white/10 hover:border-amber-400/50'}`}>
                                         {/* Header Row */}
                                         <div
-                                            onClick={() => isConfirmed ? toggleExpand(m.id) : navigate(`/calendar/${m.id}`)}
+                                            onClick={() => isConfirmed ? toggleExpand(m.id) : navigate(`/calendar/${m.uuid}`)}
                                             className="p-6 flex justify-between items-center cursor-pointer"
                                         >
                                             <div className="flex-1 pr-4">
@@ -154,7 +154,7 @@ export default function Dashboard() {
                                                         )}
                                                         <div className="pt-4 flex justify-end">
                                                             <button
-                                                                onClick={(e) => { e.stopPropagation(); navigate(`/calendar/${m.id}`); }}
+                                                                onClick={(e) => { e.stopPropagation(); navigate(`/calendar/${m.uuid}`); }}
                                                                 className="px-4 py-2 bg-white/5 hover:bg-white/10 text-amber-400 rounded-lg text-xs font-semibold transition-colors border border-amber-500/30 hover:border-amber-400"
                                                             >
                                                                 查看完整名單與報表 &rarr;

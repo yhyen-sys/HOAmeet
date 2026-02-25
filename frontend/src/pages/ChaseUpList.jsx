@@ -7,7 +7,7 @@ import { fetchAPI } from '../utils/api';
 import Header from '../components/Header';
 
 export default function ChaseUpList() {
-    const { id: meetingId } = useParams();
+    const { uuid } = useParams();
     const navigate = useNavigate();
     const { hasAdminRights } = useAuthStore();
     const [participants, setParticipants] = useState([]);
@@ -16,7 +16,7 @@ export default function ChaseUpList() {
     useEffect(() => {
         const loadMeeting = async () => {
             try {
-                const res = await fetchAPI(`/meetings/${meetingId}`);
+                const res = await fetchAPI(`/meetings/${uuid}`);
                 if (res.ok) {
                     setMeeting(await res.json());
                 }
@@ -25,7 +25,7 @@ export default function ChaseUpList() {
             }
         };
         loadMeeting();
-    }, [meetingId]);
+    }, [uuid]);
 
     useEffect(() => {
         // 實務上應檢查權限並呼叫 API 取得追蹤清單
@@ -40,7 +40,7 @@ export default function ChaseUpList() {
             { id: 2, name: "林雪柔 專員", dept: "學術單位", status: "pending" },
             { id: 3, name: "張智傑 助理", dept: "公共關係室", status: "pending" }
         ]);
-    }, [meetingId, hasAdminRights, navigate]);
+    }, [uuid, hasAdminRights, navigate]);
 
     const remindAll = () => {
         // 實務上這裡可以呼叫後端 API 觸發 Email 發送機制
@@ -55,7 +55,7 @@ export default function ChaseUpList() {
         <div className="container mx-auto px-4 py-8 max-w-4xl z-10 relative">
             <Header
                 title={<span>📊 {meeting ? meeting.title : '載入中...'}</span>}
-                description={<span>會議的更動收悉回報狀況 (編號 #{meetingId})</span>}
+                description={<span>會議的更動收悉回報狀況</span>}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

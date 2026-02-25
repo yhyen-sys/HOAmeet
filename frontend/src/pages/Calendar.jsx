@@ -14,7 +14,7 @@ import { fetchAPI } from '../utils/api';
 import Header from '../components/Header';
 
 export default function Calendar() {
-    const { id: meetingId } = useParams();
+    const { uuid } = useParams();
     const navigate = useNavigate();
     const { hasAdminRights } = useAuthStore();
     const calendarRef = useRef(null);
@@ -33,7 +33,7 @@ export default function Calendar() {
                     const allMeetings = await res.json();
                     const confirmed = allMeetings.filter(m =>
                         m.status === 'confirmed' &&
-                        m.id !== parseInt(meetingId) &&
+                        m.uuid !== uuid &&
                         m.confirmed_start && m.confirmed_end
                     );
 
@@ -59,7 +59,7 @@ export default function Calendar() {
     useEffect(() => {
         const loadMeeting = async () => {
             try {
-                const res = await fetchAPI(`/meetings/${meetingId}`);
+                const res = await fetchAPI(`/meetings/${uuid}`);
                 if (res.ok) {
                     const data = await res.json();
                     setMeeting(data);
@@ -74,7 +74,7 @@ export default function Calendar() {
             }
         };
         loadMeeting();
-    }, [meetingId]);
+    }, [uuid]);
 
     const handleSelect = (selectInfo) => {
         // 避免跨日選取
@@ -158,7 +158,7 @@ export default function Calendar() {
             const res = await fetchAPI(`/user/availability`, {
                 method: 'POST',
                 body: JSON.stringify({
-                    meeting_id: meetingId,
+                    meeting_uuid: uuid,
                     slots: dbSlots
                 })
             });

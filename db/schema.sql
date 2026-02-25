@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS Users (
 -- 會議主表
 CREATE TABLE IF NOT EXISTS Meetings (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    uuid VARCHAR(36) UNIQUE NOT NULL COMMENT '不可預測的會議唯一識別碼',
     title VARCHAR(200) NOT NULL,
     subject TEXT NULL COMMENT '會議主旨',
     agenda TEXT NULL COMMENT '議程',

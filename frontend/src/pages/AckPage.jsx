@@ -7,7 +7,7 @@ const API_BASE = "http://localhost:1880/api";
 
 export default function AckPage() {
     const [searchParams] = useSearchParams();
-    const m_id = searchParams.get('m_id') || searchParams.get('uid');
+    const m_id = searchParams.get('uid') || searchParams.get('uuid') || searchParams.get('m_id');
     const u_id = searchParams.get('u_id') || searchParams.get('user');
     const token = searchParams.get('token');
 
