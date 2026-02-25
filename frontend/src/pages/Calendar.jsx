@@ -184,7 +184,7 @@ export default function Calendar() {
                     headerToolbar={{
                         left: 'prev,next today',
                         center: 'title',
-                        right: 'timeGridWeek,timeGridDay'
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
                     }}
                     slotMinTime="08:00:00"
                     slotMaxTime="20:00:00"
@@ -194,7 +194,34 @@ export default function Calendar() {
                     selectMirror={true}
                     selectOverlap={true}
                     unselectAuto={false}
-                    select={handleSelect}
+                    select={(selectInfo) => {
+                        if (selectInfo.allDay) {
+                            // all-day 就會選取 8am-5pm, 不包含 12pm-1:30pm
+                            const dateStr = selectInfo.startStr.split('T')[0];
+                            const morningSlot = {
+                                id: `m_${Date.now()}_1`,
+                                start: `${dateStr}T08:00:00`,
+                                end: `${dateStr}T12:00:00`,
+                                display: 'auto',
+                                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                                borderColor: '#10b981',
+                                classNames: ['selectable-event']
+                            };
+                            const afternoonSlot = {
+                                id: `m_${Date.now()}_2`,
+                                start: `${dateStr}T13:30:00`,
+                                end: `${dateStr}T17:00:00`,
+                                display: 'auto',
+                                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                                borderColor: '#10b981',
+                                classNames: ['selectable-event']
+                            };
+                            setSelectedSlots(prev => [...prev, morningSlot, afternoonSlot]);
+                        } else {
+                            handleSelect(selectInfo);
+                        }
+                        selectInfo.view.calendar.unselect();
+                    }}
                     eventClick={handleEventClick}
                     events={allEvents}
                     eventContent={(arg) => {
