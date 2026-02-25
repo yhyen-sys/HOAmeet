@@ -54,7 +54,7 @@ export default function Calendar() {
             }
         };
         loadOtherMeetings();
-    }, [meetingId]);
+    }, [uuid]);
 
     useEffect(() => {
         const loadMeeting = async () => {
