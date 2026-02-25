@@ -6,10 +6,9 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { motion } from 'framer-motion';
-import { ArrowLeft, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
-import 'tippy.js/themes/light.css';
 import 'tippy.js/themes/light.css';
 import { fetchAPI } from '../utils/api';
 import Header from '../components/Header';
@@ -46,23 +45,48 @@ export default function Calendar() {
 
     const handleSelect = (selectInfo) => {
         // 避免跨日選取
-        if (selectInfo.start.getDate() !== selectInfo.end.getDate()) {
+        if (!selectInfo.allDay && selectInfo.start.getDate() !== selectInfo.end.getDate()) {
             alert("請勿跨日選取時段");
             selectInfo.view.calendar.unselect();
             return;
         }
 
-        const newSlot = {
-            id: `m_${Date.now()}`,
-            start: selectInfo.startStr,
-            end: selectInfo.endStr,
-            display: 'auto',
-            backgroundColor: 'rgba(16, 185, 129, 0.8)',
-            borderColor: '#10b981',
-            classNames: ['selectable-event']
-        };
+        if (selectInfo.allDay) {
+            // all-day 就會選取 8am-5pm, 不包含 12pm-1:30pm
+            const dateStr = selectInfo.startStr.split('T')[0];
+            const timestamp = Date.now();
+            const morningSlot = {
+                id: `m_${timestamp}_1`,
+                start: `${dateStr}T08:00:00`,
+                end: `${dateStr}T12:00:00`,
+                display: 'auto',
+                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                borderColor: '#10b981',
+                classNames: ['selectable-event']
+            };
+            const afternoonSlot = {
+                id: `m_${timestamp}_2`,
+                start: `${dateStr}T13:30:00`,
+                end: `${dateStr}T17:00:00`,
+                display: 'auto',
+                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                borderColor: '#10b981',
+                classNames: ['selectable-event']
+            };
+            setSelectedSlots(prev => [...prev, morningSlot, afternoonSlot]);
+        } else {
+            const newSlot = {
+                id: `m_${Date.now()}`,
+                start: selectInfo.startStr,
+                end: selectInfo.endStr,
+                display: 'auto',
+                backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                borderColor: '#10b981',
+                classNames: ['selectable-event']
+            };
+            setSelectedSlots(prev => [...prev, newSlot]);
+        }
 
-        setSelectedSlots([...selectedSlots, newSlot]);
         selectInfo.view.calendar.unselect();
     };
 
@@ -194,34 +218,7 @@ export default function Calendar() {
                     selectMirror={true}
                     selectOverlap={true}
                     unselectAuto={false}
-                    select={(selectInfo) => {
-                        if (selectInfo.allDay) {
-                            // all-day 就會選取 8am-5pm, 不包含 12pm-1:30pm
-                            const dateStr = selectInfo.startStr.split('T')[0];
-                            const morningSlot = {
-                                id: `m_${Date.now()}_1`,
-                                start: `${dateStr}T08:00:00`,
-                                end: `${dateStr}T12:00:00`,
-                                display: 'auto',
-                                backgroundColor: 'rgba(16, 185, 129, 0.8)',
-                                borderColor: '#10b981',
-                                classNames: ['selectable-event']
-                            };
-                            const afternoonSlot = {
-                                id: `m_${Date.now()}_2`,
-                                start: `${dateStr}T13:30:00`,
-                                end: `${dateStr}T17:00:00`,
-                                display: 'auto',
-                                backgroundColor: 'rgba(16, 185, 129, 0.8)',
-                                borderColor: '#10b981',
-                                classNames: ['selectable-event']
-                            };
-                            setSelectedSlots(prev => [...prev, morningSlot, afternoonSlot]);
-                        } else {
-                            handleSelect(selectInfo);
-                        }
-                        selectInfo.view.calendar.unselect();
-                    }}
+                    select={handleSelect}
                     eventClick={handleEventClick}
                     events={allEvents}
                     eventContent={(arg) => {
