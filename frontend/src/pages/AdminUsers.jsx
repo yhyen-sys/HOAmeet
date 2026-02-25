@@ -13,13 +13,18 @@ export default function AdminUsers() {
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        // 模擬從後端取得的所有使用者清單 (實務上應呼叫 GET /api/admin/users)
-        setUsers([
-            { id: 101, name: "負責人", email: "admin@yourdomain.gov.tw", dept: "幕僚長辦公室", role: "super_admin" },
-            { id: 102, name: "林雪柔 專員", email: "lin.sr@gov.tw", dept: "財務部", role: "creator" },
-            { id: 103, name: "張智傑 助理", email: "chang.cj@gov.tw", dept: "公共關係室", role: "user" },
-            { id: 104, name: "陳大文 組長", email: "chen.tw@gov.tw", dept: "專案小組", role: "creator" }
-        ]);
+        const loadUsers = async () => {
+            try {
+                const res = await fetchAPI('/admin/users');
+                if (res.ok) {
+                    const data = await res.json();
+                    setUsers(data);
+                }
+            } catch (err) {
+                console.error("載入使用者失敗:", err);
+            }
+        };
+        loadUsers();
     }, []);
 
     const toggleRole = async (userId, isChecked) => {
