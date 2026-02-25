@@ -241,7 +241,7 @@
         "id": "e551dcbbcfafb478",
         "type": "catch",
         "z": "124419962d0f0420",
-        "name": "捕捉 MySQL 錯誤",
+        "name": "Global MySQL & Flow Catch",
         "scope": null,
         "uncaught": false,
         "x": 170,
@@ -709,7 +709,7 @@
         "y": 1440,
         "wires": [
             [
-                "59c2f2284a972dab"
+                "func_meeting_create_final_res"
             ]
         ]
     },
@@ -724,22 +724,6 @@
         "x": 830,
         "y": 1440,
         "wires": []
-    },
-    {
-        "id": "b809faec8f6a2872",
-        "type": "catch",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "name": "Catch Everything",
-        "scope": null,
-        "uncaught": false,
-        "x": 140,
-        "y": 1540,
-        "wires": [
-            [
-                "218f1a5009f43501"
-            ]
-        ]
     },
     {
         "id": "218f1a5009f43501",
@@ -933,7 +917,7 @@
         "type": "function",
         "z": "124419962d0f0420",
         "name": "登入邏輯判斷",
-        "func": "/**\n * 節點 C：判斷登入狀態與核發 Token (第 6 個節點)\n */\n\nlet dbResult = msg.payload;\n\nif (dbResult.length > 0) {\n    let user = dbResult[0];\n    \n    // 🔴 檢查帳號狀態\n    if (user.global_status !== 'active') {\n        msg.payload = { \n            error: \"Forbidden\", \n            message: \"您的帳號已被停用或刪除，請洽管理員\" \n        };\n        msg.statusCode = 403;\n        return [null, msg];\n    }\n    \n    if (user.department_id === null || user.job_title_id === null) {\n        msg.payload = { \n            message: \"請補齊單位與職稱資料\", \n            action: \"REQUIRE_INFO\",\n            email: msg.userData.email\n        };\n        msg.statusCode = 206;\n    } else {\n        let role = (user.email === \"yi.kuei.co@gmail.com\") ? \"super_admin\" : (user.global_role || \"user\");\n        let sessionToken = \"sys_token_\" + role + \"_\" + new Date().getTime() + \"_\" + user.id; \n        \n        msg.payload = { \n            message: \"登入成功\", \n            action: \"LOGIN_SUCCESS\",\n            token: sessionToken,\n            user: {\n                id: user.id,\n                name: user.last_name + user.first_name,\n                global_role: role,\n                global_status: user.global_status,\n                last_name: user.last_name,\n                department_id: user.department_id,\n                job_title_id: user.job_title_id,\n                email: user.email\n            }\n        };\n        msg.statusCode = 200;\n    }\n} else {\n    msg.payload = { \n        message: \"歡迎首次登入，請填寫您的單位與職稱\", \n        action: \"REQUIRE_INFO\",\n        email: msg.userData.email,\n        first_name: msg.userData.first_name,\n        last_name: msg.userData.last_name\n    };\n    msg.statusCode = 206;\n}\n\nreturn msg;",
+        "func": "let dbResult = msg.payload;\n\nif (dbResult.length > 0) {\n    let user = dbResult[0];\n    \n    // 🔴 檢查帳號狀態\n    if (user.global_status !== 'active') {\n        msg.payload = { \n            error: \"Forbidden\", \n            message: \"您的帳號已被停用或刪除，請洽管理員\" \n        };\n        msg.statusCode = 403;\n        return [null, msg];\n    }\n    \n    if (user.department_id === null || user.job_title_id === null) {\n        msg.payload = { \n            message: \"請補齊單位與職稱資料\", \n            action: \"REQUIRE_INFO\",\n            email: msg.userData.email\n        };\n        msg.statusCode = 206;\n    } else {\n        // 確保超級管理員權限\n        let role = (user.email === \"yi.kuei.co@gmail.com\") ? \"super_admin\" : (user.global_role || \"user\");\n        let sessionToken = \"sys_token_\" + role + \"_\" + new Date().getTime() + \"_\" + user.id; \n        \n        msg.payload = { \n            message: \"登入成功\", \n            action: \"LOGIN_SUCCESS\",\n            token: sessionToken,\n            user: {\n                id: user.id,\n                name: user.last_name + user.first_name,\n                global_role: role,\n                global_status: user.global_status,\n                last_name: user.last_name,\n                department_id: user.department_id,\n                job_title_id: user.job_title_id,\n                email: user.email\n            }\n        };\n        msg.statusCode = 200;\n    }\n} else {\n    msg.payload = { \n        message: \"歡迎首次登入，請填寫您的單位與職稱\", \n        action: \"REQUIRE_INFO\",\n        email: msg.userData.email,\n        first_name: msg.userData.first_name,\n        last_name: msg.userData.last_name\n    };\n    msg.statusCode = 206;\n}\n\nreturn msg;",
         "outputs": 1,
         "x": 630,
         "y": 240,
@@ -968,7 +952,7 @@
         "type": "function",
         "z": "124419962d0f0420",
         "name": "註冊成功核發 Token",
-        "func": "let userId = msg.payload && msg.payload.insertId ? msg.payload.insertId : Math.floor(Math.random() * 10000);\nlet sessionToken = 'sys_token_creator_' + new Date().getTime() + '_' + userId;\n\nmsg.payload = {\n    message: '註冊並登入成功',\n    action: 'LOGIN_SUCCESS',\n    token: sessionToken,\n    user: {\n        id: userId,\n        name: msg.userData.last_name + msg.userData.first_name,\n        last_name: msg.userData.last_name,\n        department_id: msg.userData.department_id,\n        job_title_id: msg.userData.job_title_id,\n        email: msg.userData.email\n    }\n};\nmsg.statusCode = 200;\n\nreturn msg;",
+        "func": "let userId = msg.payload && msg.payload.insertId ? msg.payload.insertId : Math.floor(Math.random() * 10000);\nlet email = msg.userData.email;\nlet role = (email === \"yi.kuei.co@gmail.com\") ? \"super_admin\" : \"user\";\nlet sessionToken = 'sys_token_' + role + '_' + new Date().getTime() + '_' + userId;\n\nmsg.payload = {\n    message: '註冊並登入成功',\n    action: 'LOGIN_SUCCESS',\n    token: sessionToken,\n    user: {\n        id: userId,\n        name: msg.userData.last_name + msg.userData.first_name,\n        global_role: role,\n        global_status: 'active',\n        last_name: msg.userData.last_name,\n        department_id: msg.userData.department_id,\n        job_title_id: msg.userData.job_title_id,\n        email: email\n    }\n};\nmsg.statusCode = 200;\n\nreturn msg;",
         "outputs": 1,
         "x": 850,
         "y": 360,
@@ -1162,7 +1146,7 @@
         "z": "124419962d0f0420",
         "g": "911dbd3240e0046e",
         "name": "3. Prepare Participants",
-        "func": "const meetingId = msg.meetingId;\nconst parts = msg.meetingData.participants;\n\nif (!parts || parts.length === 0) {\n    return msg; \n}\n\nlet values = [];\nlet params = [];\nparts.forEach(p => {\n    values.push(\"(?, ?, ?)\");\n    params.push(meetingId, p.user_id, p.is_mandatory ? 1 : 0);\n});\n\nmsg.topic = `INSERT INTO Meeting_Participants (meeting_id, user_id, is_mandatory) VALUES ${values.join(',')}`;\nmsg.payload = params;\nreturn msg;",
+        "func": "const meetingId = msg.meetingId;\nconst parts = msg.meetingData.participants;\n\n// Prepare the final success payload in advance\nmsg.successPayload = { \n    message: \"會議創建成功\", \n    id: meetingId,\n    uuid: msg.meetingUuid \n};\n\nif (!parts || parts.length === 0) {\n    // If no participants, we skip the insert by running a dummy query\n    // and setting a flag to indicate we should use the successPayload\n    msg.topic = \"SELECT 1 AS skip_parts\";\n    msg.payload = [];\n    return msg; \n}\n\nlet values = [];\nlet params = [];\nparts.forEach(p => {\n    values.push(\"(?, ?, ?)\");\n    params.push(meetingId, p.user_id, p.is_mandatory ? 1 : 0);\n});\n\nmsg.topic = `INSERT INTO Meeting_Participants (meeting_id, user_id, is_mandatory) VALUES ${values.join(',')}`;\nmsg.payload = params;\nreturn msg;",
         "outputs": 1,
         "x": 1150,
         "y": 1360,
@@ -1316,5 +1300,21 @@
         "x": 1640,
         "y": 1800,
         "wires": []
+    },
+    {
+        "id": "func_meeting_create_final_res",
+        "type": "function",
+        "z": "124419962d0f0420",
+        "g": "911dbd3240e0046e",
+        "name": "Format Create Res",
+        "func": "msg.payload = msg.successPayload || { message: \"會議創建成功\", uuid: msg.meetingUuid };\nreturn msg;",
+        "outputs": 1,
+        "x": 1350,
+        "y": 1420,
+        "wires": [
+            [
+                "59c2f2284a972dab"
+            ]
+        ]
     }
 ]
