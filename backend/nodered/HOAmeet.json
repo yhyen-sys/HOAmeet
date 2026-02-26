@@ -104,6 +104,12 @@
       "mysql_get_meeting",
       "func_prep_slots_list",
       "mysql_get_slots",
+      "func_prep_parts_list",
+      "mysql_get_parts",
+      "func_prep_get_avail",
+      "mysql_get_avail",
+      "func_prep_get_prog",
+      "mysql_get_prog",
       "func_format_meeting_res",
       "http_out_meeting_res",
       "catch_get_meeting"
@@ -825,8 +831,8 @@
     "type": "function",
     "z": "124419962d0f0420",
     "g": "group_get_single_meeting",
-    "name": "Format Response",
-    "func": "msg.payload = { ...msg.meetingMeta, time_slots: msg.timeSlots, participants: msg.participants, user_availability: msg.userAvail, survey_progress: msg.payload[0] }; return msg;",
+    "name": "Format Meeting Response",
+    "func": "const prog = (msg.payload && msg.payload.length > 0) ? msg.payload[0] : { responded_count: 0, total_participants: 0 };\n\nmsg.payload = {\n    ...msg.meetingMeta,\n    time_slots: msg.timeSlots || [],\n    participants: msg.participants || [],\n    user_availability: msg.userAvail || [],\n    survey_progress: {\n        responded_count: prog.responded_count || 0,\n        total_participants: prog.total_participants || 0\n    }\n};\nreturn msg;",
     "outputs": 1,
     "x": 560,
     "y": 1760,
@@ -1657,7 +1663,7 @@
     "id": "func_prep_get_prog",
     "type": "function",
     "name": "Prep Prog SQL",
-    "func": "msg.userAvail = msg.payload; const internalId = msg.meetingMeta.id; msg.topic = 'SELECT COUNT(DISTINCT user_id) as responded_count, (SELECT COUNT(*) FROM Meeting_Participants WHERE meeting_id = ?) as total_participants FROM User_Availability WHERE slot_id IN (SELECT id FROM Time_Slots WHERE meeting_id = ?)'; msg.payload = [internalId, internalId]; return msg;",
+    "func": "msg.userAvail = msg.payload;\nconst internalId = msg.meetingMeta.id;\n\nmsg.topic = `\n    SELECT \n        (SELECT COUNT(DISTINCT user_id) FROM User_Availability WHERE slot_id IN (SELECT id FROM Time_Slots WHERE meeting_id = ?)) as responded_count,\n        (SELECT COUNT(*) FROM Meeting_Participants WHERE meeting_id = ?) as total_participants\n`;\nmsg.payload = [internalId, internalId];\nreturn msg;",
     "wires": [
       [
         "mysql_get_prog"

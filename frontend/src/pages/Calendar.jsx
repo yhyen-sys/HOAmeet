@@ -357,10 +357,14 @@ export default function Calendar() {
           .fc-dayGridMonth-view .suggested-event {
               background-color: transparent !important;
               border-color: transparent !important;
+              cursor: pointer;
           }
           .fc-dayGridMonth-view .suggested-event .fc-event-main {
               padding: 0 !important;
               color: inherit !important;
+          }
+          .fc-event:hover {
+              filter: brightness(1.2);
           }
         `}</style>
 
@@ -414,9 +418,9 @@ export default function Calendar() {
                         if (arg.event.extendedProps.isSuggested && arg.view.type === 'dayGridMonth') {
                             const isSelected = arg.event.title.includes('✅');
                             return (
-                                <div className={`flex items-center gap-1.5 px-1 py-0.5 mx-0.5 mb-0.5 rounded border overflow-hidden ${isSelected ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' : 'bg-amber-500/10 border-amber-500/30 text-amber-500'}`}>
-                                    <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${isSelected ? 'bg-emerald-500' : 'bg-amber-500'}`}></div>
-                                    <span className="text-[10px] font-bold truncate leading-none py-0.5">
+                                <div className={`flex items-center gap-1.5 px-2 py-1 mx-0.5 mb-1 rounded-md border transition-all pointer-events-none ${isSelected ? 'bg-emerald-500/30 border-emerald-500/50 text-emerald-300 shadow-sm shadow-emerald-500/20' : 'bg-amber-500/15 border-amber-500/30 text-amber-500 hover:border-amber-500/50'}`}>
+                                    <div className={`w-2 h-2 rounded-full shrink-0 ${isSelected ? 'bg-emerald-400' : 'bg-amber-500'} animate-pulse`}></div>
+                                    <span className="text-[11px] font-bold truncate leading-none">
                                         {arg.timeText} {isSelected ? '空檔' : '建議'}
                                     </span>
                                 </div>
