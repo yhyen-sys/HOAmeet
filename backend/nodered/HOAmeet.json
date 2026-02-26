@@ -1,1630 +1,1682 @@
 [
-    {
-        "id": "124419962d0f0420",
-        "type": "tab",
-        "label": "Google Auth Flow",
-        "disabled": false,
-        "info": ""
-    },
-    {
-        "id": "fa1b53f20053a304",
-        "type": "group",
-        "z": "124419962d0f0420",
-        "name": "保護的 API 路由 (需要 Token)",
-        "style": {
-            "stroke": "#009933",
-            "fill": "#e6ffe6",
-            "label": true
-        },
-        "nodes": [
-            "928cdce6a21b1368",
-            "28f03ce542ad94dc",
-            "9e100c9799469997",
-            "837b7ac985cc13ea"
-        ],
-        "x": 44,
-        "y": 479,
-        "w": 722,
-        "h": 182
-    },
-    {
-        "id": "group_my_meetings",
-        "type": "group",
-        "z": "124419962d0f0420",
-        "name": "GET /api/meetings/my",
-        "style": {
-            "stroke": "#ff9900",
-            "fill": "#fff1d0",
-            "fill-opacity": "0.5",
-            "label": true,
-            "color": "#000000"
-        },
-        "nodes": [
-            "http_in_my_meetings",
-            "func_prepare_sql",
-            "mysql_my_meetings",
-            "func_format_response",
-            "http_out_my_meetings",
-            "catch_my_meetings",
-            "http_out_error_meetings"
-        ],
-        "x": -26,
-        "y": 999,
-        "w": 972,
-        "h": 162
-    },
-    {
-        "id": "911dbd3240e0046e",
-        "type": "group",
-        "z": "124419962d0f0420",
-        "name": "Meeting Creation & User List API",
-        "style": {
-            "stroke": "#0099ff",
-            "fill": "#e6f8ff",
-            "fill-opacity": "0.5",
-            "label": true,
-            "color": "#000000"
-        },
-        "nodes": [
-            "e9c8775ddcd41bc4",
-            "9b305cf18937b9b6",
-            "6b9a749ad06fe415",
-            "d880ab4e17ae449e",
-            "20a8f3cf8bc6cf3b",
-            "9cd82291e7e18ec7",
-            "c5226553c7f8f4fd",
-            "edc1699eeba4d523",
-            "7ae215c1b0cc30c2",
-            "977c040b7e9f9da2",
-            "3b14db09738b0ebc",
-            "59c2f2284a972dab",
-            "b809faec8f6a2872",
-            "218f1a5009f43501"
-        ],
-        "x": 14,
-        "y": 1219,
-        "w": 1052,
-        "h": 362
-    },
-    {
-        "id": "group_get_single_meeting",
-        "type": "group",
-        "z": "124419962d0f0420",
-        "name": "GET /api/meetings/:id",
-        "style": {
-            "stroke": "#00cc66",
-            "fill": "#e6fffa",
-            "fill-opacity": "0.5",
-            "label": true,
-            "color": "#000000"
-        },
-        "nodes": [
-            "http_in_get_meeting",
-            "func_prep_get_meeting",
-            "mysql_get_meeting",
-            "func_prep_slots_list",
-            "mysql_get_slots",
-            "func_format_meeting_res",
-            "http_out_meeting_res",
-            "catch_get_meeting"
-        ],
-        "x": 14,
-        "y": 1639,
-        "w": 852,
-        "h": 222
-    },
-    {
-        "id": "efa7f42a825fcca2",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "name": "POST /api/auth/google",
-        "url": "/api/auth/google",
-        "method": "post",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 150,
-        "y": 120,
-        "wires": [
-            [
-                "393785d52015c177"
-            ]
-        ]
-    },
-    {
-        "id": "5b4ab398b3886f4b",
-        "type": "http request",
-        "z": "124419962d0f0420",
-        "name": "Google Tokeninfo",
-        "method": "use",
-        "ret": "obj",
-        "paytoqs": "ignore",
-        "url": "",
-        "tls": "",
-        "persist": false,
-        "proxy": "",
-        "authType": "",
-        "x": 610,
-        "y": 120,
-        "wires": [
-            [
-                "a91cf307603cde4c"
-            ]
-        ]
-    },
-    {
-        "id": "8e635957712faec4",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "mydb": "0bdc806336f756dc",
-        "name": "MySQL Users",
-        "x": 420,
-        "y": 240,
-        "wires": [
-            [
-                "15b0f2e403805e65",
-                "070cd52b685e8cfc"
-            ]
-        ]
-    },
-    {
-        "id": "4c09a6a47d45bff3",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "name": "HTTP Response",
-        "statusCode": "",
-        "headers": {},
-        "x": 840,
-        "y": 180,
-        "wires": []
-    },
-    {
-        "id": "5bb443298fbdbfd1",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "name": "POST /api/auth/register",
-        "url": "/api/auth/register",
-        "method": "post",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 160,
-        "y": 360,
-        "wires": [
-            [
-                "982bb0a24f90e078"
-            ]
-        ]
-    },
-    {
-        "id": "f595b69a0fd326c3",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "mydb": "0bdc806336f756dc",
-        "name": "MySQL Insert User",
-        "x": 630,
-        "y": 360,
-        "wires": [
-            [
-                "cfd5d8dcc48ca58f",
-                "18adab484827f35a"
-            ]
-        ]
-    },
-    {
-        "id": "e42553cb9572c93a",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "name": "HTTP Response",
-        "statusCode": "",
-        "headers": {},
-        "x": 1080,
-        "y": 400,
-        "wires": []
-    },
-    {
-        "id": "04dcc1f0576cd11f",
-        "type": "debug",
-        "z": "124419962d0f0420",
-        "name": "SQL 錯誤追蹤",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 380,
-        "y": 700,
-        "wires": []
-    },
-    {
-        "id": "e551dcbbcfafb478",
-        "type": "catch",
-        "z": "124419962d0f0420",
-        "name": "Global MySQL & Flow Catch",
-        "scope": null,
-        "uncaught": false,
-        "x": 170,
-        "y": 700,
-        "wires": [
-            [
-                "admin_debug_error",
-                "4c09a6a47d45bff3"
-            ]
-        ]
-    },
-    {
-        "id": "90c1ba422e906c82",
-        "type": "debug",
-        "z": "124419962d0f0420",
-        "name": "debug 53",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 440,
-        "y": 300,
-        "wires": []
-    },
-    {
-        "id": "d365704fa76468e1",
-        "type": "debug",
-        "z": "124419962d0f0420",
-        "name": "debug 54",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 580,
-        "y": 40,
-        "wires": []
-    },
-    {
-        "id": "9b0d50f8678cc4be",
-        "type": "debug",
-        "z": "124419962d0f0420",
-        "name": "debug 55",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 880,
-        "y": 280,
-        "wires": []
-    },
-    {
-        "id": "070cd52b685e8cfc",
-        "type": "debug",
-        "z": "124419962d0f0420",
-        "name": "debug 56",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 680,
-        "y": 300,
-        "wires": []
-    },
-    {
-        "id": "6a44bcab95cf8e2e",
-        "type": "debug",
-        "z": "124419962d0f0420",
-        "name": "debug 57",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 580,
-        "y": 440,
-        "wires": []
-    },
-    {
-        "id": "18adab484827f35a",
-        "type": "debug",
-        "z": "124419962d0f0420",
-        "name": "debug 58",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 800,
-        "y": 420,
-        "wires": []
-    },
-    {
-        "id": "36704b236d9a1b2e",
-        "type": "debug",
-        "z": "124419962d0f0420",
-        "name": "debug 59",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 480,
-        "y": 640,
-        "wires": []
-    },
-    {
-        "id": "http_get_departments",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "name": "GET /api/departments",
-        "url": "/api/departments",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 260,
-        "y": 840,
-        "wires": [
-            [
-                "query_departments"
-            ]
-        ]
-    },
-    {
-        "id": "query_departments",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "mydb": "0bdc806336f756dc",
-        "name": "SELECT Departments",
-        "x": 510,
-        "y": 840,
-        "wires": [
-            [
-                "http_resp_departments"
-            ]
-        ]
-    },
-    {
-        "id": "http_resp_departments",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "name": "Response",
-        "statusCode": "",
-        "headers": {},
-        "x": 730,
-        "y": 840,
-        "wires": []
-    },
-    {
-        "id": "http_get_jobtitles",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "name": "GET /api/job_titles",
-        "url": "/api/job_titles",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 250,
-        "y": 920,
-        "wires": [
-            [
-                "query_jobtitles"
-            ]
-        ]
-    },
-    {
-        "id": "query_jobtitles",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "mydb": "0bdc806336f756dc",
-        "name": "SELECT Job Titles",
-        "x": 500,
-        "y": 920,
-        "wires": [
-            [
-                "http_resp_jobtitles"
-            ]
-        ]
-    },
-    {
-        "id": "http_resp_jobtitles",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "name": "Response",
-        "statusCode": "",
-        "headers": {},
-        "x": 730,
-        "y": 920,
-        "wires": []
-    },
-    {
-        "id": "http_in_my_meetings",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "g": "group_my_meetings",
-        "name": "",
-        "url": "/api/meetings/my",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 100,
-        "y": 1040,
-        "wires": [
-            [
-                "func_prepare_sql"
-            ]
-        ]
-    },
-    {
-        "id": "func_prepare_sql",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_my_meetings",
-        "name": "Prepare GET Meetings SQL",
-        "func": "let userId = null;\n\n// 解析前端傳來的 Token\nconst authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    const parts = token.split('_');\n    if (parts.length >= 4) {\n        userId = parseInt(parts[parts.length - 1], 10);\n    }\n}\n\n// 萬一解析失敗，拋出錯誤讓 Catch 節點接手\nif (!userId) {\n    throw new Error(\"Unauthorized: 無法識別使用者身分\");\n}\n\n// 撈取與該使用者有相關聯的會議 (發起人 或 受邀人)\nmsg.topic = `\n    SELECT \n        m.*,\n        u.first_name AS admin_first_name,\n        u.last_name AS admin_last_name,\n        d.dept_name AS admin_dept_name,\n        jt.title_name AS admin_title_name\n    FROM Meetings m\n    JOIN Users u ON m.admin_id = u.id\n    LEFT JOIN Departments d ON u.department_id = d.id\n    LEFT JOIN Job_Titles jt ON u.job_title_id = jt.id\n    WHERE m.admin_id = ? \n       OR m.id IN (SELECT meeting_id FROM Meeting_Participants WHERE user_id = ?)\n    ORDER BY m.created_at DESC;\n`;\n\nmsg.payload = [userId, userId];\nreturn msg;",
-        "outputs": 1,
-        "x": 320,
-        "y": 1040,
-        "wires": [
-            [
-                "mysql_my_meetings"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_my_meetings",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_my_meetings",
-        "mydb": "0bdc806336f756dc",
-        "name": "MySQL Meetings",
-        "x": 520,
-        "y": 1040,
-        "wires": [
-            [
-                "func_format_response"
-            ]
-        ]
-    },
-    {
-        "id": "func_format_response",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_my_meetings",
-        "name": "Format JSON",
-        "func": "msg.payload = msg.payload || [];\nreturn msg;",
-        "outputs": 1,
-        "x": 700,
-        "y": 1040,
-        "wires": [
-            [
-                "http_out_my_meetings"
-            ]
-        ]
-    },
-    {
-        "id": "http_out_my_meetings",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "g": "group_my_meetings",
-        "name": "",
-        "statusCode": "200",
-        "headers": {},
-        "x": 860,
-        "y": 1040,
-        "wires": []
-    },
-    {
-        "id": "catch_my_meetings",
-        "type": "catch",
-        "z": "124419962d0f0420",
-        "g": "group_my_meetings",
-        "name": "Catch Errors",
-        "scope": [
-            "mysql_my_meetings",
-            "func_prepare_sql"
-        ],
-        "uncaught": false,
-        "x": 330,
-        "y": 1120,
-        "wires": [
-            [
-                "http_out_error_meetings"
-            ]
-        ]
-    },
-    {
-        "id": "http_out_error_meetings",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "g": "group_my_meetings",
-        "name": "500 Error",
-        "statusCode": "500",
-        "headers": {},
-        "x": 500,
-        "y": 1120,
-        "wires": []
-    },
-    {
-        "id": "e9c8775ddcd41bc4",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "name": "",
-        "url": "/api/users/list",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 130,
-        "y": 1260,
-        "wires": [
-            [
-                "9b305cf18937b9b6"
-            ]
-        ]
-    },
-    {
-        "id": "9b305cf18937b9b6",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "name": "Prepare Users SQL",
-        "func": "msg.topic = `\n    SELECT u.id, u.first_name, u.last_name, d.dept_name, jt.title_name \n    FROM Users u\n    LEFT JOIN Departments d ON u.department_id = d.id\n    LEFT JOIN Job_Titles jt ON u.job_title_id = jt.id\n    ORDER BY d.id ASC, jt.tier_level ASC;\n`;\nmsg.payload = [];\nreturn msg;",
-        "outputs": 1,
-        "x": 350,
-        "y": 1260,
-        "wires": [
-            [
-                "6b9a749ad06fe415"
-            ]
-        ]
-    },
-    {
-        "id": "6b9a749ad06fe415",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "mydb": "0bdc806336f756dc",
-        "name": "MySQL Users",
-        "x": 580,
-        "y": 1260,
-        "wires": [
-            [
-                "d880ab4e17ae449e"
-            ]
-        ]
-    },
-    {
-        "id": "d880ab4e17ae449e",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "name": "",
-        "statusCode": "200",
-        "headers": {},
-        "x": 780,
-        "y": 1260,
-        "wires": []
-    },
-    {
-        "id": "20a8f3cf8bc6cf3b",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "name": "",
-        "url": "/api/meetings",
-        "method": "post",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 130,
-        "y": 1360,
-        "wires": [
-            [
-                "9cd82291e7e18ec7"
-            ]
-        ]
-    },
-    {
-        "id": "9cd82291e7e18ec7",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "name": "1. Prepare Meeting Data",
-        "func": "const d = msg.payload;\nlet adminId = null;\n\nconst authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    const parts = token.split('_');\n    if (parts.length >= 4) {\n        adminId = parseInt(parts[parts.length - 1], 10);\n    }\n}\n\nif (!adminId) {\n    throw new Error(\"Unauthorized: 無法識別發起人身分\");\n}\n\n// Generate UUID v4\nconst meetingUuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {\n    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);\n    return v.toString(16);\n});\n\nmsg.meetingData = d;\nmsg.meetingUuid = meetingUuid;\n\nmsg.topic = `\n    INSERT INTO Meetings \n    (uuid, title, subject, agenda, government_agenda, discussion_points, location, online_url, duration_minutes, is_online, status, admin_id) \n    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'polling', ?)`;\n\nmsg.payload = [\n    meetingUuid,\n    d.title,\n    d.subject || null,\n    d.agenda || null,\n    d.government_agenda || null,\n    d.discussion_points || null,\n    d.location,\n    d.online_url || null,\n    d.duration_minutes,\n    d.is_online ? 1 : 0,\n    adminId\n];\nreturn msg;",
-        "outputs": 1,
-        "x": 370,
-        "y": 1360,
-        "wires": [
-            [
-                "c5226553c7f8f4fd"
-            ]
-        ]
-    },
-    {
-        "id": "c5226553c7f8f4fd",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "mydb": "0bdc806336f756dc",
-        "name": "Insert Meeting",
-        "x": 580,
-        "y": 1360,
-        "wires": [
-            [
-                "edc1699eeba4d523"
-            ]
-        ]
-    },
-    {
-        "id": "edc1699eeba4d523",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "name": "2. Prepare Time Slots",
-        "func": "msg.payload = { \n    message: \"會議創建成功\", \n    id: msg.payload.insertId,\n    uuid: msg.meetingUuid \n};\nreturn msg;",
-        "outputs": 1,
-        "x": 780,
-        "y": 1360,
-        "wires": [
-            [
-                "7ae215c1b0cc30c2"
-            ]
-        ]
-    },
-    {
-        "id": "7ae215c1b0cc30c2",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "mydb": "0bdc806336f756dc",
-        "name": "Insert Slots",
-        "x": 970,
-        "y": 1360,
-        "wires": [
-            [
-                "func_prep_participants"
-            ]
-        ]
-    },
-    {
-        "id": "3b14db09738b0ebc",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "mydb": "0bdc806336f756dc",
-        "name": "Insert Parts",
-        "x": 610,
-        "y": 1440,
-        "wires": [
-            [
-                "func_meeting_create_final_res"
-            ]
-        ]
-    },
-    {
-        "id": "59c2f2284a972dab",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "name": "200 Success",
-        "statusCode": "200",
-        "headers": {},
-        "x": 830,
-        "y": 1440,
-        "wires": []
-    },
-    {
-        "id": "218f1a5009f43501",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "name": "500 Error",
-        "statusCode": "500",
-        "headers": {},
-        "x": 350,
-        "y": 1540,
-        "wires": []
-    },
-    {
-        "id": "http_in_get_meeting",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "g": "group_get_single_meeting",
-        "name": "",
-        "url": "/api/meetings/:id",
-        "method": "get",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 140,
-        "y": 1680,
-        "wires": [
-            [
-                "func_prep_get_meeting"
-            ]
-        ]
-    },
-    {
-        "id": "func_prep_get_meeting",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_get_single_meeting",
-        "name": "Prepare GET Meeting SQL",
-        "func": "let userId = null;\nlet uuid = msg.req.params.id;\n\nconst authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    const parts = token.split('_');\n    if (parts.length >= 4) {\n        userId = parseInt(parts[parts.length - 1], 10);\n    }\n}\n\nif (!userId) {\n    throw new Error(\"Unauthorized: 請先登入後再存取會議資料\");\n}\n\nmsg.topic = `\n    SELECT m.*, u.first_name AS admin_first_name, u.last_name AS admin_last_name\n    FROM Meetings m\n    JOIN Users u ON m.admin_id = u.id\n    WHERE m.uuid = ? \n    AND (\n        m.admin_id = ? \n        OR m.id IN (SELECT meeting_id FROM Meeting_Participants WHERE user_id = ?)\n    );\n`;\nmsg.payload = [uuid, userId, userId];\nreturn msg;",
-        "outputs": 1,
-        "x": 360,
-        "y": 1680,
-        "wires": [
-            [
-                "mysql_get_meeting"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_get_meeting",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_get_single_meeting",
-        "mydb": "0bdc806336f756dc",
-        "name": "Get Meeting Meta",
-        "x": 580,
-        "y": 1680,
-        "wires": [
-            [
-                "func_prep_slots_list"
-            ]
-        ]
-    },
-    {
-        "id": "func_prep_slots_list",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_get_single_meeting",
-        "name": "Prepare Slots SQL",
-        "func": "if (!msg.payload || msg.payload.length === 0) {\n    msg.payload = { error: \"Meeting not found or unauthorized\" };\n    msg.statusCode = 404;\n    return [null, msg]; \n}\nmsg.meetingMeta = msg.payload[0];\n\n// Use the correct integer ID for the next queries!\nconst internalId = msg.meetingMeta.id;\n\n// We will chain the queries: Slots -> Participants -> Format\nmsg.topic = \"SELECT * FROM Time_Slots WHERE meeting_id = ?\";\nmsg.payload = [internalId];\nreturn [msg, null];",
-        "outputs": 2,
-        "x": 160,
-        "y": 1760,
-        "wires": [
-            [
-                "mysql_get_slots"
-            ],
-            [
-                "http_out_meeting_res"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_get_slots",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_get_single_meeting",
-        "mydb": "0bdc806336f756dc",
-        "name": "Get Slots",
-        "x": 380,
-        "y": 1760,
-        "wires": [
-            [
-                "func_prep_parts_list"
-            ]
-        ]
-    },
-    {
-        "id": "func_format_meeting_res",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_get_single_meeting",
-        "name": "Format Response",
-        "func": "msg.payload = {\n    ...msg.meetingMeta,\n    time_slots: msg.timeSlots,\n    participants: msg.payload // Participants are the last query result\n};\nreturn msg;",
-        "outputs": 1,
-        "x": 560,
-        "y": 1760,
-        "wires": [
-            [
-                "http_out_meeting_res"
-            ]
-        ]
-    },
-    {
-        "id": "http_out_meeting_res",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "g": "group_get_single_meeting",
-        "name": "",
-        "statusCode": "200",
-        "headers": {},
-        "x": 780,
-        "y": 1760,
-        "wires": []
-    },
-    {
-        "id": "catch_get_meeting",
-        "type": "catch",
-        "z": "124419962d0f0420",
-        "g": "group_get_single_meeting",
-        "name": "Catch Error",
-        "scope": null,
-        "uncaught": false,
-        "x": 140,
-        "y": 1820,
-        "wires": [
-            [
-                "http_out_meeting_res"
-            ]
-        ]
-    },
-    {
-        "id": "0bdc806336f756dc",
-        "type": "MySQLdatabase",
-        "name": "",
-        "host": "10.0.0.5",
-        "port": "3306",
-        "db": "office",
-        "tz": "",
-        "charset": "UTF8"
-    },
-    {
-        "id": "393785d52015c177",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "name": "準備 Google API 請求",
-        "func": "/**\n * 節點 A：準備呼叫 Google API (第 2 個節點)\n */\n\n// 取得前端 POST 過來的 token\nlet googleToken = msg.payload.token;\n\nif (!googleToken) {\n    msg.payload = { error: \"缺少 Google Token\" };\n    msg.statusCode = 400;\n    return [null, msg]; // 結束流程並跳到錯誤回應\n}\n\n// 設定 HTTP Request 節點要呼叫的目標網址\nmsg.url = \"https://oauth2.googleapis.com/tokeninfo?id_token=\" + googleToken;\nmsg.method = \"GET\";\n\nreturn [msg, null];",
-        "outputs": 2,
-        "x": 380,
-        "y": 120,
-        "wires": [
-            [
-                "5b4ab398b3886f4b",
-                "d365704fa76468e1"
-            ],
-            [
-                "4c09a6a47d45bff3"
-            ]
-        ]
-    },
-    {
-        "id": "a91cf307603cde4c",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "name": "解析結果並準備 MySQL",
-        "func": "/**\n * 節點 B：解析 Google 回應並查詢 MySQL (第 4 個節點)\n */\n\n// 解析 Google 回傳的 JSON 資料\nlet googleData = typeof msg.payload === 'string' ? JSON.parse(msg.payload) : msg.payload;\n\n// 檢查 Google 是否回傳錯誤\nif (googleData.error) {\n    msg.payload = { error: \"Google 驗證失敗\", details: googleData.error_description };\n    msg.statusCode = 401;\n    return [null, msg]; \n}\n\n// 提取出安全且經過驗證的 Email 和 姓名\nlet userEmail = googleData.email;\nlet firstName = googleData.given_name || '';\nlet lastName = googleData.family_name || '';\n\n// 將基本資料暫存起來，後面會用到\nmsg.userData = {\n    email: userEmail,\n    first_name: firstName,\n    last_name: lastName\n};\n\n// 組裝 MySQL 查詢指令：檢查此 Email 是否存在我們的 Users 表中\nmsg.topic = \"SELECT * FROM Users WHERE email = ? LIMIT 1\";\nmsg.payload = [userEmail];\n\nreturn [msg, null];",
-        "outputs": 2,
-        "x": 190,
-        "y": 240,
-        "wires": [
-            [
-                "8e635957712faec4"
-            ],
-            [
-                "4c09a6a47d45bff3",
-                "90c1ba422e906c82"
-            ]
-        ]
-    },
-    {
-        "id": "15b0f2e403805e65",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "name": "登入邏輯判斷",
-        "func": "let dbResult = msg.payload;\n\nif (dbResult.length > 0) {\n    let user = dbResult[0];\n    \n    // 🔴 檢查帳號狀態\n    if (user.global_status !== 'active') {\n        msg.payload = { \n            error: \"Forbidden\", \n            message: \"您的帳號已被停用或刪除，請洽管理員\" \n        };\n        msg.statusCode = 403;\n        return [null, msg];\n    }\n    \n    if (user.department_id === null || user.job_title_id === null) {\n        msg.payload = { \n            message: \"請補齊單位與職稱資料\", \n            action: \"REQUIRE_INFO\",\n            email: msg.userData.email\n        };\n        msg.statusCode = 206;\n    } else {\n        // 確保超級管理員權限\n        let role = (user.email === \"yi.kuei.co@gmail.com\") ? \"super_admin\" : (user.global_role || \"user\");\n        let sessionToken = \"sys_token_\" + role + \"_\" + new Date().getTime() + \"_\" + user.id; \n        \n        msg.payload = { \n            message: \"登入成功\", \n            action: \"LOGIN_SUCCESS\",\n            token: sessionToken,\n            user: {\n                id: user.id,\n                name: user.last_name + user.first_name,\n                global_role: role,\n                global_status: user.global_status,\n                last_name: user.last_name,\n                department_id: user.department_id,\n                job_title_id: user.job_title_id,\n                email: user.email\n            }\n        };\n        msg.statusCode = 200;\n    }\n} else {\n    msg.payload = { \n        message: \"歡迎首次登入，請填寫您的單位與職稱\", \n        action: \"REQUIRE_INFO\",\n        email: msg.userData.email,\n        first_name: msg.userData.first_name,\n        last_name: msg.userData.last_name\n    };\n    msg.statusCode = 206;\n}\n\nreturn msg;",
-        "outputs": 1,
-        "x": 630,
-        "y": 240,
-        "wires": [
-            [
-                "4c09a6a47d45bff3",
-                "9b0d50f8678cc4be"
-            ]
-        ]
-    },
-    {
-        "id": "982bb0a24f90e078",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "name": "準備 INSERT MySQL",
-        "func": "let data = msg.payload;\nif (!data.email || !data.first_name || !data.last_name || (!data.department_id && data.department_id !== 0) || (!data.job_title_id && data.job_title_id !== 0)) {\n    msg.payload = { error: '註冊資料不完整', received: data };\n    msg.statusCode = 400;\n    return [null, msg];\n}\nmsg.userData = data;\nmsg.topic = 'INSERT INTO Users (email, first_name, last_name, department_id, job_title_id) VALUES (?, ?, ?, ?, ?)';\nmsg.payload = [data.email, data.first_name, data.last_name, data.department_id, data.job_title_id];\nreturn [msg, null];",
-        "outputs": 2,
-        "x": 410,
-        "y": 360,
-        "wires": [
-            [
-                "f595b69a0fd326c3"
-            ],
-            [
-                "e42553cb9572c93a",
-                "6a44bcab95cf8e2e"
-            ]
-        ]
-    },
-    {
-        "id": "cfd5d8dcc48ca58f",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "name": "註冊成功核發 Token",
-        "func": "let userId = msg.payload && msg.payload.insertId ? msg.payload.insertId : Math.floor(Math.random() * 10000);\nlet email = msg.userData.email;\nlet role = (email === \"yi.kuei.co@gmail.com\") ? \"super_admin\" : \"user\";\nlet sessionToken = 'sys_token_' + role + '_' + new Date().getTime() + '_' + userId;\n\nmsg.payload = {\n    message: '註冊並登入成功',\n    action: 'LOGIN_SUCCESS',\n    token: sessionToken,\n    user: {\n        id: userId,\n        name: msg.userData.last_name + msg.userData.first_name,\n        global_role: role,\n        global_status: 'active',\n        last_name: msg.userData.last_name,\n        department_id: msg.userData.department_id,\n        job_title_id: msg.userData.job_title_id,\n        email: email\n    }\n};\nmsg.statusCode = 200;\n\nreturn msg;",
-        "outputs": 1,
-        "x": 850,
-        "y": 360,
-        "wires": [
-            [
-                "e42553cb9572c93a"
-            ]
-        ]
-    },
-    {
-        "id": "admin_get_users_in",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "name": "GET /api/admin/users",
-        "url": "/api/admin/users",
-        "method": "get",
-        "wires": [
-            [
-                "admin_auth_middleware"
-            ]
-        ]
-    },
-    {
-        "id": "admin_put_role_in",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "name": "PUT /api/admin/users/role",
-        "url": "/api/admin/users/role",
-        "method": "put",
-        "wires": [
-            [
-                "admin_auth_middleware"
-            ]
-        ]
-    },
-    {
-        "id": "admin_auth_middleware",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "name": "Admin Auth Guard",
-        "func": "const authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    if (token.includes('super_admin')) {\n        return [msg, null];\n    }\n}\nmsg.payload = { error: 'Unauthorized', message: '管理權限不足' };\nmsg.statusCode = 403;\nreturn [null, msg];",
-        "outputs": 2,
-        "wires": [
-            [
-                "admin_routing_switch",
-                "admin_debug_success"
-            ],
-            [
-                "4c09a6a47d45bff3"
-            ]
-        ]
-    },
-    {
-        "id": "admin_routing_switch",
-        "type": "switch",
-        "z": "124419962d0f0420",
-        "name": "Route by Method",
-        "property": "req.url",
-        "propertyType": "msg",
-        "rules": [
-            {
-                "t": "eq",
-                "v": "/api/admin/users",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "/api/admin/users/role",
-                "vt": "str"
-            },
-            {
-                "t": "eq",
-                "v": "/api/admin/users/status",
-                "vt": "str"
-            }
-        ],
-        "checkall": "true",
-        "repair": false,
-        "outputs": 2,
-        "wires": [
-            [
-                "admin_prep_get_sql"
-            ],
-            [
-                "admin_prep_put_sql"
-            ],
-            [
-                "admin_prep_status_sql"
-            ]
-        ]
-    },
-    {
-        "id": "admin_prep_get_sql",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "name": "Prepare GET Users SQL",
-        "func": "msg.topic = 'SELECT u.id, u.name, u.first_name, u.last_name, u.email, d.dept_name as dept, u.global_role as role, u.global_status FROM Users u LEFT JOIN Departments d ON u.department_id = d.id WHERE u.global_status != \"deleted\"';\nreturn msg;",
-        "outputs": 1,
-        "wires": [
-            [
-                "admin_mysql_node"
-            ]
-        ]
-    },
-    {
-        "id": "admin_prep_put_sql",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "name": "Prepare PUT Role SQL",
-        "func": "let data = msg.payload;\nif (!data.user_id || !data.new_role) {\n    msg.statusCode = 400;\n    msg.payload = { error: 'Missing parameters' };\n    return [null, msg];\n}\nmsg.topic = 'UPDATE Users SET global_role = ? WHERE id = ?';\nmsg.payload = [data.new_role, data.user_id];\nreturn [msg, null];",
-        "outputs": 2,
-        "wires": [
-            [
-                "admin_mysql_node"
-            ],
-            [
-                "4c09a6a47d45bff3"
-            ]
-        ]
-    },
-    {
-        "id": "admin_mysql_node",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "mydb": "0bdc806336f756dc",
-        "name": "Admin MySQL",
-        "wires": [
-            [
-                "4c09a6a47d45bff3"
-            ]
-        ]
-    },
-    {
-        "id": "admin_debug_success",
-        "type": "debug",
-        "z": "124419962d0f0420",
-        "name": "Admin Auth Success",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "complete": "true",
-        "x": 600,
-        "y": 500,
-        "wires": []
-    },
-    {
-        "id": "admin_debug_error",
-        "type": "debug",
-        "z": "124419962d0f0420",
-        "name": "Admin Error Catch",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "complete": "true",
-        "x": 600,
-        "y": 750,
-        "wires": []
-    },
-    {
-        "id": "admin_prep_status_sql",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "name": "Prepare PUT Status SQL",
-        "func": "let data = msg.payload;\nif (!data.user_id || !data.new_status) {\n    msg.statusCode = 400;\n    msg.payload = { error: 'Missing parameters' };\n    return [null, msg];\n}\nmsg.topic = 'UPDATE Users SET global_status = ? WHERE id = ?';\nmsg.payload = [data.new_status, data.user_id];\nreturn [msg, null];",
-        "outputs": 2,
-        "wires": [
-            [
-                "admin_mysql_node"
-            ],
-            [
-                "4c09a6a47d45bff3"
-            ]
-        ]
-    },
-    {
-        "id": "admin_put_status_in",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "name": "PUT /api/admin/users/status",
-        "url": "/api/admin/users/status",
-        "method": "put",
-        "wires": [
-            [
-                "admin_auth_middleware"
-            ]
-        ]
-    },
-    {
-        "id": "func_prep_participants",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "name": "3. Prepare Participants",
-        "func": "const meetingId = msg.meetingId;\nconst parts = msg.meetingData.participants;\n\n// Prepare the final success payload in advance\nmsg.successPayload = { \n    message: \"會議創建成功\", \n    id: meetingId,\n    uuid: msg.meetingUuid \n};\n\nif (!parts || parts.length === 0) {\n    // If no participants, we skip the insert by running a dummy query\n    // and setting a flag to indicate we should use the successPayload\n    msg.topic = \"SELECT 1 AS skip_parts\";\n    msg.payload = [];\n    return msg; \n}\n\nlet values = [];\nlet params = [];\nparts.forEach(p => {\n    values.push(\"(?, ?, ?)\");\n    params.push(meetingId, p.user_id, p.is_mandatory ? 1 : 0);\n});\n\nmsg.topic = `INSERT INTO Meeting_Participants (meeting_id, user_id, is_mandatory) VALUES ${values.join(',')}`;\nmsg.payload = params;\nreturn msg;",
-        "outputs": 1,
-        "x": 1150,
-        "y": 1360,
-        "wires": [
-            [
-                "3b14db09738b0ebc"
-            ]
-        ]
-    },
-    {
-        "id": "group_availability",
-        "type": "group",
-        "z": "124419962d0f0420",
-        "name": "Availability API (UUID & ACL)",
-        "style": {
-            "label": true
-        },
-        "nodes": [
-            "http_in_post_avail",
-            "func_prep_avail_sql",
-            "mysql_check_meeting_avail",
-            "func_exec_avail_insert",
-            "mysql_get_slots_avail",
-            "func_final_avail_sql",
-            "mysql_insert_avail",
-            "res_avail_success"
-        ],
-        "x": 50,
-        "y": 1740,
-        "w": 1700,
-        "h": 120
-    },
-    {
-        "id": "http_in_post_avail",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "g": "group_availability",
-        "name": "",
-        "url": "/api/user/availability",
-        "method": "post",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 140,
-        "y": 1800,
-        "wires": [
-            [
-                "func_prep_avail_sql"
-            ]
-        ]
-    },
-    {
-        "id": "func_prep_avail_sql",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_availability",
-        "name": "Prepare Avail SQL",
-        "func": "let userId = null;\nconst { meeting_uuid, slots } = msg.payload;\n\nconst authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    const parts = token.split('_');\n    if (parts.length >= 4) {\n        userId = parseInt(parts[parts.length - 1], 10);\n    }\n}\n\nif (!userId || !meeting_uuid) {\n    throw new Error(\"Missing parameters or Unauthorized\");\n}\n\nmsg.userId = userId;\nmsg.slots = slots;\n\nmsg.topic = `\n    SELECT id FROM Meetings \n    WHERE uuid = ? \n    AND (\n        admin_id = ? \n        OR id IN (SELECT meeting_id FROM Meeting_Participants WHERE user_id = ?)\n    );\n`;\nmsg.payload = [meeting_uuid, userId, userId];\nreturn msg;",
-        "outputs": 1,
-        "x": 380,
-        "y": 1800,
-        "wires": [
-            [
-                "mysql_check_meeting_avail"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_check_meeting_avail",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_availability",
-        "mydb": "0bdc806336f756dc",
-        "name": "Check Meeting & Auth",
-        "x": 620,
-        "y": 1800,
-        "wires": [
-            [
-                "func_exec_avail_insert"
-            ]
-        ]
-    },
-    {
-        "id": "func_exec_avail_insert",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_availability",
-        "name": "Exec Avail Insert",
-        "func": "if (!msg.payload || msg.payload.length === 0) {\n    msg.payload = { error: \"Meeting not found or access denied\" };\n    msg.statusCode = 403;\n    return [null, msg];\n}\n\nconst meetingId = msg.payload[0].id;\nconst userId = msg.userId;\nconst slots = msg.slots;\n\n// We need to resolve start_time/end_time in the request to slot_ids in the DB\n// This usually requires another query OR the frontend sending slot_ids\n// Since Calendar.jsx sends start_time/end_time, we MUST find the slot_ids first.\n\nmsg.meetingId = meetingId;\nmsg.topic = \"SELECT id, start_time, end_time FROM Time_Slots WHERE meeting_id = ?\";\nmsg.payload = [meetingId];\nreturn msg;",
-        "outputs": 1,
-        "x": 860,
-        "y": 1800,
-        "wires": [
-            [
-                "mysql_get_slots_avail"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_get_slots_avail",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_availability",
-        "mydb": "0bdc806336f756dc",
-        "name": "Get Slot IDs",
-        "x": 1060,
-        "y": 1800,
-        "wires": [
-            [
-                "func_final_avail_sql"
-            ]
-        ]
-    },
-    {
-        "id": "func_final_avail_sql",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_availability",
-        "name": "Final Avail SQL",
-        "func": "const dbSlots = msg.payload;\nconst userSlots = msg.slots;\nconst userId = msg.userId;\n\nlet values = [];\nlet params = [];\n\nuserSlots.forEach(us => {\n    // Match by time (simplified comparison)\n    const match = dbSlots.find(ds => {\n        const dsStart = new Date(ds.start_time).getTime();\n        const usStart = new Date(us.start_time).getTime();\n        return Math.abs(dsStart - usStart) < 60000; // 1 min tolerance\n    });\n    \n    if (match) {\n        values.push(\"(?, ?, 'available')\");\n        params.push(userId, match.id);\n    }\n});\n\nif (values.length === 0) {\n    msg.payload = { error: \"No matching slots found\" };\n    msg.statusCode = 400;\n    return [null, msg];\n}\n\nmsg.topic = `INSERT INTO User_Availability (user_id, slot_id, status) VALUES ${values.join(',')} ON DUPLICATE KEY UPDATE status='available'`;\nmsg.payload = params;\nreturn msg;",
-        "outputs": 1,
-        "x": 1260,
-        "y": 1800,
-        "wires": [
-            [
-                "mysql_insert_avail"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_insert_avail",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_availability",
-        "mydb": "0bdc806336f756dc",
-        "name": "Insert Avail",
-        "x": 1460,
-        "y": 1800,
-        "wires": [
-            [
-                "res_avail_success"
-            ]
-        ]
-    },
-    {
-        "id": "res_avail_success",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "g": "group_availability",
-        "name": "Success",
-        "statusCode": "200",
-        "x": 1640,
-        "y": 1800,
-        "wires": []
-    },
-    {
-        "id": "func_meeting_create_final_res",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "911dbd3240e0046e",
-        "name": "Format Create Res",
-        "func": "msg.payload = msg.successPayload || { message: \"會議創建成功\", uuid: msg.meetingUuid };\nreturn msg;",
-        "outputs": 1,
-        "x": 1350,
-        "y": 1420,
-        "wires": [
-            [
-                "59c2f2284a972dab"
-            ]
-        ]
-    },
-    {
-        "id": "func_prep_parts_list",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_get_single_meeting",
-        "name": "Prepare Parts SQL",
-        "func": "msg.timeSlots = msg.payload;\n\nconst internalId = msg.meetingMeta.id;\nmsg.topic = \"SELECT mp.*, u.first_name, u.last_name, u.email, d.dept_name, jt.title_name FROM Meeting_Participants mp JOIN Users u ON mp.user_id = u.id LEFT JOIN Departments d ON u.department_id = d.id LEFT JOIN Job_Titles jt ON u.job_title_id = jt.id WHERE mp.meeting_id = ?\";\nmsg.payload = [internalId];\nreturn msg;",
-        "outputs": 1,
-        "x": 580,
-        "y": 1760,
-        "wires": [
-            [
-                "mysql_get_parts"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_get_parts",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_get_single_meeting",
-        "mydb": "0bdc806336f756dc",
-        "name": "Get Parts",
-        "x": 760,
-        "y": 1760,
-        "wires": [
-            [
-                "func_format_meeting_res"
-            ]
-        ]
-    },
-    {
-        "id": "group_put_meeting",
-        "type": "group",
-        "z": "124419962d0f0420",
-        "name": "Edit Meeting API (PUT)",
-        "style": {
-            "label": true
-        },
-        "nodes": [
-            "http_in_put_meeting",
-            "func_prep_put_meeting_check",
-            "mysql_check_admin",
-            "func_prep_put_meeting_meta",
-            "mysql_update_meta",
-            "func_prep_del_slots",
-            "mysql_del_slots",
-            "func_prep_ins_slots",
-            "mysql_ins_slots",
-            "func_prep_del_parts",
-            "mysql_del_parts",
-            "func_prep_ins_parts",
-            "mysql_ins_parts",
-            "func_put_success",
-            "http_out_put_error",
-            "http_out_put_success"
-        ],
-        "x": 50,
-        "y": 1400,
-        "w": 2100,
-        "h": 260
-    },
-    {
-        "id": "http_in_put_meeting",
-        "type": "http in",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "name": "",
-        "url": "/api/meetings/:id",
-        "method": "put",
-        "upload": false,
-        "swaggerDoc": "",
-        "x": 130,
-        "y": 1500,
-        "wires": [
-            [
-                "func_prep_put_meeting_check"
-            ]
-        ]
-    },
-    {
-        "id": "func_prep_put_meeting_check",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "name": "Check Auth & Meeting",
-        "func": "const d = msg.payload;\nlet userId = null;\nlet uuid = msg.req.params.id;\n\nconst authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    const parts = token.split('_');\n    if (parts.length >= 4) {\n        userId = parseInt(parts[parts.length - 1], 10);\n    }\n}\n\nif (!userId) {\n    throw new Error(\"Unauthorized: 請先登入後再進行編輯\");\n}\n\n// We must verify the user is the admin_id\nmsg.meetingData = d;\nmsg.userId = userId;\nmsg.uuid = uuid;\n\nmsg.topic = \"SELECT id, status FROM Meetings WHERE uuid = ? AND admin_id = ?\";\nmsg.payload = [uuid, userId];\nreturn msg;",
-        "outputs": 1,
-        "x": 360,
-        "y": 1500,
-        "wires": [
-            [
-                "mysql_check_admin"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_check_admin",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "mydb": "0bdc806336f756dc",
-        "name": "Check Admin",
-        "x": 580,
-        "y": 1500,
-        "wires": [
-            [
-                "func_prep_put_meeting_meta"
-            ]
-        ]
-    },
-    {
-        "id": "func_prep_put_meeting_meta",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "name": "Update Meeting Meta",
-        "func": "if (!msg.payload || msg.payload.length === 0) {\n    msg.payload = { error: \"Forbidden\", message: \"您無權編輯此會議或會議不存在\" };\n    msg.statusCode = 403;\n    return [null, msg];\n}\n\nconst internalId = msg.payload[0].id;\nmsg.internalId = internalId;\nconst d = msg.meetingData;\n\n// Update metadata and increment sequence_num\nmsg.topic = `\n    UPDATE Meetings SET\n    title = ?, subject = ?, agenda = ?, government_agenda = ?,\n    discussion_points = ?, location = ?, online_url = ?, duration_minutes = ?,\n    is_online = ?, sequence_num = sequence_num + 1\n    WHERE id = ?\n`;\n\nmsg.payload = [\n    d.title,\n    d.subject || null,\n    d.agenda || null,\n    d.government_agenda || null,\n    d.discussion_points || null,\n    d.location,\n    d.online_url || null,\n    d.duration_minutes,\n    d.is_online ? 1 : 0,\n    internalId\n];\nreturn [msg, null];",
-        "outputs": 2,
-        "x": 800,
-        "y": 1500,
-        "wires": [
-            [
-                "mysql_update_meta"
-            ],
-            [
-                "http_out_put_error"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_update_meta",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "mydb": "0bdc806336f756dc",
-        "name": "Upd Meta",
-        "x": 1020,
-        "y": 1500,
-        "wires": [
-            [
-                "func_prep_del_slots"
-            ]
-        ]
-    },
-    {
-        "id": "func_prep_del_slots",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "name": "Prepare Del Slots",
-        "func": "// We will delete all old slots. \n// Note: This drops user votes, but for now it's the simplest way to sync.\nmsg.topic = \"DELETE FROM Time_Slots WHERE meeting_id = ?\";\nmsg.payload = [msg.internalId];\nreturn msg;",
-        "outputs": 1,
-        "x": 1220,
-        "y": 1500,
-        "wires": [
-            [
-                "mysql_del_slots"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_del_slots",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "mydb": "0bdc806336f756dc",
-        "name": "Del Slots",
-        "x": 1420,
-        "y": 1500,
-        "wires": [
-            [
-                "func_prep_ins_slots"
-            ]
-        ]
-    },
-    {
-        "id": "func_prep_ins_slots",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "name": "Prepare Ins Slots",
-        "func": "const slots = msg.meetingData.time_slots;\nif (!slots || slots.length === 0) {\n    msg.topic = \"SELECT 1\";\n    msg.payload = [];\n    return msg;\n}\n\nlet values = [];\nlet params = [];\nslots.forEach(s => {\n    values.push(\"(?, ?, ?)\");\n    params.push(msg.internalId, s.start, s.end);\n});\nmsg.topic = `INSERT INTO Time_Slots (meeting_id, start_time, end_time) VALUES ${values.join(',')}`;\nmsg.payload = params;\nreturn msg;",
-        "outputs": 1,
-        "x": 1620,
-        "y": 1500,
-        "wires": [
-            [
-                "mysql_ins_slots"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_ins_slots",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "mydb": "0bdc806336f756dc",
-        "name": "Ins Slots",
-        "x": 1820,
-        "y": 1500,
-        "wires": [
-            [
-                "func_prep_del_parts"
-            ]
-        ]
-    },
-    {
-        "id": "func_prep_del_parts",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "name": "Prepare Del Parts",
-        "func": "msg.topic = \"DELETE FROM Meeting_Participants WHERE meeting_id = ?\";\nmsg.payload = [msg.internalId];\nreturn msg;",
-        "outputs": 1,
-        "x": 1020,
-        "y": 1580,
-        "wires": [
-            [
-                "mysql_del_parts"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_del_parts",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "mydb": "0bdc806336f756dc",
-        "name": "Del Parts",
-        "x": 1220,
-        "y": 1580,
-        "wires": [
-            [
-                "func_prep_ins_parts"
-            ]
-        ]
-    },
-    {
-        "id": "func_prep_ins_parts",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "name": "Prepare Ins Parts",
-        "func": "const parts = msg.meetingData.participants;\nif (!parts || parts.length === 0) {\n    msg.payload = { message: \"會議更新成功\", uuid: msg.uuid };\n    return [null, msg]; // Skip to success\n}\n\nlet values = [];\nlet params = [];\nparts.forEach(p => {\n    values.push(\"(?, ?, ?)\");\n    params.push(msg.internalId, p.user_id, p.is_mandatory ? 1 : 0);\n});\n\nmsg.topic = `INSERT INTO Meeting_Participants (meeting_id, user_id, is_mandatory) VALUES ${values.join(',')}`;\nmsg.payload = params;\nreturn [msg, null];",
-        "outputs": 2,
-        "x": 1420,
-        "y": 1580,
-        "wires": [
-            [
-                "mysql_ins_parts"
-            ],
-            [
-                "http_out_put_success"
-            ]
-        ]
-    },
-    {
-        "id": "mysql_ins_parts",
-        "type": "mysql",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "mydb": "0bdc806336f756dc",
-        "name": "Ins Parts",
-        "x": 1620,
-        "y": 1580,
-        "wires": [
-            [
-                "func_put_success"
-            ]
-        ]
-    },
-    {
-        "id": "func_put_success",
-        "type": "function",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "name": "Format Success",
-        "func": "msg.payload = { message: \"會議更新成功\", uuid: msg.uuid };\nreturn msg;",
-        "outputs": 1,
-        "x": 1820,
-        "y": 1580,
-        "wires": [
-            [
-                "http_out_put_success"
-            ]
-        ]
-    },
-    {
-        "id": "http_out_put_error",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "name": "Error Response",
-        "statusCode": "",
-        "x": 1020,
-        "y": 1440,
-        "wires": []
-    },
-    {
-        "id": "http_out_put_success",
-        "type": "http response",
-        "z": "124419962d0f0420",
-        "g": "group_put_meeting",
-        "name": "Success Response",
-        "statusCode": "200",
-        "x": 2040,
-        "y": 1580,
-        "wires": []
-    }
+  {
+    "id": "124419962d0f0420",
+    "type": "tab",
+    "label": "Google Auth Flow",
+    "disabled": false,
+    "info": ""
+  },
+  {
+    "id": "fa1b53f20053a304",
+    "type": "group",
+    "z": "124419962d0f0420",
+    "name": "保護的 API 路由 (需要 Token)",
+    "style": {
+      "stroke": "#009933",
+      "fill": "#e6ffe6",
+      "label": true
+    },
+    "nodes": [
+      "928cdce6a21b1368",
+      "28f03ce542ad94dc",
+      "9e100c9799469997",
+      "837b7ac985cc13ea"
+    ],
+    "x": 44,
+    "y": 479,
+    "w": 722,
+    "h": 182
+  },
+  {
+    "id": "group_my_meetings",
+    "type": "group",
+    "z": "124419962d0f0420",
+    "name": "GET /api/meetings/my",
+    "style": {
+      "stroke": "#ff9900",
+      "fill": "#fff1d0",
+      "fill-opacity": "0.5",
+      "label": true,
+      "color": "#000000"
+    },
+    "nodes": [
+      "http_in_my_meetings",
+      "func_prepare_sql",
+      "mysql_my_meetings",
+      "func_format_response",
+      "http_out_my_meetings",
+      "catch_my_meetings",
+      "http_out_error_meetings"
+    ],
+    "x": -26,
+    "y": 999,
+    "w": 972,
+    "h": 162
+  },
+  {
+    "id": "911dbd3240e0046e",
+    "type": "group",
+    "z": "124419962d0f0420",
+    "name": "Meeting Creation & User List API",
+    "style": {
+      "stroke": "#0099ff",
+      "fill": "#e6f8ff",
+      "fill-opacity": "0.5",
+      "label": true,
+      "color": "#000000"
+    },
+    "nodes": [
+      "e9c8775ddcd41bc4",
+      "9b305cf18937b9b6",
+      "6b9a749ad06fe415",
+      "d880ab4e17ae449e",
+      "20a8f3cf8bc6cf3b",
+      "9cd82291e7e18ec7",
+      "c5226553c7f8f4fd",
+      "edc1699eeba4d523",
+      "7ae215c1b0cc30c2",
+      "977c040b7e9f9da2",
+      "3b14db09738b0ebc",
+      "59c2f2284a972dab",
+      "b809faec8f6a2872",
+      "218f1a5009f43501"
+    ],
+    "x": 14,
+    "y": 1219,
+    "w": 1052,
+    "h": 362
+  },
+  {
+    "id": "group_get_single_meeting",
+    "type": "group",
+    "z": "124419962d0f0420",
+    "name": "GET /api/meetings/:id",
+    "style": {
+      "stroke": "#00cc66",
+      "fill": "#e6fffa",
+      "fill-opacity": "0.5",
+      "label": true,
+      "color": "#000000"
+    },
+    "nodes": [
+      "http_in_get_meeting",
+      "func_prep_get_meeting",
+      "mysql_get_meeting",
+      "func_prep_slots_list",
+      "mysql_get_slots",
+      "func_format_meeting_res",
+      "http_out_meeting_res",
+      "catch_get_meeting"
+    ],
+    "x": 14,
+    "y": 1639,
+    "w": 852,
+    "h": 222
+  },
+  {
+    "id": "efa7f42a825fcca2",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "name": "POST /api/auth/google",
+    "url": "/api/auth/google",
+    "method": "post",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 150,
+    "y": 120,
+    "wires": [
+      [
+        "393785d52015c177"
+      ]
+    ]
+  },
+  {
+    "id": "5b4ab398b3886f4b",
+    "type": "http request",
+    "z": "124419962d0f0420",
+    "name": "Google Tokeninfo",
+    "method": "use",
+    "ret": "obj",
+    "paytoqs": "ignore",
+    "url": "",
+    "tls": "",
+    "persist": false,
+    "proxy": "",
+    "authType": "",
+    "x": 610,
+    "y": 120,
+    "wires": [
+      [
+        "a91cf307603cde4c"
+      ]
+    ]
+  },
+  {
+    "id": "8e635957712faec4",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "mydb": "0bdc806336f756dc",
+    "name": "MySQL Users",
+    "x": 420,
+    "y": 240,
+    "wires": [
+      [
+        "15b0f2e403805e65",
+        "070cd52b685e8cfc"
+      ]
+    ]
+  },
+  {
+    "id": "4c09a6a47d45bff3",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "name": "HTTP Response",
+    "statusCode": "",
+    "headers": {},
+    "x": 840,
+    "y": 180,
+    "wires": []
+  },
+  {
+    "id": "5bb443298fbdbfd1",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "name": "POST /api/auth/register",
+    "url": "/api/auth/register",
+    "method": "post",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 160,
+    "y": 360,
+    "wires": [
+      [
+        "982bb0a24f90e078"
+      ]
+    ]
+  },
+  {
+    "id": "f595b69a0fd326c3",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "mydb": "0bdc806336f756dc",
+    "name": "MySQL Insert User",
+    "x": 630,
+    "y": 360,
+    "wires": [
+      [
+        "cfd5d8dcc48ca58f",
+        "18adab484827f35a"
+      ]
+    ]
+  },
+  {
+    "id": "e42553cb9572c93a",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "name": "HTTP Response",
+    "statusCode": "",
+    "headers": {},
+    "x": 1080,
+    "y": 400,
+    "wires": []
+  },
+  {
+    "id": "04dcc1f0576cd11f",
+    "type": "debug",
+    "z": "124419962d0f0420",
+    "name": "SQL 錯誤追蹤",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "true",
+    "targetType": "full",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 380,
+    "y": 700,
+    "wires": []
+  },
+  {
+    "id": "e551dcbbcfafb478",
+    "type": "catch",
+    "z": "124419962d0f0420",
+    "name": "Global MySQL & Flow Catch",
+    "scope": null,
+    "uncaught": false,
+    "x": 170,
+    "y": 700,
+    "wires": [
+      [
+        "admin_debug_error",
+        "4c09a6a47d45bff3"
+      ]
+    ]
+  },
+  {
+    "id": "90c1ba422e906c82",
+    "type": "debug",
+    "z": "124419962d0f0420",
+    "name": "debug 53",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "false",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 440,
+    "y": 300,
+    "wires": []
+  },
+  {
+    "id": "d365704fa76468e1",
+    "type": "debug",
+    "z": "124419962d0f0420",
+    "name": "debug 54",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "false",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 580,
+    "y": 40,
+    "wires": []
+  },
+  {
+    "id": "9b0d50f8678cc4be",
+    "type": "debug",
+    "z": "124419962d0f0420",
+    "name": "debug 55",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "false",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 880,
+    "y": 280,
+    "wires": []
+  },
+  {
+    "id": "070cd52b685e8cfc",
+    "type": "debug",
+    "z": "124419962d0f0420",
+    "name": "debug 56",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "false",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 680,
+    "y": 300,
+    "wires": []
+  },
+  {
+    "id": "6a44bcab95cf8e2e",
+    "type": "debug",
+    "z": "124419962d0f0420",
+    "name": "debug 57",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "false",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 580,
+    "y": 440,
+    "wires": []
+  },
+  {
+    "id": "18adab484827f35a",
+    "type": "debug",
+    "z": "124419962d0f0420",
+    "name": "debug 58",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "false",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 800,
+    "y": 420,
+    "wires": []
+  },
+  {
+    "id": "36704b236d9a1b2e",
+    "type": "debug",
+    "z": "124419962d0f0420",
+    "name": "debug 59",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "tostatus": false,
+    "complete": "false",
+    "statusVal": "",
+    "statusType": "auto",
+    "x": 480,
+    "y": 640,
+    "wires": []
+  },
+  {
+    "id": "http_get_departments",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "name": "GET /api/departments",
+    "url": "/api/departments",
+    "method": "get",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 260,
+    "y": 840,
+    "wires": [
+      [
+        "query_departments"
+      ]
+    ]
+  },
+  {
+    "id": "query_departments",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "mydb": "0bdc806336f756dc",
+    "name": "SELECT Departments",
+    "x": 510,
+    "y": 840,
+    "wires": [
+      [
+        "http_resp_departments"
+      ]
+    ]
+  },
+  {
+    "id": "http_resp_departments",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "name": "Response",
+    "statusCode": "",
+    "headers": {},
+    "x": 730,
+    "y": 840,
+    "wires": []
+  },
+  {
+    "id": "http_get_jobtitles",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "name": "GET /api/job_titles",
+    "url": "/api/job_titles",
+    "method": "get",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 250,
+    "y": 920,
+    "wires": [
+      [
+        "query_jobtitles"
+      ]
+    ]
+  },
+  {
+    "id": "query_jobtitles",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "mydb": "0bdc806336f756dc",
+    "name": "SELECT Job Titles",
+    "x": 500,
+    "y": 920,
+    "wires": [
+      [
+        "http_resp_jobtitles"
+      ]
+    ]
+  },
+  {
+    "id": "http_resp_jobtitles",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "name": "Response",
+    "statusCode": "",
+    "headers": {},
+    "x": 730,
+    "y": 920,
+    "wires": []
+  },
+  {
+    "id": "http_in_my_meetings",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "g": "group_my_meetings",
+    "name": "",
+    "url": "/api/meetings/my",
+    "method": "get",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 100,
+    "y": 1040,
+    "wires": [
+      [
+        "func_prepare_sql"
+      ]
+    ]
+  },
+  {
+    "id": "func_prepare_sql",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_my_meetings",
+    "name": "Prepare GET Meetings SQL",
+    "func": "let userId = null;\n\n// 解析前端傳來的 Token\nconst authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    const parts = token.split('_');\n    if (parts.length >= 4) {\n        userId = parseInt(parts[parts.length - 1], 10);\n    }\n}\n\n// 萬一解析失敗，拋出錯誤讓 Catch 節點接手\nif (!userId) {\n    throw new Error(\"Unauthorized: 無法識別使用者身分\");\n}\n\n// 撈取與該使用者有相關聯的會議 (發起人 或 受邀人)\nmsg.topic = `\n    SELECT \n        m.*,\n        u.first_name AS admin_first_name,\n        u.last_name AS admin_last_name,\n        d.dept_name AS admin_dept_name,\n        jt.title_name AS admin_title_name\n    FROM Meetings m\n    JOIN Users u ON m.admin_id = u.id\n    LEFT JOIN Departments d ON u.department_id = d.id\n    LEFT JOIN Job_Titles jt ON u.job_title_id = jt.id\n    WHERE m.admin_id = ? \n       OR m.id IN (SELECT meeting_id FROM Meeting_Participants WHERE user_id = ?)\n    ORDER BY m.created_at DESC;\n`;\n\nmsg.payload = [userId, userId];\nreturn msg;",
+    "outputs": 1,
+    "x": 320,
+    "y": 1040,
+    "wires": [
+      [
+        "mysql_my_meetings"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_my_meetings",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_my_meetings",
+    "mydb": "0bdc806336f756dc",
+    "name": "MySQL Meetings",
+    "x": 520,
+    "y": 1040,
+    "wires": [
+      [
+        "func_format_response"
+      ]
+    ]
+  },
+  {
+    "id": "func_format_response",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_my_meetings",
+    "name": "Format JSON",
+    "func": "msg.payload = msg.payload || [];\nreturn msg;",
+    "outputs": 1,
+    "x": 700,
+    "y": 1040,
+    "wires": [
+      [
+        "http_out_my_meetings"
+      ]
+    ]
+  },
+  {
+    "id": "http_out_my_meetings",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "g": "group_my_meetings",
+    "name": "",
+    "statusCode": "200",
+    "headers": {},
+    "x": 860,
+    "y": 1040,
+    "wires": []
+  },
+  {
+    "id": "catch_my_meetings",
+    "type": "catch",
+    "z": "124419962d0f0420",
+    "g": "group_my_meetings",
+    "name": "Catch Errors",
+    "scope": [
+      "mysql_my_meetings",
+      "func_prepare_sql"
+    ],
+    "uncaught": false,
+    "x": 330,
+    "y": 1120,
+    "wires": [
+      [
+        "http_out_error_meetings"
+      ]
+    ]
+  },
+  {
+    "id": "http_out_error_meetings",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "g": "group_my_meetings",
+    "name": "500 Error",
+    "statusCode": "500",
+    "headers": {},
+    "x": 500,
+    "y": 1120,
+    "wires": []
+  },
+  {
+    "id": "e9c8775ddcd41bc4",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "name": "",
+    "url": "/api/users/list",
+    "method": "get",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 130,
+    "y": 1260,
+    "wires": [
+      [
+        "9b305cf18937b9b6"
+      ]
+    ]
+  },
+  {
+    "id": "9b305cf18937b9b6",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "name": "Prepare Users SQL",
+    "func": "msg.topic = `\n    SELECT u.id, u.first_name, u.last_name, d.dept_name, jt.title_name \n    FROM Users u\n    LEFT JOIN Departments d ON u.department_id = d.id\n    LEFT JOIN Job_Titles jt ON u.job_title_id = jt.id\n    ORDER BY d.id ASC, jt.tier_level ASC;\n`;\nmsg.payload = [];\nreturn msg;",
+    "outputs": 1,
+    "x": 350,
+    "y": 1260,
+    "wires": [
+      [
+        "6b9a749ad06fe415"
+      ]
+    ]
+  },
+  {
+    "id": "6b9a749ad06fe415",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "mydb": "0bdc806336f756dc",
+    "name": "MySQL Users",
+    "x": 580,
+    "y": 1260,
+    "wires": [
+      [
+        "d880ab4e17ae449e"
+      ]
+    ]
+  },
+  {
+    "id": "d880ab4e17ae449e",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "name": "",
+    "statusCode": "200",
+    "headers": {},
+    "x": 780,
+    "y": 1260,
+    "wires": []
+  },
+  {
+    "id": "20a8f3cf8bc6cf3b",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "name": "",
+    "url": "/api/meetings",
+    "method": "post",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 130,
+    "y": 1360,
+    "wires": [
+      [
+        "9cd82291e7e18ec7"
+      ]
+    ]
+  },
+  {
+    "id": "9cd82291e7e18ec7",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "name": "1. Prepare Meeting Data",
+    "func": "const d = msg.payload;\nlet adminId = null;\n\nconst authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    const parts = token.split('_');\n    if (parts.length >= 4) {\n        adminId = parseInt(parts[parts.length - 1], 10);\n    }\n}\n\nif (!adminId) {\n    throw new Error(\"Unauthorized: 無法識別發起人身分\");\n}\n\n// Generate UUID v4\nconst meetingUuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {\n    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);\n    return v.toString(16);\n});\n\nmsg.meetingData = d;\nmsg.meetingUuid = meetingUuid;\n\nmsg.topic = `\n    INSERT INTO Meetings \n    (uuid, title, subject, agenda, government_agenda, discussion_points, location, online_url, duration_minutes, is_online, status, admin_id) \n    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'polling', ?)`;\n\nmsg.payload = [\n    meetingUuid,\n    d.title,\n    d.subject || null,\n    d.agenda || null,\n    d.government_agenda || null,\n    d.discussion_points || null,\n    d.location,\n    d.online_url || null,\n    d.duration_minutes,\n    d.is_online ? 1 : 0,\n    adminId\n];\nreturn msg;",
+    "outputs": 1,
+    "x": 370,
+    "y": 1360,
+    "wires": [
+      [
+        "c5226553c7f8f4fd"
+      ]
+    ]
+  },
+  {
+    "id": "c5226553c7f8f4fd",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "mydb": "0bdc806336f756dc",
+    "name": "Insert Meeting",
+    "x": 580,
+    "y": 1360,
+    "wires": [
+      [
+        "edc1699eeba4d523"
+      ]
+    ]
+  },
+  {
+    "id": "edc1699eeba4d523",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "name": "2. Prepare Time Slots",
+    "func": "msg.payload = { \n    message: \"會議創建成功\", \n    id: msg.payload.insertId,\n    uuid: msg.meetingUuid \n};\nreturn msg;",
+    "outputs": 1,
+    "x": 780,
+    "y": 1360,
+    "wires": [
+      [
+        "7ae215c1b0cc30c2"
+      ]
+    ]
+  },
+  {
+    "id": "7ae215c1b0cc30c2",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "mydb": "0bdc806336f756dc",
+    "name": "Insert Slots",
+    "x": 970,
+    "y": 1360,
+    "wires": [
+      [
+        "func_prep_participants"
+      ]
+    ]
+  },
+  {
+    "id": "3b14db09738b0ebc",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "mydb": "0bdc806336f756dc",
+    "name": "Insert Parts",
+    "x": 610,
+    "y": 1440,
+    "wires": [
+      [
+        "func_meeting_create_final_res"
+      ]
+    ]
+  },
+  {
+    "id": "59c2f2284a972dab",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "name": "200 Success",
+    "statusCode": "200",
+    "headers": {},
+    "x": 830,
+    "y": 1440,
+    "wires": []
+  },
+  {
+    "id": "218f1a5009f43501",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "name": "500 Error",
+    "statusCode": "500",
+    "headers": {},
+    "x": 350,
+    "y": 1540,
+    "wires": []
+  },
+  {
+    "id": "http_in_get_meeting",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "g": "group_get_single_meeting",
+    "name": "",
+    "url": "/api/meetings/:id",
+    "method": "get",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 140,
+    "y": 1680,
+    "wires": [
+      [
+        "func_prep_get_meeting"
+      ]
+    ]
+  },
+  {
+    "id": "func_prep_get_meeting",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_get_single_meeting",
+    "name": "Prepare GET Meeting SQL",
+    "func": "let userId = null;\nlet uuid = msg.req.params.id;\n\nconst authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    const parts = token.split('_');\n    if (parts.length >= 4) {\n        userId = parseInt(parts[parts.length - 1], 10);\n    }\n}\n\nif (!userId) {\n    throw new Error(\"Unauthorized: 請先登入後再存取會議資料\");\n}\n\nmsg.topic = `\n    SELECT m.*, u.first_name AS admin_first_name, u.last_name AS admin_last_name\n    FROM Meetings m\n    JOIN Users u ON m.admin_id = u.id\n    WHERE m.uuid = ? \n    AND (\n        m.admin_id = ? \n        OR m.id IN (SELECT meeting_id FROM Meeting_Participants WHERE user_id = ?)\n    );\n`;\nmsg.payload = [uuid, userId, userId];\nreturn msg;",
+    "outputs": 1,
+    "x": 360,
+    "y": 1680,
+    "wires": [
+      [
+        "mysql_get_meeting"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_get_meeting",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_get_single_meeting",
+    "mydb": "0bdc806336f756dc",
+    "name": "Get Meeting Meta",
+    "x": 580,
+    "y": 1680,
+    "wires": [
+      [
+        "func_prep_slots_list"
+      ]
+    ]
+  },
+  {
+    "id": "func_prep_slots_list",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_get_single_meeting",
+    "name": "Prepare Slots SQL",
+    "func": "if (!msg.payload || msg.payload.length === 0) {\n    msg.payload = { error: \"Meeting not found or unauthorized\" };\n    msg.statusCode = 404;\n    return [null, msg]; \n}\nmsg.meetingMeta = msg.payload[0];\n\n// Use the correct integer ID for the next queries!\nconst internalId = msg.meetingMeta.id;\n\n// We will chain the queries: Slots -> Participants -> Format\nmsg.topic = \"SELECT * FROM Time_Slots WHERE meeting_id = ?\";\nmsg.payload = [internalId];\nreturn [msg, null];",
+    "outputs": 2,
+    "x": 160,
+    "y": 1760,
+    "wires": [
+      [
+        "mysql_get_slots"
+      ],
+      [
+        "http_out_meeting_res"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_get_slots",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_get_single_meeting",
+    "mydb": "0bdc806336f756dc",
+    "name": "Get Slots",
+    "x": 380,
+    "y": 1760,
+    "wires": [
+      [
+        "func_prep_parts_list"
+      ]
+    ]
+  },
+  {
+    "id": "func_format_meeting_res",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_get_single_meeting",
+    "name": "Format Response",
+    "func": "msg.payload = { ...msg.meetingMeta, time_slots: msg.timeSlots, participants: msg.participants, user_availability: msg.userAvail, survey_progress: msg.payload[0] }; return msg;",
+    "outputs": 1,
+    "x": 560,
+    "y": 1760,
+    "wires": [
+      [
+        "http_out_meeting_res"
+      ]
+    ]
+  },
+  {
+    "id": "http_out_meeting_res",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "g": "group_get_single_meeting",
+    "name": "",
+    "statusCode": "200",
+    "headers": {},
+    "x": 780,
+    "y": 1760,
+    "wires": []
+  },
+  {
+    "id": "catch_get_meeting",
+    "type": "catch",
+    "z": "124419962d0f0420",
+    "g": "group_get_single_meeting",
+    "name": "Catch Error",
+    "scope": null,
+    "uncaught": false,
+    "x": 140,
+    "y": 1820,
+    "wires": [
+      [
+        "http_out_meeting_res"
+      ]
+    ]
+  },
+  {
+    "id": "0bdc806336f756dc",
+    "type": "MySQLdatabase",
+    "name": "",
+    "host": "10.0.0.5",
+    "port": "3306",
+    "db": "office",
+    "tz": "",
+    "charset": "UTF8"
+  },
+  {
+    "id": "393785d52015c177",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "name": "準備 Google API 請求",
+    "func": "/**\n * 節點 A：準備呼叫 Google API (第 2 個節點)\n */\n\n// 取得前端 POST 過來的 token\nlet googleToken = msg.payload.token;\n\nif (!googleToken) {\n    msg.payload = { error: \"缺少 Google Token\" };\n    msg.statusCode = 400;\n    return [null, msg]; // 結束流程並跳到錯誤回應\n}\n\n// 設定 HTTP Request 節點要呼叫的目標網址\nmsg.url = \"https://oauth2.googleapis.com/tokeninfo?id_token=\" + googleToken;\nmsg.method = \"GET\";\n\nreturn [msg, null];",
+    "outputs": 2,
+    "x": 380,
+    "y": 120,
+    "wires": [
+      [
+        "5b4ab398b3886f4b",
+        "d365704fa76468e1"
+      ],
+      [
+        "4c09a6a47d45bff3"
+      ]
+    ]
+  },
+  {
+    "id": "a91cf307603cde4c",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "name": "解析結果並準備 MySQL",
+    "func": "/**\n * 節點 B：解析 Google 回應並查詢 MySQL (第 4 個節點)\n */\n\n// 解析 Google 回傳的 JSON 資料\nlet googleData = typeof msg.payload === 'string' ? JSON.parse(msg.payload) : msg.payload;\n\n// 檢查 Google 是否回傳錯誤\nif (googleData.error) {\n    msg.payload = { error: \"Google 驗證失敗\", details: googleData.error_description };\n    msg.statusCode = 401;\n    return [null, msg]; \n}\n\n// 提取出安全且經過驗證的 Email 和 姓名\nlet userEmail = googleData.email;\nlet firstName = googleData.given_name || '';\nlet lastName = googleData.family_name || '';\n\n// 將基本資料暫存起來，後面會用到\nmsg.userData = {\n    email: userEmail,\n    first_name: firstName,\n    last_name: lastName\n};\n\n// 組裝 MySQL 查詢指令：檢查此 Email 是否存在我們的 Users 表中\nmsg.topic = \"SELECT * FROM Users WHERE email = ? LIMIT 1\";\nmsg.payload = [userEmail];\n\nreturn [msg, null];",
+    "outputs": 2,
+    "x": 190,
+    "y": 240,
+    "wires": [
+      [
+        "8e635957712faec4"
+      ],
+      [
+        "4c09a6a47d45bff3",
+        "90c1ba422e906c82"
+      ]
+    ]
+  },
+  {
+    "id": "15b0f2e403805e65",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "name": "登入邏輯判斷",
+    "func": "let dbResult = msg.payload;\n\nif (dbResult.length > 0) {\n    let user = dbResult[0];\n    \n    // 🔴 檢查帳號狀態\n    if (user.global_status !== 'active') {\n        msg.payload = { \n            error: \"Forbidden\", \n            message: \"您的帳號已被停用或刪除，請洽管理員\" \n        };\n        msg.statusCode = 403;\n        return [null, msg];\n    }\n    \n    if (user.department_id === null || user.job_title_id === null) {\n        msg.payload = { \n            message: \"請補齊單位與職稱資料\", \n            action: \"REQUIRE_INFO\",\n            email: msg.userData.email\n        };\n        msg.statusCode = 206;\n    } else {\n        // 確保超級管理員權限\n        let role = (user.email === \"yi.kuei.co@gmail.com\") ? \"super_admin\" : (user.global_role || \"user\");\n        let sessionToken = \"sys_token_\" + role + \"_\" + new Date().getTime() + \"_\" + user.id; \n        \n        msg.payload = { \n            message: \"登入成功\", \n            action: \"LOGIN_SUCCESS\",\n            token: sessionToken,\n            user: {\n                id: user.id,\n                name: user.last_name + user.first_name,\n                global_role: role,\n                global_status: user.global_status,\n                last_name: user.last_name,\n                department_id: user.department_id,\n                job_title_id: user.job_title_id,\n                email: user.email\n            }\n        };\n        msg.statusCode = 200;\n    }\n} else {\n    msg.payload = { \n        message: \"歡迎首次登入，請填寫您的單位與職稱\", \n        action: \"REQUIRE_INFO\",\n        email: msg.userData.email,\n        first_name: msg.userData.first_name,\n        last_name: msg.userData.last_name\n    };\n    msg.statusCode = 206;\n}\n\nreturn msg;",
+    "outputs": 1,
+    "x": 630,
+    "y": 240,
+    "wires": [
+      [
+        "4c09a6a47d45bff3",
+        "9b0d50f8678cc4be"
+      ]
+    ]
+  },
+  {
+    "id": "982bb0a24f90e078",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "name": "準備 INSERT MySQL",
+    "func": "let data = msg.payload;\nif (!data.email || !data.first_name || !data.last_name || (!data.department_id && data.department_id !== 0) || (!data.job_title_id && data.job_title_id !== 0)) {\n    msg.payload = { error: '註冊資料不完整', received: data };\n    msg.statusCode = 400;\n    return [null, msg];\n}\nmsg.userData = data;\nmsg.topic = 'INSERT INTO Users (email, first_name, last_name, department_id, job_title_id) VALUES (?, ?, ?, ?, ?)';\nmsg.payload = [data.email, data.first_name, data.last_name, data.department_id, data.job_title_id];\nreturn [msg, null];",
+    "outputs": 2,
+    "x": 410,
+    "y": 360,
+    "wires": [
+      [
+        "f595b69a0fd326c3"
+      ],
+      [
+        "e42553cb9572c93a",
+        "6a44bcab95cf8e2e"
+      ]
+    ]
+  },
+  {
+    "id": "cfd5d8dcc48ca58f",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "name": "註冊成功核發 Token",
+    "func": "let userId = msg.payload && msg.payload.insertId ? msg.payload.insertId : Math.floor(Math.random() * 10000);\nlet email = msg.userData.email;\nlet role = (email === \"yi.kuei.co@gmail.com\") ? \"super_admin\" : \"user\";\nlet sessionToken = 'sys_token_' + role + '_' + new Date().getTime() + '_' + userId;\n\nmsg.payload = {\n    message: '註冊並登入成功',\n    action: 'LOGIN_SUCCESS',\n    token: sessionToken,\n    user: {\n        id: userId,\n        name: msg.userData.last_name + msg.userData.first_name,\n        global_role: role,\n        global_status: 'active',\n        last_name: msg.userData.last_name,\n        department_id: msg.userData.department_id,\n        job_title_id: msg.userData.job_title_id,\n        email: email\n    }\n};\nmsg.statusCode = 200;\n\nreturn msg;",
+    "outputs": 1,
+    "x": 850,
+    "y": 360,
+    "wires": [
+      [
+        "e42553cb9572c93a"
+      ]
+    ]
+  },
+  {
+    "id": "admin_get_users_in",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "name": "GET /api/admin/users",
+    "url": "/api/admin/users",
+    "method": "get",
+    "wires": [
+      [
+        "admin_auth_middleware"
+      ]
+    ]
+  },
+  {
+    "id": "admin_put_role_in",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "name": "PUT /api/admin/users/role",
+    "url": "/api/admin/users/role",
+    "method": "put",
+    "wires": [
+      [
+        "admin_auth_middleware"
+      ]
+    ]
+  },
+  {
+    "id": "admin_auth_middleware",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "name": "Admin Auth Guard",
+    "func": "const authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    if (token.includes('super_admin')) {\n        return [msg, null];\n    }\n}\nmsg.payload = { error: 'Unauthorized', message: '管理權限不足' };\nmsg.statusCode = 403;\nreturn [null, msg];",
+    "outputs": 2,
+    "wires": [
+      [
+        "admin_routing_switch",
+        "admin_debug_success"
+      ],
+      [
+        "4c09a6a47d45bff3"
+      ]
+    ]
+  },
+  {
+    "id": "admin_routing_switch",
+    "type": "switch",
+    "z": "124419962d0f0420",
+    "name": "Route by Method",
+    "property": "req.url",
+    "propertyType": "msg",
+    "rules": [
+      {
+        "t": "eq",
+        "v": "/api/admin/users",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "/api/admin/users/role",
+        "vt": "str"
+      },
+      {
+        "t": "eq",
+        "v": "/api/admin/users/status",
+        "vt": "str"
+      }
+    ],
+    "checkall": "true",
+    "repair": false,
+    "outputs": 2,
+    "wires": [
+      [
+        "admin_prep_get_sql"
+      ],
+      [
+        "admin_prep_put_sql"
+      ],
+      [
+        "admin_prep_status_sql"
+      ]
+    ]
+  },
+  {
+    "id": "admin_prep_get_sql",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "name": "Prepare GET Users SQL",
+    "func": "msg.topic = 'SELECT u.id, u.name, u.first_name, u.last_name, u.email, d.dept_name as dept, u.global_role as role, u.global_status FROM Users u LEFT JOIN Departments d ON u.department_id = d.id WHERE u.global_status != \"deleted\"';\nreturn msg;",
+    "outputs": 1,
+    "wires": [
+      [
+        "admin_mysql_node"
+      ]
+    ]
+  },
+  {
+    "id": "admin_prep_put_sql",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "name": "Prepare PUT Role SQL",
+    "func": "let data = msg.payload;\nif (!data.user_id || !data.new_role) {\n    msg.statusCode = 400;\n    msg.payload = { error: 'Missing parameters' };\n    return [null, msg];\n}\nmsg.topic = 'UPDATE Users SET global_role = ? WHERE id = ?';\nmsg.payload = [data.new_role, data.user_id];\nreturn [msg, null];",
+    "outputs": 2,
+    "wires": [
+      [
+        "admin_mysql_node"
+      ],
+      [
+        "4c09a6a47d45bff3"
+      ]
+    ]
+  },
+  {
+    "id": "admin_mysql_node",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "mydb": "0bdc806336f756dc",
+    "name": "Admin MySQL",
+    "wires": [
+      [
+        "4c09a6a47d45bff3"
+      ]
+    ]
+  },
+  {
+    "id": "admin_debug_success",
+    "type": "debug",
+    "z": "124419962d0f0420",
+    "name": "Admin Auth Success",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "complete": "true",
+    "x": 600,
+    "y": 500,
+    "wires": []
+  },
+  {
+    "id": "admin_debug_error",
+    "type": "debug",
+    "z": "124419962d0f0420",
+    "name": "Admin Error Catch",
+    "active": true,
+    "tosidebar": true,
+    "console": false,
+    "complete": "true",
+    "x": 600,
+    "y": 750,
+    "wires": []
+  },
+  {
+    "id": "admin_prep_status_sql",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "name": "Prepare PUT Status SQL",
+    "func": "let data = msg.payload;\nif (!data.user_id || !data.new_status) {\n    msg.statusCode = 400;\n    msg.payload = { error: 'Missing parameters' };\n    return [null, msg];\n}\nmsg.topic = 'UPDATE Users SET global_status = ? WHERE id = ?';\nmsg.payload = [data.new_status, data.user_id];\nreturn [msg, null];",
+    "outputs": 2,
+    "wires": [
+      [
+        "admin_mysql_node"
+      ],
+      [
+        "4c09a6a47d45bff3"
+      ]
+    ]
+  },
+  {
+    "id": "admin_put_status_in",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "name": "PUT /api/admin/users/status",
+    "url": "/api/admin/users/status",
+    "method": "put",
+    "wires": [
+      [
+        "admin_auth_middleware"
+      ]
+    ]
+  },
+  {
+    "id": "func_prep_participants",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "name": "3. Prepare Participants",
+    "func": "const meetingId = msg.meetingId;\nconst parts = msg.meetingData.participants;\n\n// Prepare the final success payload in advance\nmsg.successPayload = { \n    message: \"會議創建成功\", \n    id: meetingId,\n    uuid: msg.meetingUuid \n};\n\nif (!parts || parts.length === 0) {\n    // If no participants, we skip the insert by running a dummy query\n    // and setting a flag to indicate we should use the successPayload\n    msg.topic = \"SELECT 1 AS skip_parts\";\n    msg.payload = [];\n    return msg; \n}\n\nlet values = [];\nlet params = [];\nparts.forEach(p => {\n    values.push(\"(?, ?, ?)\");\n    params.push(meetingId, p.user_id, p.is_mandatory ? 1 : 0);\n});\n\nmsg.topic = `INSERT INTO Meeting_Participants (meeting_id, user_id, is_mandatory) VALUES ${values.join(',')}`;\nmsg.payload = params;\nreturn msg;",
+    "outputs": 1,
+    "x": 1150,
+    "y": 1360,
+    "wires": [
+      [
+        "3b14db09738b0ebc"
+      ]
+    ]
+  },
+  {
+    "id": "group_availability",
+    "type": "group",
+    "z": "124419962d0f0420",
+    "name": "Availability API (UUID & ACL)",
+    "style": {
+      "label": true
+    },
+    "nodes": [
+      "http_in_post_avail",
+      "func_prep_avail_sql",
+      "mysql_check_meeting_avail",
+      "func_exec_avail_insert",
+      "mysql_get_slots_avail",
+      "func_final_avail_sql",
+      "mysql_insert_avail",
+      "res_avail_success"
+    ],
+    "x": 50,
+    "y": 1740,
+    "w": 1700,
+    "h": 120
+  },
+  {
+    "id": "http_in_post_avail",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "g": "group_availability",
+    "name": "",
+    "url": "/api/user/availability",
+    "method": "post",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 140,
+    "y": 1800,
+    "wires": [
+      [
+        "func_prep_avail_sql"
+      ]
+    ]
+  },
+  {
+    "id": "func_prep_avail_sql",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_availability",
+    "name": "Prepare Avail SQL",
+    "func": "let userId = null;\nconst { meeting_uuid, slots } = msg.payload;\n\nconst authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    const parts = token.split('_');\n    if (parts.length >= 4) {\n        userId = parseInt(parts[parts.length - 1], 10);\n    }\n}\n\nif (!userId || !meeting_uuid) {\n    throw new Error(\"Missing parameters or Unauthorized\");\n}\n\nmsg.userId = userId;\nmsg.slots = slots;\n\nmsg.topic = `\n    SELECT id FROM Meetings \n    WHERE uuid = ? \n    AND (\n        admin_id = ? \n        OR id IN (SELECT meeting_id FROM Meeting_Participants WHERE user_id = ?)\n    );\n`;\nmsg.payload = [meeting_uuid, userId, userId];\nreturn msg;",
+    "outputs": 1,
+    "x": 380,
+    "y": 1800,
+    "wires": [
+      [
+        "mysql_check_meeting_avail"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_check_meeting_avail",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_availability",
+    "mydb": "0bdc806336f756dc",
+    "name": "Check Meeting & Auth",
+    "x": 620,
+    "y": 1800,
+    "wires": [
+      [
+        "func_exec_avail_insert"
+      ]
+    ]
+  },
+  {
+    "id": "func_exec_avail_insert",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_availability",
+    "name": "Exec Avail Insert",
+    "func": "if (!msg.payload || msg.payload.length === 0) {\n    msg.payload = { error: \"Meeting not found or access denied\" };\n    msg.statusCode = 403;\n    return [null, msg];\n}\n\nconst meetingId = msg.payload[0].id;\nconst userId = msg.userId;\nconst slots = msg.slots;\n\n// We need to resolve start_time/end_time in the request to slot_ids in the DB\n// This usually requires another query OR the frontend sending slot_ids\n// Since Calendar.jsx sends start_time/end_time, we MUST find the slot_ids first.\n\nmsg.meetingId = meetingId;\nmsg.topic = \"SELECT id, start_time, end_time FROM Time_Slots WHERE meeting_id = ?\";\nmsg.payload = [meetingId];\nreturn msg;",
+    "outputs": 1,
+    "x": 860,
+    "y": 1800,
+    "wires": [
+      [
+        "mysql_get_slots_avail"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_get_slots_avail",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_availability",
+    "mydb": "0bdc806336f756dc",
+    "name": "Get Slot IDs",
+    "x": 1060,
+    "y": 1800,
+    "wires": [
+      [
+        "func_final_avail_sql"
+      ]
+    ]
+  },
+  {
+    "id": "func_final_avail_sql",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_availability",
+    "name": "Final Avail SQL",
+    "func": "const dbSlots = msg.payload;\nconst userSlots = msg.slots;\nconst userId = msg.userId;\n\nlet values = [];\nlet params = [];\n\nuserSlots.forEach(us => {\n    // Match by time (simplified comparison)\n    const match = dbSlots.find(ds => {\n        const dsStart = new Date(ds.start_time).getTime();\n        const usStart = new Date(us.start_time).getTime();\n        return Math.abs(dsStart - usStart) < 60000; // 1 min tolerance\n    });\n    \n    if (match) {\n        values.push(\"(?, ?, 'available')\");\n        params.push(userId, match.id);\n    }\n});\n\nif (values.length === 0) {\n    msg.payload = { error: \"No matching slots found\" };\n    msg.statusCode = 400;\n    return [null, msg];\n}\n\nmsg.topic = `INSERT INTO User_Availability (user_id, slot_id, status) VALUES ${values.join(',')} ON DUPLICATE KEY UPDATE status='available'`;\nmsg.payload = params;\nreturn msg;",
+    "outputs": 1,
+    "x": 1260,
+    "y": 1800,
+    "wires": [
+      [
+        "mysql_insert_avail"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_insert_avail",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_availability",
+    "mydb": "0bdc806336f756dc",
+    "name": "Insert Avail",
+    "x": 1460,
+    "y": 1800,
+    "wires": [
+      [
+        "res_avail_success"
+      ]
+    ]
+  },
+  {
+    "id": "res_avail_success",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "g": "group_availability",
+    "name": "Success",
+    "statusCode": "200",
+    "x": 1640,
+    "y": 1800,
+    "wires": []
+  },
+  {
+    "id": "func_meeting_create_final_res",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "911dbd3240e0046e",
+    "name": "Format Create Res",
+    "func": "msg.payload = msg.successPayload || { message: \"會議創建成功\", uuid: msg.meetingUuid };\nreturn msg;",
+    "outputs": 1,
+    "x": 1350,
+    "y": 1420,
+    "wires": [
+      [
+        "59c2f2284a972dab"
+      ]
+    ]
+  },
+  {
+    "id": "func_prep_parts_list",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_get_single_meeting",
+    "name": "Prepare Parts SQL",
+    "func": "msg.timeSlots = msg.payload;\n\nconst internalId = msg.meetingMeta.id;\nmsg.topic = \"SELECT mp.*, u.first_name, u.last_name, u.email, d.dept_name, jt.title_name FROM Meeting_Participants mp JOIN Users u ON mp.user_id = u.id LEFT JOIN Departments d ON u.department_id = d.id LEFT JOIN Job_Titles jt ON u.job_title_id = jt.id WHERE mp.meeting_id = ?\";\nmsg.payload = [internalId];\nreturn msg;",
+    "outputs": 1,
+    "x": 580,
+    "y": 1760,
+    "wires": [
+      [
+        "mysql_get_parts"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_get_parts",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_get_single_meeting",
+    "mydb": "0bdc806336f756dc",
+    "name": "Get Parts",
+    "x": 760,
+    "y": 1760,
+    "wires": [
+      [
+        "func_prep_get_avail"
+      ]
+    ]
+  },
+  {
+    "id": "group_put_meeting",
+    "type": "group",
+    "z": "124419962d0f0420",
+    "name": "Edit Meeting API (PUT)",
+    "style": {
+      "label": true
+    },
+    "nodes": [
+      "http_in_put_meeting",
+      "func_prep_put_meeting_check",
+      "mysql_check_admin",
+      "func_prep_put_meeting_meta",
+      "mysql_update_meta",
+      "func_prep_del_slots",
+      "mysql_del_slots",
+      "func_prep_ins_slots",
+      "mysql_ins_slots",
+      "func_prep_del_parts",
+      "mysql_del_parts",
+      "func_prep_ins_parts",
+      "mysql_ins_parts",
+      "func_put_success",
+      "http_out_put_error",
+      "http_out_put_success"
+    ],
+    "x": 50,
+    "y": 1400,
+    "w": 2100,
+    "h": 260
+  },
+  {
+    "id": "http_in_put_meeting",
+    "type": "http in",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "name": "",
+    "url": "/api/meetings/:id",
+    "method": "put",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 130,
+    "y": 1500,
+    "wires": [
+      [
+        "func_prep_put_meeting_check"
+      ]
+    ]
+  },
+  {
+    "id": "func_prep_put_meeting_check",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "name": "Check Auth & Meeting",
+    "func": "const d = msg.payload;\nlet userId = null;\nlet uuid = msg.req.params.id;\n\nconst authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    const parts = token.split('_');\n    if (parts.length >= 4) {\n        userId = parseInt(parts[parts.length - 1], 10);\n    }\n}\n\nif (!userId) {\n    throw new Error(\"Unauthorized: 請先登入後再進行編輯\");\n}\n\n// We must verify the user is the admin_id\nmsg.meetingData = d;\nmsg.userId = userId;\nmsg.uuid = uuid;\n\nmsg.topic = \"SELECT id, status FROM Meetings WHERE uuid = ? AND admin_id = ?\";\nmsg.payload = [uuid, userId];\nreturn msg;",
+    "outputs": 1,
+    "x": 360,
+    "y": 1500,
+    "wires": [
+      [
+        "mysql_check_admin"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_check_admin",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "mydb": "0bdc806336f756dc",
+    "name": "Check Admin",
+    "x": 580,
+    "y": 1500,
+    "wires": [
+      [
+        "func_prep_put_meeting_meta"
+      ]
+    ]
+  },
+  {
+    "id": "func_prep_put_meeting_meta",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "name": "Update Meeting Meta",
+    "func": "if (!msg.payload || msg.payload.length === 0) {\n    msg.payload = { error: \"Forbidden\", message: \"您無權編輯此會議或會議不存在\" };\n    msg.statusCode = 403;\n    return [null, msg];\n}\n\nconst internalId = msg.payload[0].id;\nmsg.internalId = internalId;\nconst d = msg.meetingData;\n\n// Update metadata and increment sequence_num\nmsg.topic = `\n    UPDATE Meetings SET\n    title = ?, subject = ?, agenda = ?, government_agenda = ?,\n    discussion_points = ?, location = ?, online_url = ?, duration_minutes = ?,\n    is_online = ?, sequence_num = sequence_num + 1\n    WHERE id = ?\n`;\n\nmsg.payload = [\n    d.title,\n    d.subject || null,\n    d.agenda || null,\n    d.government_agenda || null,\n    d.discussion_points || null,\n    d.location,\n    d.online_url || null,\n    d.duration_minutes,\n    d.is_online ? 1 : 0,\n    internalId\n];\nreturn [msg, null];",
+    "outputs": 2,
+    "x": 800,
+    "y": 1500,
+    "wires": [
+      [
+        "mysql_update_meta"
+      ],
+      [
+        "http_out_put_error"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_update_meta",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "mydb": "0bdc806336f756dc",
+    "name": "Upd Meta",
+    "x": 1020,
+    "y": 1500,
+    "wires": [
+      [
+        "func_prep_del_slots"
+      ]
+    ]
+  },
+  {
+    "id": "func_prep_del_slots",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "name": "Prepare Del Slots",
+    "func": "// We will delete all old slots. \n// Note: This drops user votes, but for now it's the simplest way to sync.\nmsg.topic = \"DELETE FROM Time_Slots WHERE meeting_id = ?\";\nmsg.payload = [msg.internalId];\nreturn msg;",
+    "outputs": 1,
+    "x": 1220,
+    "y": 1500,
+    "wires": [
+      [
+        "mysql_del_slots"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_del_slots",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "mydb": "0bdc806336f756dc",
+    "name": "Del Slots",
+    "x": 1420,
+    "y": 1500,
+    "wires": [
+      [
+        "func_prep_ins_slots"
+      ]
+    ]
+  },
+  {
+    "id": "func_prep_ins_slots",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "name": "Prepare Ins Slots",
+    "func": "const slots = msg.meetingData.time_slots;\nif (!slots || slots.length === 0) {\n    msg.topic = \"SELECT 1\";\n    msg.payload = [];\n    return msg;\n}\n\nlet values = [];\nlet params = [];\nslots.forEach(s => {\n    values.push(\"(?, ?, ?)\");\n    params.push(msg.internalId, s.start, s.end);\n});\nmsg.topic = `INSERT INTO Time_Slots (meeting_id, start_time, end_time) VALUES ${values.join(',')}`;\nmsg.payload = params;\nreturn msg;",
+    "outputs": 1,
+    "x": 1620,
+    "y": 1500,
+    "wires": [
+      [
+        "mysql_ins_slots"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_ins_slots",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "mydb": "0bdc806336f756dc",
+    "name": "Ins Slots",
+    "x": 1820,
+    "y": 1500,
+    "wires": [
+      [
+        "func_prep_del_parts"
+      ]
+    ]
+  },
+  {
+    "id": "func_prep_del_parts",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "name": "Prepare Del Parts",
+    "func": "msg.topic = \"DELETE FROM Meeting_Participants WHERE meeting_id = ?\";\nmsg.payload = [msg.internalId];\nreturn msg;",
+    "outputs": 1,
+    "x": 1020,
+    "y": 1580,
+    "wires": [
+      [
+        "mysql_del_parts"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_del_parts",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "mydb": "0bdc806336f756dc",
+    "name": "Del Parts",
+    "x": 1220,
+    "y": 1580,
+    "wires": [
+      [
+        "func_prep_ins_parts"
+      ]
+    ]
+  },
+  {
+    "id": "func_prep_ins_parts",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "name": "Prepare Ins Parts",
+    "func": "const parts = msg.meetingData.participants;\nif (!parts || parts.length === 0) {\n    msg.payload = { message: \"會議更新成功\", uuid: msg.uuid };\n    return [null, msg]; // Skip to success\n}\n\nlet values = [];\nlet params = [];\nparts.forEach(p => {\n    values.push(\"(?, ?, ?)\");\n    params.push(msg.internalId, p.user_id, p.is_mandatory ? 1 : 0);\n});\n\nmsg.topic = `INSERT INTO Meeting_Participants (meeting_id, user_id, is_mandatory) VALUES ${values.join(',')}`;\nmsg.payload = params;\nreturn [msg, null];",
+    "outputs": 2,
+    "x": 1420,
+    "y": 1580,
+    "wires": [
+      [
+        "mysql_ins_parts"
+      ],
+      [
+        "http_out_put_success"
+      ]
+    ]
+  },
+  {
+    "id": "mysql_ins_parts",
+    "type": "mysql",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "mydb": "0bdc806336f756dc",
+    "name": "Ins Parts",
+    "x": 1620,
+    "y": 1580,
+    "wires": [
+      [
+        "func_put_success"
+      ]
+    ]
+  },
+  {
+    "id": "func_put_success",
+    "type": "function",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "name": "Format Success",
+    "func": "msg.payload = { message: \"會議更新成功\", uuid: msg.uuid };\nreturn msg;",
+    "outputs": 1,
+    "x": 1820,
+    "y": 1580,
+    "wires": [
+      [
+        "http_out_put_success"
+      ]
+    ]
+  },
+  {
+    "id": "http_out_put_error",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "name": "Error Response",
+    "statusCode": "",
+    "x": 1020,
+    "y": 1440,
+    "wires": []
+  },
+  {
+    "id": "http_out_put_success",
+    "type": "http response",
+    "z": "124419962d0f0420",
+    "g": "group_put_meeting",
+    "name": "Success Response",
+    "statusCode": "200",
+    "x": 2040,
+    "y": 1580,
+    "wires": []
+  },
+  {
+    "id": "func_prep_get_avail",
+    "type": "function",
+    "name": "Prep Avail SQL",
+    "func": "msg.participants = msg.payload; const internalId = msg.meetingMeta.id; const userId = msg.userId; msg.topic = 'SELECT slot_id, status FROM User_Availability WHERE user_id = ? AND slot_id IN (SELECT id FROM Time_Slots WHERE meeting_id = ?)'; msg.payload = [userId, internalId]; return msg;",
+    "wires": [
+      [
+        "mysql_get_avail"
+      ]
+    ],
+    "x": 800,
+    "y": 700
+  },
+  {
+    "id": "mysql_get_avail",
+    "type": "mysql",
+    "mydb": "0bdc806336f756dc",
+    "name": "Get Avail",
+    "wires": [
+      [
+        "func_prep_get_prog"
+      ]
+    ],
+    "x": 950,
+    "y": 700
+  },
+  {
+    "id": "func_prep_get_prog",
+    "type": "function",
+    "name": "Prep Prog SQL",
+    "func": "msg.userAvail = msg.payload; const internalId = msg.meetingMeta.id; msg.topic = 'SELECT COUNT(DISTINCT user_id) as responded_count, (SELECT COUNT(*) FROM Meeting_Participants WHERE meeting_id = ?) as total_participants FROM User_Availability WHERE slot_id IN (SELECT id FROM Time_Slots WHERE meeting_id = ?)'; msg.payload = [internalId, internalId]; return msg;",
+    "wires": [
+      [
+        "mysql_get_prog"
+      ]
+    ],
+    "x": 800,
+    "y": 750
+  },
+  {
+    "id": "mysql_get_prog",
+    "type": "mysql",
+    "mydb": "0bdc806336f756dc",
+    "name": "Get Prog",
+    "wires": [
+      [
+        "func_format_meeting_res"
+      ]
+    ],
+    "x": 950,
+    "y": 750
+  }
 ]

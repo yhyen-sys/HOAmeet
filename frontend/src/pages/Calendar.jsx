@@ -90,6 +90,21 @@ export default function Calendar() {
                     // For now, let's just use the heatmap placeholder if backend doesn't provide it yet
                     // In real scenario, heatmap would be a separate API or included
                     setHeatmapData(data.heatmap || []);
+
+                    if (data.user_availability && data.user_availability.length > 0) {
+                        const initSlots = [];
+                        data.user_availability.forEach(ua => {
+                            const ts = (data.time_slots || []).find(t => t.id === ua.slot_id);
+                            if (ts) {
+                                initSlots.push({
+                                    id: `sug_${ts.id}`,
+                                    start: ts.start_time,
+                                    end: ts.end_time
+                                });
+                            }
+                        });
+                        setSelectedSlots(initSlots);
+                    }
                 }
             } catch (error) {
                 console.error("載入會議資料失敗:", error);
@@ -274,15 +289,24 @@ export default function Calendar() {
                     <div className="flex flex-col gap-1 mt-1">
                         <div className="text-stone-400">請選取您的空檔時段</div>
                         {meeting && (
-                            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs mt-2">
-                                <div className="bg-white/5 px-2 py-1 rounded border border-white/10 text-stone-300">
-                                    📍 {meeting.location}
-                                </div>
-                                {meeting.is_online === 1 && (
-                                    <div className="bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20 text-amber-500">
-                                        🌐 提供線上參與 {meeting.online_url && `(${meeting.online_url})`}
+                            <div className="flex flex-col gap-2">
+                                {meeting.survey_progress && (
+                                    <div className="flex">
+                                        <div className="bg-emerald-500/10 px-2 py-1 rounded-md border border-emerald-500/20 text-emerald-400 font-bold text-xs inline-flex items-center gap-1 shadow-sm">
+                                            📊 調查進度: {meeting.survey_progress.responded_count || 0} / {meeting.survey_progress.total_participants || 0} 人已回覆
+                                        </div>
                                     </div>
                                 )}
+                                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                                    <div className="bg-white/5 px-2 py-1 rounded border border-white/10 text-stone-300">
+                                        📍 {meeting.location}
+                                    </div>
+                                    {meeting.is_online === 1 && (
+                                        <div className="bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20 text-amber-500">
+                                            🌐 提供線上參與 {meeting.online_url && `(${meeting.online_url})`}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </div>
