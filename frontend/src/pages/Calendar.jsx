@@ -349,12 +349,8 @@ export default function Calendar() {
           .fc-h-event { border: 1px solid rgba(255,255,255,0.1); }
           .fc .fc-toolbar-title { font-weight: 700; color: #facc15; }
           
-          /* 月視圖下的建議時段隱藏原生背景，改用我們自訂的 HTML Badge */
-          .fc-dayGridMonth-view .suggested-event {
-              background: transparent !important;
-              border: none !important;
-              box-shadow: none !important;
-          }
+          .fc-h-event { border: 1px solid rgba(255,255,255,0.1); }
+          .fc .fc-toolbar-title { font-weight: 700; color: #facc15; }
         `}</style>
 
                 <FullCalendar
@@ -401,17 +397,6 @@ export default function Calendar() {
                             return (
                                 <div className="text-red-400 font-bold text-xs p-1 text-center opacity-70">
                                     {arg.event.extendedProps.title}
-                                </div>
-                            );
-                        }
-                        if (arg.event.extendedProps.isSuggested && arg.view.type === 'dayGridMonth') {
-                            const isSelected = arg.event.title.includes('✅');
-                            return (
-                                <div className={`flex items-center gap-1.5 px-2 py-1 mx-1 my-0.5 rounded-md backdrop-blur-sm border transition-all ${isSelected ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' : 'bg-amber-500/10 border-amber-500/30 text-amber-500 hover:bg-amber-500/20'}`}>
-                                    <div className={`w-2 h-2 rounded-full ${isSelected ? 'bg-emerald-400' : 'bg-amber-400'}`}></div>
-                                    <span className="text-xs font-bold truncate">
-                                        {arg.timeText} {isSelected ? '空檔' : '建議'}
-                                    </span>
                                 </div>
                             );
                         }

@@ -761,7 +761,7 @@
     "z": "124419962d0f0420",
     "g": "group_get_single_meeting",
     "name": "Prepare GET Meeting SQL",
-    "func": "let userId = null;\nlet uuid = msg.req.params.id;\n\nconst authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    const parts = token.split('_');\n    if (parts.length >= 4) {\n        userId = parseInt(parts[parts.length - 1], 10);\n    }\n}\n\nif (!userId) {\n    throw new Error(\"Unauthorized: 請先登入後再存取會議資料\");\n}\n\nmsg.topic = `\n    SELECT m.*, u.first_name AS admin_first_name, u.last_name AS admin_last_name\n    FROM Meetings m\n    JOIN Users u ON m.admin_id = u.id\n    WHERE m.uuid = ? \n    AND (\n        m.admin_id = ? \n        OR m.id IN (SELECT meeting_id FROM Meeting_Participants WHERE user_id = ?)\n    );\n`;\nmsg.payload = [uuid, userId, userId];\nreturn msg;",
+    "func": "let userId = null;\nlet uuid = msg.req.params.id;\n\nconst authHeader = msg.req.headers['authorization'];\nif (authHeader && authHeader.startsWith('Bearer ')) {\n    const token = authHeader.substring(7);\n    const parts = token.split('_');\n    if (parts.length >= 4) {\n        userId = parseInt(parts[parts.length - 1], 10);\n    }\n}\n\nif (!userId) {\n    throw new Error(\"Unauthorized: 請先登入後再存取會議資料\");\n}\n\nmsg.topic = `\n    SELECT m.*, u.first_name AS admin_first_name, u.last_name AS admin_last_name\n    FROM Meetings m\n    JOIN Users u ON m.admin_id = u.id\n    WHERE m.uuid = ? \n    AND (\n        m.admin_id = ? \n        OR m.id IN (SELECT meeting_id FROM Meeting_Participants WHERE user_id = ?)\n    );\n`;\nmsg.userId = userId;\nmsg.payload = [uuid, userId, userId];\nreturn msg;",
     "outputs": 1,
     "x": 360,
     "y": 1680,
