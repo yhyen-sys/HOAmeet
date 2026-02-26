@@ -10,6 +10,7 @@ import { CheckCircle } from 'lucide-react';
 import tippy from 'tippy.js';
 import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
+import zhTwLocale from '@fullcalendar/core/locales/zh-tw';
 import { fetchAPI } from '../utils/api';
 import Header from '../components/Header';
 
@@ -248,8 +249,9 @@ export default function Calendar() {
             start: fstart,
             end: fend,
             title: isSelected ? '✅ 空檔' : '💡 建議時段',
-            backgroundColor: isSelected ? 'rgba(16, 185, 129, 0.9)' : 'rgba(245, 158, 11, 0.7)',
-            borderColor: isSelected ? '#10b981' : '#f59e0b',
+            backgroundColor: isSelected ? 'rgba(16, 185, 129, 0.9)' : 'rgba(245, 158, 11, 0.4)', // 0.7 -> 0.4 (+30% transparent)
+            borderColor: isSelected ? '#10b981' : 'rgba(245, 158, 11, 0.6)',
+            textColor: isSelected ? '#ffffff' : '#fef3c7',
             classNames: ['suggested-event'],
             extendedProps: {
                 isSuggested: true,
@@ -315,16 +317,23 @@ export default function Calendar() {
           .fc { --fc-border-color: rgba(255,255,255,0.1); --fc-page-bg-color: transparent; }
           .fc-timegrid-slot { height: 3.5em !important; }
           .fc-theme-standard td, .fc-theme-standard th { border: 1px solid rgba(255,255,255,0.1); }
-          .fc-col-header-cell-cushion { color: #f8fafc; padding: 8px !important; }
+          .fc-col-header-cell-cushion { color: #f8fafc; padding: 8px !important; text-transform: capitalize; }
           .fc-timegrid-axis-cushion { color: #94a3b8; font-size: 0.85rem; }
           .fc-event { border: none; border-radius: 4px; }
           .fc-v-event .fc-event-main { padding: 4px; font-size: 0.8rem; }
+          /* 強制在月視圖 (dayGrid) 內顯示行事曆事件的顏色背景 */
+          .fc-daygrid-event-harness { margin-bottom: 2px !important; }
+          .fc-daygrid-event { white-space: normal !important; overflow: hidden; font-size: 0.75rem; padding: 2px 4px !important; }
+          .fc-daygrid-dot-event .fc-event-title { font-weight: bold; }
+          .fc-h-event { border: 1px solid rgba(255,255,255,0.1); }
+          .fc .fc-toolbar-title { font-weight: 700; color: #facc15; }
         `}</style>
 
                 <FullCalendar
                     ref={calendarRef}
                     plugins={[timeGridPlugin, interactionPlugin, dayGridPlugin]}
-                    initialView="timeGridWeek"
+                    locale={zhTwLocale}
+                    initialView="dayGridMonth"
                     headerToolbar={{
                         left: 'prev,next today',
                         center: 'title',
