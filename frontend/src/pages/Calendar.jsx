@@ -171,14 +171,14 @@ export default function Calendar() {
             const originalSlot = clickInfo.event.extendedProps.originalSlot;
 
             setSelectedSlots(prev => {
-                const exists = prev.find(s => s.id === slotId);
+                const exists = prev.find(s => String(s.id) === String(slotId));
                 if (exists) {
                     // 取消選取
-                    return prev.filter(s => s.id !== slotId);
+                    return prev.filter(s => String(s.id) !== String(slotId));
                 } else {
                     // 加入選取
                     return [...prev, {
-                        id: slotId,
+                        id: String(slotId),
                         start: originalSlot.start_time,
                         end: originalSlot.end_time
                     }];
@@ -255,13 +255,14 @@ export default function Calendar() {
     }));
 
     const suggestedEvents = (meeting?.time_slots || []).map((ts, idx) => {
-        const uniqueId = ts.id || idx;
-        const isSelected = selectedSlots.some(s => s.id === `sug_${uniqueId}`);
+        const uniqueId = ts.id != null ? String(ts.id) : String(idx);
+        const slotIdStr = `sug_${uniqueId}`;
+        const isSelected = selectedSlots.some(s => String(s.id) === slotIdStr);
         const fstart = (ts.start_time || '').replace(' ', 'T');
         const fend = (ts.end_time || '').replace(' ', 'T');
 
         return {
-            id: `sug_${uniqueId}`,
+            id: slotIdStr,
             start: fstart,
             end: fend,
             title: isSelected ? '✅ 空檔' : '💡 建議時段',
@@ -351,6 +352,16 @@ export default function Calendar() {
           
           .fc-h-event { border: 1px solid rgba(255,255,255,0.1); }
           .fc .fc-toolbar-title { font-weight: 700; color: #facc15; }
+          
+          /* 月視圖下的建議時段轉換為 Badge，移除原生背景 */
+          .fc-dayGridMonth-view .suggested-event {
+              background-color: transparent !important;
+              border-color: transparent !important;
+          }
+          .fc-dayGridMonth-view .suggested-event .fc-event-main {
+              padding: 0 !important;
+              color: inherit !important;
+          }
         `}</style>
 
                 <FullCalendar
@@ -397,6 +408,17 @@ export default function Calendar() {
                             return (
                                 <div className="text-red-400 font-bold text-xs p-1 text-center opacity-70">
                                     {arg.event.extendedProps.title}
+                                </div>
+                            );
+                        }
+                        if (arg.event.extendedProps.isSuggested && arg.view.type === 'dayGridMonth') {
+                            const isSelected = arg.event.title.includes('✅');
+                            return (
+                                <div className={`flex items-center gap-1.5 px-1 py-0.5 mx-0.5 mb-0.5 rounded border overflow-hidden ${isSelected ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' : 'bg-amber-500/10 border-amber-500/30 text-amber-500'}`}>
+                                    <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${isSelected ? 'bg-emerald-500' : 'bg-amber-500'}`}></div>
+                                    <span className="text-[10px] font-bold truncate leading-none py-0.5">
+                                        {arg.timeText} {isSelected ? '空檔' : '建議'}
+                                    </span>
                                 </div>
                             );
                         }
