@@ -239,13 +239,14 @@ export default function Calendar() {
         extendedProps: { isHeatmap: true, score: h.score, isTop: h.isTop, availableCount: h.availableCount }
     }));
 
-    const suggestedEvents = (meeting?.time_slots || []).map(ts => {
-        const isSelected = selectedSlots.some(s => s.id === `sug_${ts.id}`);
+    const suggestedEvents = (meeting?.time_slots || []).map((ts, idx) => {
+        const uniqueId = ts.id || idx;
+        const isSelected = selectedSlots.some(s => s.id === `sug_${uniqueId}`);
         const fstart = (ts.start_time || '').replace(' ', 'T');
         const fend = (ts.end_time || '').replace(' ', 'T');
 
         return {
-            id: `sug_${ts.id}`,
+            id: `sug_${uniqueId}`,
             start: fstart,
             end: fend,
             title: isSelected ? '✅ 空檔' : '💡 建議時段',
@@ -321,12 +322,15 @@ export default function Calendar() {
           .fc-timegrid-axis-cushion { color: #94a3b8; font-size: 0.85rem; }
           .fc-event { border: none; border-radius: 4px; }
           .fc-v-event .fc-event-main { padding: 4px; font-size: 0.8rem; }
-          /* 強制在月視圖 (dayGrid) 內顯示行事曆事件的顏色背景 */
-          .fc-daygrid-event-harness { margin-bottom: 2px !important; }
-          .fc-daygrid-event { white-space: normal !important; overflow: hidden; font-size: 0.75rem; padding: 2px 4px !important; }
-          .fc-daygrid-dot-event .fc-event-title { font-weight: bold; }
           .fc-h-event { border: 1px solid rgba(255,255,255,0.1); }
           .fc .fc-toolbar-title { font-weight: 700; color: #facc15; }
+          
+          /* 月視圖下的建議時段隱藏原生背景，改用我們自訂的 HTML Badge */
+          .fc-dayGridMonth-view .suggested-event {
+              background: transparent !important;
+              border: none !important;
+              box-shadow: none !important;
+          }
         `}</style>
 
                 <FullCalendar
@@ -373,6 +377,17 @@ export default function Calendar() {
                             return (
                                 <div className="text-red-400 font-bold text-xs p-1 text-center opacity-70">
                                     {arg.event.extendedProps.title}
+                                </div>
+                            );
+                        }
+                        if (arg.event.extendedProps.isSuggested && arg.view.type === 'dayGridMonth') {
+                            const isSelected = arg.event.title.includes('✅');
+                            return (
+                                <div className={`flex items-center gap-1.5 px-2 py-1 mx-1 my-0.5 rounded-md backdrop-blur-sm border transition-all ${isSelected ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400' : 'bg-amber-500/10 border-amber-500/30 text-amber-500 hover:bg-amber-500/20'}`}>
+                                    <div className={`w-2 h-2 rounded-full ${isSelected ? 'bg-emerald-400' : 'bg-amber-400'}`}></div>
+                                    <span className="text-xs font-bold truncate">
+                                        {arg.timeText} {isSelected ? '空檔' : '建議'}
+                                    </span>
                                 </div>
                             );
                         }
